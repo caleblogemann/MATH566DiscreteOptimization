@@ -1,0 +1,186 @@
+\documentclass[11pt, oneside]{article}
+\usepackage[letterpaper, margin=2cm]{geometry}
+\usepackage{MATH566}
+
+\begin{document}
+\noindent \textbf{\Large{Caleb Logemann \\
+MATH 566 Discrete Optimization\\
+Homework 1
+}}
+
+%\lstinputlisting[language=Matlab]{H01_23.m}
+
+\noindent In order to find the recommended daily intake of nutrients, I used the website
+\\ \href{https://fnic.nal.usda.gov/fnic/interactiveDRI/}{https://fnic.nal.usda.gov/fnic/interactiveDRI/}.
+This website gives recommended daily intake based on height, weight, age,
+gender, and activity level.
+The following table summarizes the recommended daily intake for the professor.
+    \begin{center}
+        \begin{tabular}{lr}
+            \toprule
+            Nutrient      & Daily Requirement \\
+            \midrule
+            Calories      & 2779 kcal \\
+            Carbohydrates & 383 grams  \\
+            Fiber         & 38 grams \\
+            Protein       & 60 grams \\
+            Sodium        & 1.5 grams \\
+            \bottomrule
+        \end{tabular}
+    \end{center}
+
+\noindent I then went to Walmart to do some grocery shopping. 
+The following table summarizes the nutritional content and cost of 15
+different foods.
+
+    \begin{center}
+        \begin{tabular}{lccccccc}
+            \toprule
+            Food                 & Calories & Carbohydrates & Fiber & Protein &  Sodium &   Cost \\
+            \midrule
+            Gatorade (20 oz)     &      125 &          35 g &   0 g &     0 g & 0.275 g & \$0.75 \\ % 1
+            Peanut Butter (32 g) &      190 &           7 g &   2 g &     7 g & 0.130 g & \$0.13 \\ % 2
+            Apple sauce (128 g)  &      110 &          27 g &   1 g &     0 g &     0 g & \$0.34 \\ % 3
+            Blackberry Jam (20 g)&       50 &          13 g &   0 g &     0 g &     0 g & \$0.13 \\ % 4
+            Frozen Waffles (70 g)&      190 &          27 g &   1 g &     4 g & 0.360 g & \$0.48 \\ % 5
+            Granola Bar          &      100 &          18 g &   1 g &     2 g &  0.06 g & \$0.17 \\ % 6
+            Corn (125 g)         &       60 &           9 g &   2 g &     2 g &   0.2 g & \$0.21 \\ % 7
+            Green Beans (120 g)  &       20 &           4 g &   2 g &     1 g &  0.38 g & \$0.21 \\ % 8
+            Peas (125 g)         &       70 &          12 g &   3 g &     4 g &  0.37 g & \$0.21 \\ % 9
+            FiberOne Cereal (1/2 cup)&   60 &          25 g &  14 g &     2 g & 0.105 g & \$0.25 \\ % 10
+            Cocunut Milk (80 ml) &      120 &           2 g &   0 g &     1 g & 0.025 g & \$0.42 \\ % 11
+            Tortilla (49 g)      &      140 &          24 g &   1 g &     4 g &  0.44 g & \$0.26 \\ % 12
+            Turkey Breast (52 g) &       80 &           1 g &   0 g &     8 g &  0.69 g & \$0.50 \\ % 13
+            Roast Beef (56 g)    &       60 &           0 g &   0 g &    11 g &  0.52 g & \$1.15 \\ % 14
+            Hamburger Buns (1.6 oz)&    150 &          25 g &   1 g &     4 g & 0.025 g & \$0.29 \\ % 15
+            \bottomrule
+        \end{tabular}
+    \end{center}
+
+\noindent The following model for APMonitor was used to solve this linear program.
+
+\begin{verbatim}
+Model Diet
+    Variables
+        x[1:15] = 0, >=0
+    End Variables
+
+    Equations
+        125*x[1] + 190*x[2] + 110*x[3] + 50*x[4] + 190*x[5] + 100*x[6] + 60*x[7]
+        + 20*x[8] + 70*x[9] + 60*x[10] + 120*x[11] + 140*x[12] + 80*x[13]
+        + 60*x[14] + 150*x[15] >= 2779
+        35*x[1] + 7*x[2] + 27*x[3] + 13*x[4] + 27*x[5] + 18*x[6] + 9*x[7]
+        + 4*x[8] + 12*x[9] + 25*x[10] + 2*x[11] + 24*x[12] + 1*x[13] + 25*x[15] >= 383
+        2*x[2] + x[3] + x[5] + x[6] + 2*x[7] + 2*x[8] + 3*x[9] + 14*x[10]
+        + x[12] + x[15] >= 38
+        7*x[2] + 4*x[5] + 2*x[6] + 2*x[7] + 1*x[8] + 4*x[9] + 2*x[10] + x[11]
+        + 4*x[12] + 8*x[13] + 11*x[14] + 4*x[15] >= 60
+        0.275*x[1] + 0.13*x[2] + 0.36*x[5] + 0.06*x[6] + 0.2*x[7] + 0.38*x[8]
+        + 0.37*x[9] + 0.105*x[10] + 0.025*x[11] + 0.44*x[12] + 0.69*x[13]
+        + 0.52*x[14] + 0.025*x[15] >= 1.5*1.4
+        minimize 0.75*x[1] + 0.13*x[2] + 0.34*x[3] + 0.13*x[4] + 0.48*x[5]
+        + 0.17*x[6] + 0.21*x[7] + 0.21*x[8] + 0.21*x[9] + 0.25*x[10]
+        + 0.42*x[11] + 0.26*x[12] + 0.5*x[13] + 1.15*x[14] + 0.29*x[15]
+    End Equations
+End Model
+\end{verbatim}
+
+\noindent The solution that APMonitor found was
+\begin{verbatim}
+Objective Value = 3.95434986
+diet.slk_1 = 0.0
+diet.slk_2 = 0.0
+diet.slk_3 = 0.0
+diet.slk_4 = 12.1406002045
+diet.slk_5 = 0.0
+diet.x[10] = 0.752789795399
+diet.x[11] = 0.0
+diet.x[12] = 0.859616100788
+diet.x[13] = 0.0
+diet.x[14] = 0.0
+diet.x[15] = 0.0
+diet.x[1] = 0.0
+diet.x[2] = 4.66463518143
+diet.x[3] = 0.0
+diet.x[4] = 0.0
+diet.x[5] = 0.0
+diet.x[6] = 17.2720603943
+diet.x[7] = 0.0
+diet.x[8] = 0.0
+diet.x[9] = 0.0
+\end{verbatim}
+
+This means that for \$3.95 a day, the professor should eat .75 servings of
+FiberOne cereal, .86 tortillas, 4.66 servings of peanut butter and 17.27 granola bars.
+
+The following table summarizes my daily recommended intake of nutrients.
+\begin{center}
+    \begin{tabular}{lr}
+        \toprule
+        Nutrient      & Daily Requirement \\
+        \midrule
+        Calories      & 3397 kcal \\
+        Carbohydrates & 467 grams  \\
+        Fiber         & 38 grams \\
+        Protein       & 73 grams \\
+        Sodium        & 1.5 grams \\
+        \bottomrule
+    \end{tabular}
+\end{center}
+
+In order to solve this linear program for my daily requirements, I used the
+following model.
+\begin{verbatim}
+Model Diet
+    Variables
+        x[1:15] = 0, >=0
+    End Variables
+
+    Equations
+        125*x[1] + 190*x[2] + 110*x[3] + 50*x[4] + 190*x[5] + 100*x[6] + 60*x[7]
+        + 20*x[8] + 70*x[9] + 60*x[10] + 120*x[11] + 140*x[12] + 80*x[13]
+        + 60*x[14] + 150*x[15] >= 3397
+        35*x[1] + 7*x[2] + 27*x[3] + 13*x[4] + 27*x[5] + 18*x[6] + 9*x[7]
+        + 4*x[8] + 12*x[9] + 25*x[10] + 2*x[11] + 24*x[12] + 1*x[13] + 25*x[15] >= 467
+        2*x[2] + x[3] + x[5] + x[6] + 2*x[7] + 2*x[8] + 3*x[9] + 14*x[10]
+        + x[12] + x[15] >= 38
+        7*x[2] + 4*x[5] + 2*x[6] + 2*x[7] + 1*x[8] + 4*x[9] + 2*x[10] + x[11]
+        + 4*x[12] + 8*x[13] + 11*x[14] + 4*x[15] >= 73
+        0.275*x[1] + 0.13*x[2] + 0.36*x[5] + 0.06*x[6] + 0.2*x[7] + 0.38*x[8]
+        + 0.37*x[9] + 0.105*x[10] + 0.025*x[11] + 0.44*x[12] + 0.69*x[13]
+        + 0.52*x[14] + 0.025*x[15] >= 1.5
+        minimize 0.75*x[1] + 0.13*x[2] + 0.34*x[3] + 0.13*x[4] + 0.48*x[5]
+        + 0.17*x[6] + 0.21*x[7] + 0.21*x[8] + 0.21*x[9] + 0.25*x[10]
+        + 0.42*x[11] + 0.26*x[12] + 0.5*x[13] + 1.15*x[14] + 0.29*x[15]
+    End Equations
+End Model
+\end{verbatim}
+
+The solution to this linear program was
+\begin{verbatim}
+Objective Value = 4.76215906
+diet.slk_1 = 0.0
+diet.slk_2 = 0.0
+diet.slk_3 = 0.0
+diet.slk_4 = 12.5778903961
+diet.slk_5 = 0.643295824528
+diet.x[10] = 0.260098397732
+diet.x[11] = 0.0
+diet.x[12] = 0.0
+diet.x[13] = 0.0
+diet.x[14] = 0.0
+diet.x[15] = 0.0
+diet.x[1] = 0.0
+diet.x[2] = 5.44681596756
+diet.x[3] = 0.0
+diet.x[4] = 0.0
+diet.x[5] = 0.0
+diet.x[6] = 23.4649906158
+diet.x[7] = 0.0
+diet.x[8] = 0.0
+diet.x[9] = 0.0
+\end{verbatim}
+
+This means that for \$4.76 a day, I should eat .26 servings of FiberOne cereal,
+5.45 servings of peanut butter, and 23.465 granola bars.
+\end{document}
