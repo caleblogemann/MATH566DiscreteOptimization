@@ -5,12 +5,57 @@
 \begin{document}
 \noindent \textbf{\Large{Caleb Logemann \\
 MATH 566 Discrete Optimization\\
-Homework 1
+Homework 2
 }}
 
 %\lstinputlisting[language=Matlab]{H01_23.m}
 \begin{enumerate}
+    \item % #1
 
+    \item % #2
+
+    \item % #3
+        A paper mill manufactures rolls of paper of a standard width, 3 meters.
+        But customers want to buy rolls of shorter width, and the mill has to
+        cut such rolls from the 3m rolls.
+        Let us consider an order of
+        \begin{itemize}
+            \item 97 rolls of width 135 cm,
+            \item 610 rolls of width 108 cm,
+            \item 395 rolls of width 93 cm, and
+            \item 211 rolls of width 42 cm.
+        \end{itemize}
+        What is the smallest number of 3m rolls that have to be cut in order to
+        satisfy this order?
+
+        First we must enumerate all of the different ways that a 3m roll can be
+        cut up into these lengths.
+        \begin{enumerate}
+            \item $c_1 = 2 \times 135$
+            \item $c_2 = 135 + 108 + 42$
+            \item $c_3 = 135 + 93 + 42$
+            \item $c_4 = 135 + 3 \times 42$
+            \item $c_5 = 2 \times 108 + 2 \times 42$
+            \item $c_6 = 108 + 2 \times 93$
+            \item $c_7 = 108 + 93 + 2 \times 42$
+            \item $c_8 = 108 + 4 \times 42$
+            \item $c_9 = 3 \times 93$.
+            \item $c_{10} = 2 \times 93 + 2 \times 42$
+            \item $c_{11} = 93 + 4 \times 42$
+            \item $c_{12} = 7 \times 42$
+        \end{enumerate}
+        Any other cuts leave excess paper that could be used for the order so
+        won't be necessary.
+
+        Then we can create the integer linear program.
+        \begin{align*}
+            \min* \sum{i = 1}{12}{c_i} \\
+            s.t. 
+            2c_1 + c_2 + c_3 + c_4 &\ge 97 \\
+            c_2 + 2c_5 + c_6 + c_7 + c_8 &\ge 610 \\
+            c_3 + 2 c_6 + c_7 + 3c_9 + 2c_{10} + c_{11} &\ge 395 \\
+            c_2 + c_3 + 3c_4 + 2c_5 + 2c_7 + 4c_8 + 2c_{10} + 4c_{11} + 7c_{12} &\ge 211
+        \end{align*}
 
 \end{enumerate}
 \end{document}
