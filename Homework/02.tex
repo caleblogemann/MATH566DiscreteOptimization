@@ -14,6 +14,67 @@ Homework 2
 
     \item % #2
 
+        The original diet problem can be written as
+        \begin{align*}
+            \min* \v{c}^T \v{x} \\
+            s.t. A\v{x} \ge \v{b}
+        \end{align*}
+        where
+        \begin{align*}
+            A =
+            \begin{bmatrix}
+                125 & 35 & 0 &  0 & 0.275 \\ % 1
+                190 &  7 & 2 &  7 & 0.130 \\ % 2
+                110 & 27 & 1 &  0 &     0 \\ % 3
+                 50 & 13 & 0 &  0 &     0 \\ % 4
+                190 & 27 & 1 &  4 & 0.360 \\ % 5
+                100 & 18 & 1 &  2 &  0.06 \\ % 6
+                 60 &  9 & 2 &  2 &   0.2 \\ % 7
+                 20 &  4 & 2 &  1 &  0.38 \\ % 8
+                 70 & 12 & 3 &  4 &  0.37 \\ % 9
+                 60 & 25 & 4 &  2 & 0.105 \\ % 10
+                120 &  2 & 0 &  1 & 0.025 \\ % 11
+                140 & 24 & 1 &  4 &  0.44 \\ % 12
+                 80 &  1 & 0 &  8 &  0.69 \\ % 13
+                 60 &  0 & 0 & 11 &  0.52 \\ % 14
+                150 & 25 & 1 &  4 & 0.025    % 15
+            \end{bmatrix}
+            \v{b} =
+            \begin{bmatrix}
+                2779 \\
+                 383 \\
+                  38 \\
+                  60 \\
+                 1.5
+            \end{bmatrix}
+            \v{c} =
+            \begin{bmatrix}
+                0.75 \\ % 1
+                0.13 \\ % 2
+                0.34 \\ % 3
+                0.13 \\ % 4
+                0.48 \\ % 5
+                0.17 \\ % 6
+                0.21 \\ % 7
+                0.21 \\ % 8
+                0.21 \\ % 9
+                0.25 \\ % 10
+                0.42 \\ % 11
+                0.26 \\ % 12
+                0.50 \\ % 13
+                1.15 \\ % 14
+                0.29    % 15
+            \end{bmatrix}
+        \end{align*}
+        and $\v{x}$ is the number of servings of each type of food.
+
+        The dual of the diet program can be written as follows
+        \begin{align*}
+            \max \v{b}^T \v{y} \\
+            s.t. A^T \v{y} \le \v{c} \\
+            \v{y} \ge \v{0}
+        \end{align*}
+
     \item % #3
         A paper mill manufactures rolls of paper of a standard width, 3 meters.
         But customers want to buy rolls of shorter width, and the mill has to
