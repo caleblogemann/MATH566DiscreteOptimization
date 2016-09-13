@@ -1,6 +1,7 @@
 \documentclass[11pt, oneside]{article}
 \usepackage[letterpaper, margin=2cm]{geometry}
 \usepackage{MATH566}
+\usepackage{sagetex}
 
 \begin{document}
 \noindent \textbf{\Large{Caleb Logemann \\
@@ -152,10 +153,13 @@ Homework 2
             2c_1 + c_2 + c_3 + c_4 &\ge 97 \\
             c_2 + 2c_5 + c_6 + c_7 + c_8 &\ge 610 \\
             c_3 + 2 c_6 + c_7 + 3c_9 + 2c_{10} + c_{11} &\ge 395 \\
-            c_2 + c_3 + 3c_4 + 2c_5 + 2c_7 + 4c_8 + 2c_{10} + 4c_{11} + 7c_{12} &\ge 211
+            c_2 + c_3 + 3c_4 + 2c_5 + 2c_7 + 4c_8 + 2c_{10} + 4c_{11} + 7c_{12} &\ge 211 \\
+            c_i &\ge 0 \quad 1 \le i \le 12 \\
+            c_i \in \ZZ \quad 1 \le i \le 12
         \end{align*}
 
-
-
+        This integer linear program can be written in
+        \lstinputlisting[language=Sage]{02_3.sage}
+        $\sage{load('02_3.sage')}$
 \end{enumerate}
 \end{document}

@@ -5,3 +5,16 @@
 \RequirePackage{hyperref}
 \RequirePackage{Sum}
 \RequirePackage{Vector}
+\RequirePackage{SetTheory}
+\RequirePackage{listings}
+\lstdefinelanguage{Sage}[]{Python}
+{
+    morekeywords={True,False,sage,singular},
+    sensitive=true
+}
+\lstset{
+    frame=single,
+    breaklines=true,
+    postbreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\color{red}\hookrightarrow\space}}
+}
+
