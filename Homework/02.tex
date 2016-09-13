@@ -10,9 +10,46 @@ Homework 2
 
 %\lstinputlisting[language=Matlab]{H01_23.m}
 \begin{enumerate}
-    \item % #1
+    \item % #1 Done
+        \begin{enumerate}
+            \item[(a)]
+                Give an example of bounded convex sets $C$ and $D$ in $\RR^d$,
+                where $C \cap D = \varnothing$, but there is no hyperplane
+                stricly seperating $C$ and $D$.
+                That is find $a \in \RR^d$ and $b \in \RR$, such that
+                \[
+                    \v{a}^T\v{c} > b, \forall \v{c} \in C \quad \text{and} \quad \v{a}^T\v{d} < b, \forall \v{d} \in D
+                \]
+
+                Let $C = \set{\br{x, y}^T | -1 < x < 0, 0 < y < 1} \cup \set{\br{0, 0}^T}$
+                and let $D = \set{\p{x, y} | 0 < x < 1, 0 < y < 1} \cup \set{\br{0, 1}^T}$.
+                In this case $C$ and $D$ are bounded convex sets and $C \cap D = \varnothing$.
+                Let $\v{a} = \br{-1, 0}^T$ and $b = 0$, then for $\v{c} \in C$,
+                $\v{a}^T \v{c} \ge 0$ and if $\v{c} = \br{0, 0}$, then $\v{a}^T \v{c} = 0$.
+                Also for $\v{d} \in D$, $\v{a}^T \v{d} \le 0$ and for $\v{d} = \br{0, 1}^T$,
+                $\v{a}^T \v{d} = 0$.
+                Therefore there is no hyperplane strictly seperating $C$ and $D$.
+
+            \item[(b)]
+                Give an example of closed convex sets $C$ and $D$ that cannot
+                be strictly seperated.
+
+                Let $C = \set{\br{x, y}^T | xy >= 1, x >= 0}$, and let
+                $D = \set{\br{x, y}^T | x \le 0}$.
+                In this case $C$ and $D$ are closed convex sets and
+                $C \cap D = \varnothing$.
+                Then it is required that $\v{a} = \br{1, 0}^T$ and $b = 0$.
+                For $\v{c} \in C$, $\v{a}^T \v{c} > 0$.
+                Also $\v{d} \in D$, $\v{a}^T \v{d} \le 0$.
+                Therefore there is no hyperplane strictly seperating $C$ and $D$.
+        \end{enumerate}
 
     \item % #2
+        Dualize your diet problem.
+        Take the data from your diet problem from HW1, create the dual of the
+        program, and solve it.
+        Your answer should contain the solution of the dual and the
+        interpretation of the results of the dual.
 
         The original diet problem can be written as
         \begin{align*}
@@ -117,6 +154,8 @@ Homework 2
             c_3 + 2 c_6 + c_7 + 3c_9 + 2c_{10} + c_{11} &\ge 395 \\
             c_2 + c_3 + 3c_4 + 2c_5 + 2c_7 + 4c_8 + 2c_{10} + 4c_{11} + 7c_{12} &\ge 211
         \end{align*}
+
+
 
 \end{enumerate}
 \end{document}
