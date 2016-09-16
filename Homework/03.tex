@@ -9,7 +9,7 @@ MATH 566 Discrete Optimization\\
 Homework 3
 }}
 
-%\lstinputlisting[language=Matlab]{H01_23.m}
+%\lstinputlisting[language=Sage]{03_2.sage}
 \begin{enumerate}
     \item % #1
         Show that
@@ -25,7 +25,7 @@ Homework 3
             implies $\v{y}^T \v{b} \ge 0$.
         \end{center}
 
-    \item % #2
+    \item % #2 Done
         Some university in Iowa was measuring the loudness of the fan’s
         screaming during the first touchdown of the local team.
         The measurements contain loudness in dB and the number of people at the
@@ -51,6 +51,57 @@ Homework 3
         Write a linear program that solves the problem and solve if for the
         ``measured'' data.
 
+        The linear program's objective function should minimize the sum of the
+        absolute values of the errors.
+        However a linear program's objective function must be linear and
+        therefore can't contain any absolute values funtions.
+        Instead let $\abs{a x_i + b - y_i} \le e_i$. 
+        When $\sum*{i}{}{e_i}$ is minimized, then those inequalities become
+        equalities.
+        Furthermore, $\abs{a x_i + b - y_i} \le e_i$ can be transformed into two
+        linear inequalities that can act as constraints for the linear program.
+        Those two inequalties are
+        \begin{align*}
+             e_i &\ge a x_i + b - y_i \\
+            -e_i &\le a x_i + b - y_i
+        \end{align*}
+        Rearranging this inequalites results in
+        \begin{align*}
+            -e_i + a x_i + b &\le y_i \\
+             e_i + a x_i + b &\ge y_i
+        \end{align*}
+        Thus the linear program becomes
+        \[
+            \begin{array}{ll@{}ll}
+                \min* & \sum*{i}{}{e_i} \\
+                \text{s.t.} & -e_i + a x_i + b \le y_i \quad \forall i \\
+                            &  e_i + a x_i + b \ge y_i \quad \forall i
+            \end{array}
+        \]
+        There are no restrictions on $a$ or $b$ they can be any real number.
+        The values of $e_i$ must be nonnegative, but we do not require a
+        specific constraint for that as the other constraints implies this.
+
+        The following implements this linear program for the given data.
+        \lstinputlisting[language=Sage]{03_2.sage}
+
+        The out put of the previous code is
+        \begin{verbatim}
+            Objective Value: 8.70588235294
+            a = 1.17647058824
+            b = 27.6470588235
+            Errors
+            u_0 = 0.0
+            u_1 = 1.64705882353
+            u_2 = 2.05882352941
+            u_3 = 0.0
+            u_4 = 5.0
+        \end{verbatim}
+
+        \begin{center}
+            \includegraphics[scale=.5]{Figures/03_1.png}
+        \end{center}
+        
     \item % #3
         Suppose you are preparing a schedule for classes.
         You have fixed number of classes and students.
