@@ -46,7 +46,7 @@ Homework 3
         using linear programming).
         Use the one that minimizes the sum of differences. That is
         \[
-            \sum{i}{}{\abs{a x_i + b - y_i}}
+            \sum*{i}{}{\abs{a x_i + b - y_i}}
         \]
         Write a linear program that solves the problem and solve if for the
         ``measured'' data.
@@ -101,8 +101,9 @@ Homework 3
         \begin{center}
             \includegraphics[scale=.5]{Figures/03_1.png}
         \end{center}
-        
-    \item % #3
+
+    \pagebreak
+    \item % #3 Done
         Suppose you are preparing a schedule for classes.
         You have fixed number of classes and students.
         Every student told you which classes (s)he wants to attend.
@@ -133,8 +134,122 @@ Homework 3
                 [1,0,0,1,0,1,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,1,0,1,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0]]
             \end{verbatim}
         }
-        Row corresponds to one class, columns corresponds to one students.
+        Rows corresponds to one class, columns corresponds to one students.
         1 means the student wants to attend the class.
+
+        Depending on the number of timeslots and the number of classes a
+        student wants to take there is a maximum number of classes that a
+        student can actually attend.
+        For example if there are 4 timeslots and the student wants to take 7
+        classes the maximum number of classes that they can take is 4.
+        If there is a class that this student wants to take in all 4 timeslots
+        then there really isn't any conflict, because the student can fill up
+        their schedule with classes.
+        On the other hand if there are 4 timeslots and the student only wants to
+        take 2 different classes, then the maximum number of classes that the
+        student can take is 2.
+
+        This observation leads me to take the approach of maximizing the number
+        of timeslots that a student can take a class they are interested in for
+        each student.
+        In order to do this I will introduce some notation.
+        Let $s_{ij} = 1$ if student $j$ wants to take class $i$ and $s_{ij} = 0$
+        if student $j$ does not want to take class $i$.
+        Thus $s_{ij}$ is the $ij$ entry of the given data.
+        Let $c_{ij}$ be a binary variables, where $c_{ij} = 1$ if class $i$ is
+        scheduled for timeslot $j$, and $c_{ij} = 0$ otherwise.
+        Let $w_{ij}$ be a binary variable, where $w_{ij} = 1$ if student $i$
+        wants to take a class offered in timeslot $j$.
+        Otherwise $w_{ij} = 0$, if there is no class in timeslot $j$ that
+        student $i$ wants to take.
+        Lastly let $n_t$ be the number of timeslots, $n_c$ be the number of
+        classes, and $n_s$ be the number of students.
+        Since we are using binary variables, this implies the linear program
+        will in fact be an integer linear program.
+
+        Thus the objective function of our linear program will be maximizing
+        \[
+            \sum*{i = 1}{n_s}{\sum*{j=1}{n_t}{w_{ij}}}.
+        \]
+        This double sum is the total number of class periods for all students
+        which contains a class that they want to take.
+
+        The following constraints are also necessary.
+        First every class can only be schedule once, so
+        \[
+            \sum{j=1}{n_t}{c_{ij}} = 1
+        \]
+        This means that each class can only be in one timeslot.
+
+        We also need constraints to enforce the definition of the binary
+        variables $w_{ij}$.
+        In other words the variables $w_{ij}$ depends on the variables
+        $c_{ij}$.
+        Let $n_{ij}$ be the total number of classes student $i$ is interested in
+        taking during timeslot $j$.
+        This can be calculated as
+        \[
+            n_{ij} = \sum{k = 1}{n_c}{s_{ki} c_{kj}}
+        \]
+        If $n_{ij} \ge 1$, then $w_{ij} = 1$.
+        The constraint
+        \[
+            n_{ij} \le M w_{ij}
+        \]
+        enforces this when $M$ is sufficiently large.
+        This works because $w_{ij}$ is binary and can only be $0$ or $1$, so if
+        $n_{ij} > 0$, then $w_{ij} > 0$ which implies $w_{ij} = 1$.
+        In this problem $M$ being sufficiently large means that $M$ must be
+        larger than the largest possible value of $n_{ij}$, which in this case
+        means that $M > n_c$.
+
+        If on the other hand $n_{ij} = 0$, then $w_{ij} = 0$.
+        The constraint
+        \[
+            n_{ij} \ge w_{ij}
+        \]
+        enforces this condition.
+        If $n_{ij} = 0$, then $w_{ij} \neq 1$ as $0 \ngeq 1$, so $w_{ij} = 0$.
+        This also dosn't contradict the previous constraint as if $n_{ij} = 1$,
+        then $n_{ij} = 1 \ge 1 = w_{ij}$.
+
+        Thus the full integer linear program is
+        \[
+            \begin{array}{ll@{}ll}
+                \max* & \sum*{i = 1}{n_s}{\sum*{j=1}{n_t}{w_{ij}}} \\
+                \text{s.t.} & \sum{j=1}{n_t}{c_{ij}} = 1 \hskip 1em &1 \le i \le n_c \\
+                            & n_{ij} \le M w_{ij}         &1 \le i \le n_s \hskip 1em 1 \le j \le n_t\\
+                            & n_{ij} \ge w_{ij}           &1 \le i \le n_s \hskip 1em 1 \le j \le n_t \\
+                            & 0 \le c_{ij} \le 1          &1 \le i \le n_c \hskip 1em 1 \le j \le n_t \\
+                            & 0 \le w_{ij} \le 1          &1 \le i \le n_s \hskip 1em 1 \le j \le n_t \\
+                            & c_{ij} \in \ZZ              &1 \le i \le n_c \hskip 1em 1 \le j \le n_t \\
+                            & w_{ij} \in \ZZ              &1 \le i \le n_s \hskip 1em 1 \le j \le n_t
+            \end{array}
+        \]
+
+        The following sage script implements this integer linear program.
+        \lstinputlisting[language=Sage, firstline=17]{03_3.sage}
+        Importing the given data as matrix $s$ is not shown.
+        As described at the beginning of the problem there is a maximum number
+        of classes that can be taken depending on the number of timeslots.
+        This is shown as part of the output.
+
+        Running this script with 3 timeslots results in
+        \begin{verbatim}
+            157 out of 158
+            1: Class 3, Class 8, Class 9, Class 10
+            2: Class 2, Class 4, Class 5, Class 11, Class 12
+            3: Class 1, Class 6, Class 7, Class 13           
+        \end{verbatim}
+
+        With 4 timeslots
+        \begin{verbatim}
+            194 out of 202
+            1: Class 2, Class 7, Class 8, Class 12
+            2: Class 5, Class 9, Class 11
+            3: Class 1, Class 6, Class 13
+            4: Class 3, Class 4, Class 10
+        \end{verbatim}
 
 \end{enumerate}
 \end{document}
