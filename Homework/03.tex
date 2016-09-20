@@ -26,7 +26,17 @@ Homework 3
         \end{center}
 
         \begin{proof}
-        
+            First let $A\v{x} \le \v{b}$ have a nonnegative solution, that is
+            there exists $\v{x} >= \v{0}$ such that $A\v{x} \le \v{b}$.
+            Let $\v{y} \in \RR^m$, with $\v{y} \ge \v{0}$ and $\v{y}^T A \ge \v{0}^T$.
+            If we right multiply by $\v{x}$, we see that $\v{y}^T A\v{x} \ge 0$.
+            Since $\v{y} \ge \v{0}$ and $\v{b} \ge A\v{x}$, we know that
+            $\v{y}^T \v{b} \ge \v{y}^T A\v{x} \ge 0$.
+            Thus $\v{y}^T \v{b} \ge 0$.
+
+            Second assume that if for all $\v{y} \in \RR^m$ such that
+            $\v{y} \ge \v{0}$ and $\v{y}^T A \ge \v{0}^T$ then
+            $\v{y}^T \v{b} \ge 0$.
         \end{proof}
 
     \item % #2 Done
