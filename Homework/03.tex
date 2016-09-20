@@ -26,6 +26,17 @@ Homework 3
         \end{center}
 
         \begin{proof}
+            First let me rewrite the original theorem in different notation for
+            clarity.
+            Let $C \in \RR^{m \times q}$ and$\v{d} \in \RR^m$, then
+            $C\v{u} = \v{d}$ has a nonnegative solution if and only if for all
+            $\v{v} \in \RR^m$ with $\v{v}^T C \ge \v{0}^T$ then
+            $\v{v}^T \v{d} \ge 0$.
+            
+            Consider the matrix inequality $A\v{x} \le \v{b}$ for
+            $A \in \RR{m \times n}$ and $\v{b} \in \RR^m$.
+            Let $\v{z} = \v{b} - A\v{x}$
+
             First let $A\v{x} \le \v{b}$ have a nonnegative solution, that is
             there exists $\v{x} >= \v{0}$ such that $A\v{x} \le \v{b}$.
             Let $\v{y} \in \RR^m$, with $\v{y} \ge \v{0}$ and $\v{y}^T A \ge \v{0}^T$.
@@ -37,6 +48,7 @@ Homework 3
             Second assume that if for all $\v{y} \in \RR^m$ such that
             $\v{y} \ge \v{0}$ and $\v{y}^T A \ge \v{0}^T$ then
             $\v{y}^T \v{b} \ge 0$.
+
         \end{proof}
 
     \item % #2 Done
@@ -69,7 +81,7 @@ Homework 3
         absolute values of the errors.
         However a linear program's objective function must be linear and
         therefore can't contain any absolute values funtions.
-        Instead let $\abs{a x_i + b - y_i} \le e_i$. 
+        Instead let $\abs{a x_i + b - y_i} \le e_i$.
         When $\sum*{i}{}{e_i}$ is minimized, then those inequalities become
         equalities.
         Furthermore, $\abs{a x_i + b - y_i} \le e_i$ can be transformed into two
@@ -253,7 +265,7 @@ Homework 3
             157 out of 158
             1: Class 3, Class 8, Class 9, Class 10
             2: Class 2, Class 4, Class 5, Class 11, Class 12
-            3: Class 1, Class 6, Class 7, Class 13           
+            3: Class 1, Class 6, Class 7, Class 13
         \end{verbatim}
 
         With 4 timeslots
