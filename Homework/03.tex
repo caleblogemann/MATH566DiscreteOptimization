@@ -215,6 +215,16 @@ Homework 3
         This double sum is the total number of class periods for all students
         which contains a class that they want to take.
 
+        If instead we were to take the approach of minimizing the conflicts,
+        the objective function would instead be
+        \[
+            N - \sum*{i = 1}{n_s}{\sum*{j = 1}{n_t}{w_{ij}}}
+        \]
+        where $N$ is $\sum{i=1}{n_s}{\sum*{j=1}{n_c}{s_{ij}}}$ the total
+        number of classes that students want to take.
+        Minimizing this second objective function is equivalent to maximizing
+        the first second objective.
+
         The following constraints are also necessary.
         First every class can only be schedule once, so
         \[
