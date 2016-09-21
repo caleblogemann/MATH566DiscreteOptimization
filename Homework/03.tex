@@ -11,7 +11,7 @@ Homework 3
 
 %\lstinputlisting[language=Sage]{03_2.sage}
 \begin{enumerate}
-    \item % #1
+    \item % #1 Done
         Show that
         \begin{center}
             $A\v{x} = \v{b}$ has a nonnegative solution iff
@@ -29,26 +29,41 @@ Homework 3
             First let me rewrite the original theorem in different notation for
             clarity.
             Let $C \in \RR^{m \times q}$ and$\v{d} \in \RR^m$, then
-            $C\v{u} = \v{d}$ has a nonnegative solution if and only if for all
+            $C\v{u} = \v{b}$ has a nonnegative solution if and only if for all
             $\v{v} \in \RR^m$ with $\v{v}^T C \ge \v{0}^T$ then
-            $\v{v}^T \v{d} \ge 0$.
-            
+            $\v{v}^T \v{b} \ge 0$.
+
             Consider the matrix inequality $A\v{x} \le \v{b}$ for
             $A \in \RR{m \times n}$ and $\v{b} \in \RR^m$.
-            Let $\v{z} = \v{b} - A\v{x}$
+            Let $\v{z} = \v{b} - A\v{x}$, $\v{u} = \br{\v{x}, \v{z}}^T$,
+            $C = \br{A, I}$ where $I$ is the $m \times m$ identity matrix.
+            Thus
+            \[
+                C\v{u} = A\v{x} + I \v{z} = A\v{x} + \v{b} - A \v{x} = \v{b}
+            \]
+            This transformation is like adding slack variables to a linear
+            program to transform inequality to equality.
+            Note that if $A\v{x} \le \v{b}$ has a nonnegative solution, then
+            $\v{z} = \v{b} - A\v{x} \ge \v{0}$, thus $\v{u} \ge \v{0}$ so
+            $C\v{u} = \v{b}$ has a nonnegative solution. 
+            Also if $C\v{u} = \v{b}$ has a nonnegative solution, then
+            $\v{u} \ge \v{0}$ and obviously $\v{x} \ge \v{0}$.
+            Therefore $A\v{x} \le \v{b}$ has a nonnegative solution if and only
+            if $C\v{u} = b$ has a nonnegative solution.
 
-            First let $A\v{x} \le \v{b}$ have a nonnegative solution, that is
-            there exists $\v{x} >= \v{0}$ such that $A\v{x} \le \v{b}$.
-            Let $\v{y} \in \RR^m$, with $\v{y} \ge \v{0}$ and $\v{y}^T A \ge \v{0}^T$.
-            If we right multiply by $\v{x}$, we see that $\v{y}^T A\v{x} \ge 0$.
-            Since $\v{y} \ge \v{0}$ and $\v{b} \ge A\v{x}$, we know that
-            $\v{y}^T \v{b} \ge \v{y}^T A\v{x} \ge 0$.
-            Thus $\v{y}^T \v{b} \ge 0$.
-
-            Second assume that if for all $\v{y} \in \RR^m$ such that
-            $\v{y} \ge \v{0}$ and $\v{y}^T A \ge \v{0}^T$ then
+            Thus we can say from the first theorem that $A\v{x} \le \v{b}$ has
+            a nonnegative solution if and only if for all $\v{y} \in \RR^m$
+            with $\v{y}^T C \ge \v{0}^T$ then $\v{y}^T \v{b} \ge 0$.
+            Note that if $\v{y}^T C \ge \v{0}^T$, then
+            $\br{\v{y}^T C, \v{y}^T} \ge \v{0}^T$.
+            This is equivalent to $\v{y}^T C \ge \v{0}^T$ and $\v{y}^T \ge \v{0}^T$.
+            Thus if $\v{y}^T C \ge \v{0}^T$ and $\v{y}^T \ge \v{0}^T$, then
             $\v{y}^T \v{b} \ge 0$.
 
+            This shows that $A\v{x} \le \v{b}$ has a nonnegative solution
+            if and only if for all $\v{y} \in \RR^m$ such that
+            $\v{y}^T C \ge \v{0}^T$ and $\v{y}^T \ge \v{0}^T$ then
+            $\v{y}^T \v{b} \ge 0$.
         \end{proof}
 
     \item % #2 Done
