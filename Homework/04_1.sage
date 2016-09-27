@@ -12,7 +12,7 @@
 # The same is also implemented using sage solver so you can check if your program
 # produced the correct result.
 #
-import itertools
+import itertools as it
 
 # This is where you will write your program
 def solve_linear_program(A,b,c):
@@ -24,12 +24,30 @@ def solve_linear_program(A,b,c):
 
     min_value = None
     min_x     = None
-  
-    # Here comes your code where you compute min_value and min_x
-      
+
+    # get all possible combinations of columns
+    combinations = list(it.combinations(range(n), m))
+    for v in combinations:
+        # vector of zeroes
+        x = vector(QQ, n)
+        # solve subsystem
+        if A[:,v].is_invertible():
+            u = A[:,v]\b
+            # use constraint that all variables must be nonnegative
+            if min(u) >= 0:
+                # put nonzero values into zeros vector
+                for i in range(m):
+                    x[v[i]] = u[i]
+                # calculate value of objective function
+                value = c.dot_product(x)
+                # test if better than previous minimum value
+                if value < min_value or min_value == None:
+                    min_value = value
+                    min_x = x
+
     return [min_value,min_x]
 
-# This is solver using sage 
+# This is solver using sage
 def solve_using_sage(A,b,c):
     m = len(b)
     n = len(c)
@@ -39,14 +57,12 @@ def solve_using_sage(A,b,c):
         p.add_constraint( b[i] == sum([A[i,j]*x[j] for j in range(n)]) )
     p.set_objective(sum( [ c[j]*x[j] for j in range(n)] ))
     return p.solve()
-        
+
 # This is running your and also sage solver and prints the results
 def test_solver(A,b,c):
     min_value, min_x = solve_linear_program(A,b,c)
     min_value_sage = solve_using_sage(A,b,c)
     print "Optimal solution has value", min_value_sage," You computed",min_value," for x=",min_x
-    
-
 
 ######### Several test data
 
