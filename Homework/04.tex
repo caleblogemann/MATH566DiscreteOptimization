@@ -17,7 +17,7 @@ Homework 4
     Input to the program is matrix, $A \in \RR^{m \times n}$ and vectors
     $\v{b} \in \RR^m$ and $\v{c} \in \RR^n$
 
-    The following script impliements this function that solves a linear
+    The following script implements this function that solves a linear
     program by trying all basic feasible solutions.
     The function acheives the same values of the objective function as Sage's
     built in linear program solver.
@@ -53,7 +53,7 @@ Homework 4
       (P)
       \begin{cases}
         \begin{array}{lr*{11}c}
-          \max        & x_1  &+ &2x_2  &  &    &  &     &  &    &    &  & \\
+          \max*        & x_1  &+ &2x_2  &  &    &  &     &  &    &    &  & \\
           \text{s.t.} & x_1  &  &      &+ &x_3 &  &     &  &    &=   &4 & \\
                       & x_1  &+ &x_2   &  &    &+ &x_4  &  &    &=   &5 & \\
                       & -x_1 &+ &x_2   &  &    &  &     &+ &x_5 &=   &1 & \\
@@ -97,47 +97,63 @@ Homework 4
         \includegraphics[scale=.5]{Figures/04_1.png}
     \end{center}
 
-  \item % #3
+  \item % #3 Done
     Use simplex method on the following program:
-      \[
-        (P) 
-        \begin{cases} 
-          \begin{array}{lrccccc} 
-            \text{maximize}   &x_1  &  &    &     &   \\
-            \text{subject to} &x_1  &- &x_2 &\leq &1 \\
-                              &-x_1 &+ &x_2 &\leq &2 \\
-          \end{array}\\
-          \text{ \hskip 8em } x_1,x_2 \geq 0
-        \end{cases}
-      \]
-      What is happening in the computation?
+    \[
+      (P) 
+      \begin{cases} 
+        \begin{array}{lrccccc} 
+          \text{maximize}   &x_1  &  &    &     &   \\
+          \text{subject to} &x_1  &- &x_2 &\leq &1 \\
+                            &-x_1 &+ &x_2 &\leq &2 \\
+        \end{array}\\
+        \text{ \hskip 8em } x_1,x_2 \geq 0
+      \end{cases}
+    \]
+    What is happening in the computation?
 
-      The new linear program with slack variables is
-      \[
-        (P) 
-        \begin{cases} 
-          \begin{array}{lr*{10}c} 
-            \text{maximize}   &x_1  &  &    &  &    &  &    &    & \\
-            \text{subject to} &x_1  &- &x_2 &+ &x_3 &  &    &=   &1 \\
-                              &-x_1 &+ &x_2 &  &    &+ &x_4 &=   &2 \\
-                              &     &  &    &  &    &  &x_i &\ge &0 \\
-          \end{array}\\
-        \end{cases}
-      \]
+    The new linear program with slack variables is
+    \[
+      (P) 
+      \begin{cases} 
+        \begin{array}{lr*{10}c} 
+          \text{maximize}   &x_1  &  &    &  &    &  &    &    & \\
+          \text{subject to} &x_1  &- &x_2 &+ &x_3 &  &    &=   &1 \\
+                            &-x_1 &+ &x_2 &  &    &+ &x_4 &=   &2 \\
+                            &     &  &    &  &    &  &x_i &\ge &0 \\
+        \end{array}\\
+      \end{cases}
+    \]
 
-      The initial basic feasible is $x_3 = 1$ and $x_4 = 2$.
-      \begin{align*}
-        x_3 &= 1 - x_1 + x_2 \\
-        x_4 &= 2 + x_1 - x_2 \\
-        z   &= 0 + x_1
-      \end{align*}
-      First increase $x_1$ by 1.
-      \begin{align*}
-        x_3 &= 1 - x_1 + x_2 \\
-        x_4 &= 2 + x_1 - x_2 \\
-        z   &= 0 + x_1
-      \end{align*}
+    The initial basic feasible is $x_3 = 1$ and $x_4 = 2$.
+    \begin{align*}
+      x_3 &= 1 - x_1 + x_2 \\
+      x_4 &= 2 + x_1 - x_2 \\
+      z   &= 0 + x_1
+    \end{align*}
+    First increase $x_1$ by 1.
+    \begin{align*}
+      x_1 &= 1 + x_2 - x_3 \\
+      x_4 &= 3 - x_3 \\
+      z   &= 1 + x_2 - x_3
+    \end{align*}
+    Now we see that $x_2$ should be increased however there is no condition
+    limiting the increase of $x_2$.
+    This implies that the feasible region is unbounded and the objective
+    function can be increased indefinitely.
+
+    As can be seen in the following image the feasible region continues
+    out to infinity to the right.
+    \begin{center}
+      \includegraphics[scale=.5]{Figures/04_2.png}
+    \end{center}
 
   \item % #4
+    How would you solve a program 
+    $(P)  = \text{maximize } \mathbf{c}^T\mathbf{x} \text{ s.t. } A\mathbf{x} \leq \mathbf{b}, \mathbf{x} \geq \mathbf{0}$
+    using the ellipsoid method with an $\varepsilon > 0$ error?
+    (Suppose both $(P)$ and its dual $(D)$ are superconsistent.)
+    %\emph{(Hint: How to formulate the linear program as finding a point in a polytope? 
+    %Use dual program and $\varepsilon$ to guarantee full dimension.)}
 \end{enumerate}
 \end{document}
