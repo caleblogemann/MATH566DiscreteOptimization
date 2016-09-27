@@ -148,12 +148,32 @@ Homework 4
       \includegraphics[scale=.5]{Figures/04_2.png}
     \end{center}
 
-  \item % #4
+  \item % #4 Done
     How would you solve a program 
     $(P)  = \text{maximize } \mathbf{c}^T\mathbf{x} \text{ s.t. } A\mathbf{x} \leq \mathbf{b}, \mathbf{x} \geq \mathbf{0}$
     using the ellipsoid method with an $\varepsilon > 0$ error?
     (Suppose both $(P)$ and its dual $(D)$ are superconsistent.)
     %\emph{(Hint: How to formulate the linear program as finding a point in a polytope? 
     %Use dual program and $\varepsilon$ to guarantee full dimension.)}
+
+    I will create a new linear program of higher dimension that satisfies both the
+    primal and the dual.
+    Consider the set
+    $S = \set{\v{z} = \br{\v{x}, \v{y}}^T : A\v{x} \le \v{b}, A^T\v{y} \ge \v{c}, \v{x} \ge 0, \v{y} \ge 0, \v{c}^T \v{x} \le \v{b}^T \v{y} + \epsilon}$.
+    This set of vectors is a polytope that contains feasible solutions to both
+    the primal and the dual linear program.
+    Since $(P)$ and $(D)$ are superconsistent there exists at least one vector
+    $\v{x}$ that optimizes $(P)$ and one vector $\v{y}$ that optimizes $(D)$.
+    Therefore there is at least one vector $\v{z} \in S$.
+    The last constraint in this set, $\v{c}^T \v{x} \le \v{b}^T \v{y} + \epsilon$
+    allows for other solutions that are within $\epsilon$ of the optimal solution.
+    This allows guarantees that there are multiple vectors in $S$, or that $S$ is
+    an actual polytope and not a single point.
+
+    In order to solve the initial linear program, the ellipsoid method can be
+    applied to the polytope $S$.
+    Once the ellipsoid method has found a feasible solution, that solution
+    must be within $\epsilon$ of the optimal solution.
 \end{enumerate}
+
 \end{document}
