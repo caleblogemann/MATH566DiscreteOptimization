@@ -11,11 +11,37 @@ Homework 5
 
 %\lstinputlisting[language=Sage]{03_2.sage}
 \begin{enumerate}
-  \item % #1
+  \item % #1 Done
     Let $S$ be defined as intersection of halfspaces $x_i \geq 0$ and $(1-x_i)^k \geq 0$.
     Suppose $i \in \{1,2,\ldots,d\}$ and $k \geq 1$ is odd.
     Compute the analytic center of $S$.
     Notice that for $x$ satisfying $(1-x_i)^k \geq 0$, the function $(1-x_i)^k$ is convex.
+
+    Each of the halfspaces can be rewritten as $-(1 - x_i)^k \le 0$ and
+    $-x_i \le 0$, therefore the logarithmic barrier function for this set is
+    \[
+      \Phi(\v{x}) = -\sum{i = 1}{d}{\ln{(1 - x_i)^k}} - \sum{i=1}{d}{\ln{x_i}}
+    \]
+    This can be simplified to
+    \[
+      \Phi(\v{x}) = -k\sum{i = 1}{d}{\ln{1 - x_i}} - \sum{i=1}{d}{\ln{x_i}}
+    \]
+
+    Now the analytic center of $S$ is the value $\v{x}^*$ which minimizes $\Phi(\v{x})$.
+    This value can be found using calculus, by finding the value of each $x_i$
+    that makes $\pd{\Phi}{x_i} = 0$ respectively.
+    \begin{align*}
+      \pd{\Phi}{x_i} = -k\frac{1}{x_i - 1} - \frac{1}{x_i} \\
+      0 &= -k\frac{1}{x_i - 1} - \frac{1}{x_i} \\
+      0 &= \frac{-k x_i - x_1 + 1}{x_i(x_i - 1)} \\
+      0 &= -(k+1)x_i + 1 \\
+      x_i &= \frac{1}{k+1} \\
+    \end{align*}
+    This is true for any $x_i$ with $1 \le i \le d$.
+    Also since $(1 - x_i)^k$ is convex function we know that this critical point
+    is a minima.
+    Therefore the analytic center of $S$ is
+    $\p{\frac{1}{k+1}, \cdots, \frac{1}{k+1}} \in \RR^d$.
 
   \item % #2
     Compute central path for the following problem
@@ -32,6 +58,8 @@ Homework 5
     and find the optimal solution using the central path.
     Plot (sketch) the set of feasible solutions and the computed central path.
     Lot of calculus...
+
+
 
   \item % #3
     Let $G=(V,E)$ and $|V|=n$.
