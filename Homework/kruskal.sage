@@ -5,8 +5,8 @@ for i in range(10):
     vertexList.append(vector([random()*10, random()*10]))
 
 edgeList = list(it.combinations(range(10), 2))
-numVertices = len(vertices)
-numEdges = len(edges)
+numVertices = len(vertexList)
+numEdges = len(edgeList)
 
 costList = []
 for i in range(numEdges):
@@ -20,6 +20,7 @@ edgeList = [x for (x, y) in s]
 costList = [y for (x, y) in s]
 
 treeEdgeList = []
+#treeSet = {set(x) for x in vertexList}
 
 for i in range(numEdges):
     if True:
