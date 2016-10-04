@@ -1,0 +1,250 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[czech, english]{babel}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric}
+\usepackage{hyperref}
+
+
+% Itemize environment with small skips
+\newenvironment{packeditemize}{
+\begin{itemize}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{itemize}}
+
+
+% Fancy footnote....
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\usepackage{lastpage}
+\rfoot{MATH 566 - 09, page \thepage/\pageref{LastPage}}
+\cfoot{}
+\rhead{}
+\lhead{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+
+\newtheorem{theorem*}{Theorem} 
+
+% Itemize environment with small skips
+\newenvironment{packedenumerate}{
+\begin{enumerate}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{enumerate}}
+
+
+\newcounter{excounter}
+\setcounter{excounter}{1}
+\newcommand\question[2]{\vskip 1em  \noindent\textbf{\arabic{excounter}\addtocounter{excounter}{1}:} \emph{#1} \noindent#2}
+\newcommand\solution[1]{\vskip 0.5em \noindent\textbf{Solution:} #1}
+\newcommand\like{\par \noindent\emph{(This question is: good - bad - ugly? Difficulty: 0-10:\hskip 3em )}} 
+
+\newcommand\lecturer[1]{\textbf{#1}}
+\newcommand\hideforstudent[1]{#1}
+
+
+%\renewcommand\lecturer[1]{{\color{white} \textbf{#1} }}
+%\renewcommand\hideforstudent[1]{{\color{white} #1 }}
+%\renewcommand\solution[1]{{\color{white} \vskip 0.5em \noindent\textbf{Solution:} #1 }}
+
+
+
+\setlength{\parindent}{0cm}
+\setlength{\parskip}{0.1cm}
+
+\begin{document}
+
+Fall  2016, MATH-566
+
+\centerline{{\Large \textbf{Simplex method is not polynomial time - Klee-Minty Cube}}}
+
+
+Source: Chapter 5 of \href{http://www.amazon.com/Nonlinear-Programming-International-Operations-Management/dp/0387745025/ref=sr_1_2?s=books&ie=UTF8&qid=1442802899&sr=1-2&keywords=linear+and+nonlinear+programming}{Linear and Nonlinear Programming, Luenberger and Ye}
+
+Simplex method outline: Convert problem to $A\mathbf{x} = \mathbf{b}$. Find a basic feasible solution. Perform pivot steps until no variable can increase.
+
+Geometry of simplex method - start at vertex of the polytope of feasible  solutions and find a path on edges of the polytope 
+to the optimal vertex.
+
+Consider greedy way - always go in the direction that maximizes the slope in the objective function.
+
+% TODO: Make a smaller example just for $x_1$ $x_2$ and then discuss this big ugly one...
+
+\[
+(P) \begin{cases}
+\text{maximize}  & 100x_1 + 10x_2 + x_3  \\
+\text{subject to}  & 
+\begin{array}{rcrcrclr} 
+      x_1 &   &          &      &         & \leq & 1  &       (A)\\
+  20x_1 & + & x_2   &     &         & \leq & 100  &    (B)\\
+200x_1 & + &20x_2 & + & x_3  & \leq & 10000  &  (C)\\
+      x_1 &     &           &      &         & \geq & 0  &  (D)\\
+             &    &      x_2 &     &         & \geq & 0  &  (E)\\
+             &   &  &              & x_3  & \geq & 0  &  (F)\\
+\end{array}    
+\end{cases}
+\]
+
+Notice that a vertex is given by intersection of three of the halfspaces. That is, pick three of the equations to be satisfied
+with equality and it gives a vertex.
+
+Steps in simplex method:
+\begin{center}
+\begin{tabular}{cccccc}
+step &  $x_1$  &  $x_2$  &  $x_3$  & value of objective &  equalities        \\
+0     &      0      &      0        &     0       &         0                    &  $(D),(E),(F)$  \\
+1    &       1      &      0        &     0       &        100                  &  $(A),(E),(F)$   \\
+2    &       1      &      80        &     0       &       900                  &  $(A),(B),(F)$   \\
+3    &       0      &    100        &     0       &      1000                  &  $(D),(B),(F)$   \\
+4    &       0      &    100        &   8000    &    9000                  &  $(D),(B),(C)$   \\
+5    &       1      &    \hideforstudent{80}  &  \hideforstudent{8200}    &    \hideforstudent{9100}     &  \hideforstudent{$(A),(B),(C)$}   \\
+6    &       \hideforstudent{1}      &    \hideforstudent{0}  &  \hideforstudent{9800}    &    \hideforstudent{9900}     &  \hideforstudent{$(A),(E),(C)$}   \\
+7    &       \hideforstudent{0}      &    \hideforstudent{0}  &  \hideforstudent{10000}    &    \hideforstudent{10000}     &  \hideforstudent{$(D),(E),(C)$}   \\
+\end{tabular}
+\end{center}
+
+Corresponds to a travel in cube
+\begin{center}
+\begin{tikzpicture}[scale=3]
+\draw 
+(0,0,0) coordinate (a)
+(0.5,0.15,1) coordinate (b)
+(0.75,0.21,1) coordinate (c)
+(          1,0.3,0) coordinate (d)
+(          1,0.7,0) coordinate (e)
+(0.75,0.79,1) coordinate (f)
+(0.5,0.85,1) coordinate (g)
+(0,1,0) coordinate (h)
+;
+\draw[fill=gray] (a) -- (b) -- (g) -- (h) -- cycle;
+\draw[fill=gray!50] (b)--(c)--(f)--(g) -- cycle;
+\draw[fill=gray!30] (c)--(d)--(e)--(f) -- cycle;
+\draw[fill=gray!20] (e)--(f) -- (g) -- (h) --  cycle;
+\foreach \x/\y in {a/b,b/c,c/d,d/e,e/f,f/g,g/h}{
+\draw[line width=2pt,-latex](\x)--(\y);
+}
+\draw[dotted]
+(0,0,0) -- (1,0.3,0)
+;
+\draw[line width=2pt, color=white]
+(1,0,1) -- (1,1,1) -- (1,1,0) (1,1,1) -- (0,1,1);
+;
+\draw[dashed]
+(0,0,0) -- (1,0,0) -- (1,1,0) -- (1,1,1) -- (1,0,1) -- (0,0,1) -- (0,0,0)
+-- (0,1,0)  -- (1,1,0) (1,1,1)--(0,1,1) -- (0,1,0) (0,1,1) -- (0,0,1) (1,0,0) -- (1,0,1);
+\end{tikzpicture}
+\end{center}
+
+How many vertices will be in $n$ dimensional cube?
+
+\question{If $n=50$ and computer examines one million points in one second, how long will it take
+to finish the computation?}
+
+\solution{
+$n=50$ gives about $10^{15}$ vertices. It gives 33 years.
+}
+
+Klee-Minty cubes are known for different rules too. But the simplex algorithm works great in practice.
+
+\newpage
+
+\centerline{{\Large \textbf{The Ellipsoid Method}}}
+
+Problem: Let $P = \{ \mathbf{x} \in \mathbb{R}^n: A\mathbf{x} \leq \mathbf{b}$\}. Find a point in $P$.
+(given a polytope, find one point in it)
+
+Extra assumptions:
+\begin{packeditemize}
+\item $\exists R \in \mathbb{R}, P \subseteq B(\mathbf{0},R)$
+\item $\exists r \in \mathbb{R}, \exists \mathbf{c} \in \mathbb{R}^n,  B(\mathbf{c},r) \subseteq P$
+\end{packeditemize}
+In other words, $P$ is in a big ball with radius $R$ and contains a small ball of radius $r$.\\
+The $R$ and $r$ are part of the running time.
+
+Algorithm:
+\begin{packedenumerate}
+\item $E_1 := B(0,R)$, $i:=1$
+\item if center $\mathbf{y}_i$ of $E_i$ in $P$, point found
+\item if  $\mathbf{y}_i \not\in P$, there is a separating hyperplane cutting out half of  $E_i$
+\item Pick $E_{i+1}$ to be the smallest ellipsoid containing the half of $E_i$ that contains $P$
+\item $i := i +1$ and goto 2.
+\end{packedenumerate}
+
+\begin{center}
+\begin{tikzpicture}[scale=0.8]
+\draw(0,0) circle (2cm);
+\draw(-2,-2) node {$E_i$};
+\draw(1,0.3)node[regular polygon,regular polygon sides= 5,draw]{P};
+\fill(0,0) circle (3pt) node[label=left:{$\mathbf{y_i}$}]{};
+\end{tikzpicture}
+\hskip 2em
+\begin{tikzpicture}[scale=0.8]
+\draw(0,0) circle (2cm);
+\draw(-2,-2) node {$E_i$};
+\draw[fill=gray!20] 
+(0,0)--(250:2) arc (250:430:2) -- (0,0);
+\fill(0,0) circle (3pt) node[label=left:{$\mathbf{y_i}$}]{};
+\draw(0,0)--(70:2.3)(0,0)--(70:-2.3);
+\draw(1,0.3)node[regular polygon,regular polygon sides= 5,draw]{P};
+\end{tikzpicture}
+\hskip 2em
+\begin{tikzpicture}[scale=0.8]
+\draw(0,0) circle (2cm);
+\draw(-2,-2) node {$E_i$};
+\draw[fill=gray!20] 
+(0,0)--(250:2) arc (250:430:2) -- (0,0);
+\fill(0,0) circle (3pt) node[label=left:{$\mathbf{y_i}$}]{};
+\draw(0,0)--(70:2.3)(0,0)--(70:-2.3);
+\draw(1,0.3)node[regular polygon,regular polygon sides= 5,draw]{P};
+\draw (-20:0.8) circle [x radius=2.6cm, y radius=1.2cm, rotate=70];
+\draw (2.7,1) node{$E_{i+1}$};
+\end{tikzpicture}
+\end{center}
+
+\textbf{Claim:}
+If $E_i \in \mathbb{R}^n$ and $E_{i+1}$ is the smallest ellipsoid contain $\frac{1}{2}$ of $E_i$, then
+\[
+\frac{volume(E_{i+1})}{volume(E_i)}  < e^{\frac{-1}{2(n+1)}}  < 1.
+ \]
+
+\question{
+Compute an upper bound on
+\[
+\frac{volume(E_{i+2(n+1)})}{volume(E_i)} 
+\]
+}
+\solution{
+\[
+\frac{volume(E_{i+2(n+1)})}{volume(E_i)} < \left(e^{\frac{-1}{2(n+1)}}\right)^{2(n+1)} = e^{-1}.
+\]
+}
+\question{
+How many iterations of the algorithm are needed? (Use that $B(\mathbf{c},r)\subset P$.)
+}
+\solution
+{
+If volume of $volume(E_i) < volume(B(\mathbf{c},r))$, we would get a contradiction
+since $B(\mathbf{c},r) \subset  P \subset E_i$. 
+We need $O(n)$ steps to reduce volume by half and we do it $\log\left( \frac{volume(B,R)}{volume(B,r)}\right)$
+times.
+\[
+O\left(n \cdot \log\left( \frac{R^n}{r^n}  \right) \right) = O\left(n^2 \log\left(\frac{R}{r}\right)\right)
+\]
+}
+One iteration takes $O(n^2)$ operations and volume of balls is at most exponential (in size of
+input numbers). \\
+Not a practical algorithm in speed.
+
+\end{document}
+
+
+

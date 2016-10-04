@@ -1,0 +1,239 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[czech, english]{babel}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{tikz}
+
+
+% Itemize environment with small skips
+\newenvironment{packeditemize}{
+\begin{itemize}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{itemize}}
+
+
+% Fancy footnote....
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\usepackage{lastpage}
+\rfoot{MATH 566 - 07, page \thepage/\pageref{LastPage}}
+\cfoot{}
+\rhead{}
+\lhead{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+
+\newtheorem{theorem*}{Theorem} 
+
+% Itemize environment with small skips
+\newenvironment{packedenumerate}{
+\begin{enumerate}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{enumerate}}
+
+
+\newcounter{excounter}
+\setcounter{excounter}{1}
+\newcommand\question[2]{\vskip 1em  \noindent\textbf{\arabic{excounter}\addtocounter{excounter}{1}:} \emph{#1} \noindent#2}
+\newcommand\solution[1]{\vskip 0.5em \noindent\textbf{Solution:} #1}
+\newcommand\like{\par \noindent\emph{(This question is: good - bad - ugly? Difficulty: 0-10:\hskip 3em )}} 
+
+\newcommand\lecturer[1]{\textbf{#1}}
+\newcommand\hideforstudent[1]{#1}
+
+
+\renewcommand\lecturer[1]{{\color{white} \textbf{#1} }}
+%\renewcommand\hideforstudent[1]{{\color{white} #1 }}
+%\renewcommand\solution[1]{{\color{white} #1 }}
+
+
+
+\setlength{\parindent}{0cm}
+\setlength{\parskip}{0.1cm}
+
+\begin{document}
+
+Fall  2016, MATH-566
+
+\centerline{{\Large \textbf{Consequences of duality}}}
+
+\textbf{Complementary slackness:}
+Let
+\[ (P)  \text{ min } \mathbf{c}^T\mathbf{x} \text{ s.t. } A\mathbf{x} = \mathbf{b}, \mathbf{x} \geq 0 \]
+\[ (D)  \text{ max } \mathbf{b}^T\mathbf{y} \text{ s.t. } A^T\mathbf{y} \leq \mathbf{c} \]
+
+\textbf{Theorem}
+Let $\mathbf{x}$ and $\mathbf{y}$ be feasible for $(P)$ and $(D)$. Vectors $\mathbf{x}$ and $\mathbf{y}$
+are optimal solutions iff
+\begin{packeditemize}
+\item $x_i > 0 \Rightarrow \mathbf{y}^T\mathbf{a}_i = c_i$
+\item $x_i = 0 \Leftarrow \mathbf{y}^T\mathbf{a}_i < c_i$
+\end{packeditemize}
+where $\mathbf{a}_i$ is $i$th column of $A$.
+\lecturer{Draw the arrow between (P) and (D).}
+
+\question{}{Prove the theorem. Consider $(\mathbf{y}^TA - \mathbf{c}^T)\mathbf{x} = ?$}
+\solution{
+conditions $\Rightarrow$ optimality:
+\begin{align*}
+\left(\mathbf{y}^TA - \mathbf{c}^T\right)\mathbf{x} &= 0 \\
+\mathbf{y}^TA\mathbf{x} - \mathbf{c}^T\mathbf{x} &= 0 \\
+\mathbf{y}^T\mathbf{b} - \mathbf{c}^T\mathbf{x} &= 0 \\
+\mathbf{y}^T\mathbf{b} &= \mathbf{c}^T\mathbf{x}
+\end{align*}
+conditions $\Leftarrow$ optimality:
+Reverse the computation and observe that $\left(\mathbf{y}^TA - \mathbf{c}^T\right) \leq 0$
+and $\mathbf{x} \geq 0$. Hence every coordinate must be $0$, which are the constraints.
+}
+
+
+Example: Diet problem.
+Suppose in optimal solution $\mathbf{a_i}\mathbf{x} >  b_i$. The $y_j = 0$. In optimal solution we get more than we need, so the cost in the dual is zero.
+
+
+
+
+\textbf{Geometric interpretation} and solutions with complementary slackness
+
+\begin{align*}
+(P) \begin{cases}
+\text{min} & 18x_1 + 12x_2 + 2x_3 + 6x_4\\
+\text{s.t}   &   3x_1 + x_2     - 2x_3 + x_4 = 2 \\
+                &     x_1 + 3x_2 + 0 x_3 - x_4  = 2  \\
+                & x_1,x_2,x_3,x_4 \geq 0
+\end{cases} 
+\end{align*}
+\question{}{
+Write the dual and solve it using graphical method (draw half-spaces).
+The reconstruct the solution of $(P)$.
+}
+\solution{
+\begin{align*}
+(D) \begin{cases}
+\text{max} & 2y_1 + 2y_2 \\
+\text{s.t}   &   3y_1 + y_2 \leq 18 \\
+                &    y_1 + 3y_2   \leq 12  \\
+                & -2y_1 \leq 2 \\
+                & y_1 - y_2 \leq 6 
+\end{cases} 
+\end{align*}
+
+%Model dual
+%  Variables
+%    y[1:2] = 0
+%  End Variables
+%  Equations
+%    3*y[1] + y[2] <= 18
+%    y[1] + 3*y[2] <= 12
+%  -2*y[1] <= 2
+%   y[1] - y[2] <= 6
+%     maximize 2*y[1] + 2*y[2]
+%  End Equations
+%End Model
+
+\begin{center}
+\begin{tikzpicture}[scale=0.7]
+\clip (-2,-1) rectangle (8,5);
+\draw[-latex] (-2,0)  -- (8,0);
+\draw[-latex] (0,-2) -- (0,5);
+\draw[line width=1pt, -latex] (0,0) -- (2,2);
+\draw[domain=-2:7,smooth,variable=\x] plot ({\x},{-3*\x+18});
+\draw[domain=-2:8,smooth,variable=\x] plot ({\x},{-\x/3+4});
+\draw[domain=-2:8,smooth,variable=\x] plot ({\x},{\x-6});
+\draw[domain=-5:8,smooth,variable=\x] plot ({-1},{\x});
+\fill (5.25,2.25) circle (4pt) ++(30:1.5) node{$[5.25,2.25]$};
+\end{tikzpicture}
+\end{center}
+Solution will be intersection of $ 3y_1 + y_2 = 18$ and $ y_1 + 3y_2 = 12$, which
+gives $y_1 = 5.25, y_2 = 2.25$ and objective value is $15$.
+
+Complementary slackness implies that $x_3 = x_4 = 0$.
+This gives us
+\begin{align*}
+(P') \begin{cases}
+\text{min} & 18x_1 + 12x_2\\
+\text{s.t}   &   3x_1 + x_2     = 2 \\
+                &     x_1 + 3x_2   = 2  \\
+                & x_1,x_2  \geq 0
+\end{cases} 
+\end{align*}
+Notice that original matrix 
+\[
+A = 
+\begin{pmatrix}
+  3  & 1 & -2 & 1 \\
+   1 & 3 &  0  &  -1
+\end{pmatrix}
+\]
+can be written as $A = (B|\text{ trash})$ and the solution can be computed by solving $B^{-1}\mathbf{b}$.
+The solution is $x_1 = x_2 = \frac{1}{2}$. The objective value is also 15.
+}
+
+\textbf{Sensitivity}
+Let
+\[ (P)  \text{ min } \mathbf{c}^T\mathbf{x} \text{ s.t. } A\mathbf{x} = \mathbf{b}, \mathbf{x} \geq 0 \]
+\[ (D)  \text{ max } \mathbf{b}^T\mathbf{y} \text{ s.t. } A^T\mathbf{y} \leq \mathbf{c} \]
+
+How does the solution change if $\mathbf{b}$ changes? 
+
+Which of the constraints are important and which are not?
+
+Consider optimal solution $\mathbf{x}^\star = (\mathbf{x}_B,0)$. Then
+$A = (B|\text{trash})$.
+Submatrix $B$ is called the \emph{base} of the solution. 
+Note $\mathbf{x}_B = {B}^{-1}\mathbf{b}$.
+
+\[
+\mathbf{c}^T\mathbf{x}^\star = \mathbf{c}^T_B\mathbf{x}_B = \mathbf{c}^T_BB^{-1}\mathbf{b}
+\]
+Hence $(\mathbf{y}^\star)^T = \mathbf{c}^T_BB^{-1}$.
+
+Suppose $\mathbf{b} \rightarrow (\mathbf{b} + \Delta \mathbf{b})$.
+If $\Delta\mathbf{b}$ small, base $B$ is still the same. (see example)
+Then the new optimal solution is
+\[
+B^{-1}(\mathbf{b} + \Delta \mathbf{b}) = \mathbf{x}_B + \Delta \mathbf{x}_B
+\]
+
+\question{}{
+What will be the change of the value of the objective function? (denoted by $\Delta z$) 
+}
+\solution{
+\[
+\Delta z = \mathbf{c}^T_B \cdot \Delta \mathbf{x} =  \mathbf{c}^T_B \cdot  B^{-1} (\Delta \mathbf{b}) 
+=  (\mathbf{y}^\star)^T (\Delta \mathbf{b}) 
+\]
+So if $\mathbf{b}$ is changed by $\Delta \mathbf{b}$, then the value of objective function 
+is changed by $(\mathbf{y}^\star)^T (\Delta \mathbf{b})$.
+}
+
+$\mathbf{y}^\star$ gives sensitivity of the solution.
+
+\newpage
+
+Let 
+\[ (P)  \text{ min } \mathbf{c}^T\mathbf{x} \text{ s.t. } A\mathbf{x} \geq \mathbf{b}, \mathbf{x} \geq 0 \]
+\[ (D)  \text{ max } \mathbf{b}^T\mathbf{y} \text{ s.t. } A^T\mathbf{y} \leq \mathbf{c}, \mathbf{y} \geq 0 \]
+Then complementary slackness gives
+\begin{itemize}
+\item $x_i > 0 \Rightarrow \mathbf{y}^T\mathbf{a}_i = c_i$ 
+\item $x_i = 0 \Leftarrow \mathbf{y}^T\mathbf{a}_i < c_i$ 
+\item $y_i > 0 \Rightarrow \mathbf{a}^i\mathbf{x} = b_i$
+\item $y_i = 0 \Leftarrow \mathbf{a}^i\mathbf{x} > b_i$,
+\end{itemize}
+where $\mathbf`{a}^i$ is $i$th row of $A$ and where $\mathbf{a}_i$ is $i$th column of $A$.
+
+
+
+\end{document}
+
+
+

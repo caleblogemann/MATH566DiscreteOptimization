@@ -1,0 +1,197 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[czech, english]{babel}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{tikz}
+
+
+% Itemize environment with small skips
+\newenvironment{packeditemize}{
+\begin{itemize}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{itemize}}
+
+
+% Itemize environment with small skips
+\newenvironment{packedenumerate}{
+\begin{enumerate}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{enumerate}}
+
+
+% Fancy footnote....
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\usepackage{lastpage}
+\rfoot{MATH 566 - 02, page \thepage/\pageref{LastPage}}
+\cfoot{}
+\rhead{}
+\lhead{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+
+\newcounter{excounter}
+\setcounter{excounter}{1}
+\newcommand\question[2]{\vskip 1em  \noindent\textbf{\arabic{excounter}\addtocounter{excounter}{1}:} \emph{#1} \noindent#2}
+\newcommand\solution[1]{\vskip 0.5em \noindent\textbf{Solution:} #1}
+%\renewcommand\solution[1]{ }
+
+%\renewcommand\solution[1]{{\color{white}  \vskip 0.5em \noindent\textbf{Solution:} #1}}
+\newcommand\like{\par \noindent\emph{(This question is: good - bad - ugly? Difficulty: 0-10:\hskip 3em )}} 
+
+\newcommand\lecturer[1]{\textbf{#1}}
+%\renewcommand\lecturer[1]{{\color{white} \textbf{#1} }}
+
+%\renewcommand\solution[1]{\vskip 0.5em \noindent\textbf{Solution \arabic{excounter}\addtocounter{excounter}{1}:}\par\noindent#1}
+%\renewcommand\question[2]{}
+
+\setlength{\parindent}{0cm}
+\setlength{\parskip}{0.1cm}
+
+\begin{document}
+
+Fall  2016, MATH-566
+
+\centerline{{\Large \textbf{Geometry behing linear programming and basics}}}
+
+Exercise: Solve the following linear program:
+\[
+(LP) \begin{cases}
+\text{minimize}  & x+y \\ 
+\text{s.t.}           & x+2y \leq 14 \\
+                         & 3x - y \geq 0 \\
+                         & x-y \leq 2,
+\end{cases}
+\]
+\vskip 3em
+\solution{
+equations:
+\begin{align*}
+y &\leq -\frac{1}{2}x + 7  &   y &\leq 3x  &   y &\geq x-2
+\end{align*}
+\begin{center}
+\begin{tikzpicture}[scale=0.5]
+\draw[-latex,black] (-2,0)--(10,0);
+\draw[-latex,black] (0,-4)--(0,7) ;
+\begin{scope}
+\clip (-1.5,-3.5) rectangle (8,6);
+\draw (-2,-6) -- (2,6);
+\draw (-2,-4) -- (8,6);
+\draw (-2,6) -- (8,3);
+\filldraw (-1,-3) circle (5pt);
+\end{scope}
+\draw[help lines] (-2,-4) grid (10,7);
+\end{tikzpicture}
+\end{center}
+
+Optimum $(x,y) = (-1,-3)$, value of objective function is -4.
+}
+
+\textbf{Basic linear programming definitions:}
+\begin{itemize}
+\item \emph{feasible solution} is vector $\mathbf{x}$ such that $A\mathbf{x} \leq \mathbf{b}$. 
+         In other words, point satisfying all the constraints.
+\item \emph{set of feasible solutions}         
+\item \emph{optimal solution} is a feasible solution that is maximizing/minimizing the objective function.
+\end{itemize}
+
+\question{}{What shape is the set of feasible solutions?}
+\solution{In the example above a polygon. In general polyhedra, that is unbounded polygons. In 2D we could say intersection of halfplanes.}
+
+\question{}{What shape is the set of optimal solutions?}
+\solution{
+In the example above, it is a point. But it can be also a line. Or a special case, where it can be every point, but such program is not very interesting.
+}
+
+\question{}{Construct a linear program that has more than one optimal solution.}
+
+
+\newpage
+
+
+\question{}{Construct a linear program that has no feasible solution.}
+\vskip 6em
+
+\question{}{Construct a linear program that has no optimal solution.}
+\vskip 6em
+
+
+\textbf{Basic geometric definitions (for LP in higher dimension):}
+Suppose we live in $\mathbb{R}^d$ for some $d \in \mathbb{N}$.
+\begin{itemize}
+\item \emph{hyperplane} is $d-1$ dimensional subspace  $\{\mathbf{x} \in \mathbb{R}^d: \textbf{a} \cdot \mathbf{x} = c    \}$,  where $a \in \mathbb{R}^d$ and $c \in \mathbb{R}$.
+\item \emph{closed halfspace} is  $\{\mathbf{x} \in \mathbb{R}^d: \textbf{a} \cdot \mathbf{x} \leq c    \}$,  where $a \in \mathbb{R}^d$ and $c \in \mathbb{R}$.
+\item $C \subseteq \mathbb{R}^d$ is \emph{convex} if $\forall \mathbf{x},\textbf{y} \in C, \forall t \in [0,1], t\mathbf{x}+(1-t)\textbf{y} \in C$. (line between $x$ and $y$ is in $C$)  \\
+\lecturer{Draw figures in class}
+\end{itemize}
+
+Note: Intersection of family of convex sets is a convex set (obvious from the definition)
+
+
+\question{}{Show that the set of feasible solutions to any linear program is a convex set.}
+\solution{
+
+}
+
+
+
+
+
+\end{document}
+
+
+\emph{Convex hull} of a set $X = conv(X)$ is the intersection of all convex sets containing $X$.
+
+Examples: bunch of points, point + line
+
+\textbf{Claim:}
+$\mathbf{x} \in conv(X)$ iff $\mathbf{x}$ is a convex combination of points from $X$.\\
+That is: 
+\[
+\exists n, \exists \mathbf{x}_1,\ldots,\mathbf{x}_n \in X, \exists t_1,\ldots,t_n \in [0,\infty), \sum t_i = 1, x = \sum t_i\mathbf{x}_i 
+\]
+\textbf{Proof:} (as exercise)
+Hints: consider 
+\[
+Y = \left\{\sum t_i\mathbf{x}_i : n\in \mathbb{N}, \mathbf{x}_1,\ldots,\mathbf{x}_n \in X,  t_1,\ldots,t_n \in [0,\infty), \sum t_i = 1    \right\}
+\]
+and show that $Y \subseteq conv(X)$, that $X \subseteq Y$ and  $Y$ is convex.
+\vskip 15em
+\solution{
+$Y \subseteq conv(X)$:  clear for $n=1,2$, use projection and induction on $n$: 
+\begin{align*}
+\textbf{y} &= \sum_{i=1}^{n}t_i \mathbf{x}_i \\
+               &= t_1\mathbf{x}_1 + (1-t_1) \sum_{i=2}^{n}\frac{t_i}{1-t_1} \mathbf{x}_i
+\end{align*}
+Now use that second part of the sum $\sum_{i=2}^{n}\frac{t_i}{1-t_1} \mathbf{x}_i \in conv(X)$ by induction.
+
+$X \subseteq Y$ is clear from definition
+
+
+$Y$ is convex: verify definition of convexity
+\begin{align*}
+\mathbf{x} &= \sum t_i \mathbf{x}_i     &  \textbf{x}' &= \sum t'_i \mathbf{x}_i 
+\end{align*}
+Let $t \in [0,1]$:
+\begin{align*}
+t \mathbf{x} + (1-t) \mathbf{x}' = \sum (t t_i + (1-t)t'_i) \mathbf{x}_i 
+\end{align*}
+Check that $ \sum (t t_i + (1-t)t') =  t\sum t  +  (1-t)  \sum t'_i = 1$.
+}
+
+
+
+
+
+\end{document}
+
+
+

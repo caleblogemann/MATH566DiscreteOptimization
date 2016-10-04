@@ -1,0 +1,298 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[czech, english]{babel}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric}
+\usepackage{hyperref}
+
+
+% Itemize environment with small skips
+\newenvironment{packeditemize}{
+\begin{itemize}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{itemize}}
+
+
+% Fancy footnote....
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\usepackage{lastpage}
+\rfoot{MATH 566 - 11, page \thepage/\pageref{LastPage}}
+\cfoot{}
+\rhead{}
+\lhead{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+
+\newtheorem{theorem*}{Theorem} 
+
+% Itemize environment with small skips
+\newenvironment{packedenumerate}{
+\begin{enumerate}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{enumerate}}
+
+
+\newcounter{excounter}
+\setcounter{excounter}{1}
+\newcommand\question[2]{\vskip 1em  \noindent\textbf{\arabic{excounter}\addtocounter{excounter}{1}:} \emph{#1} \noindent#2}
+\newcommand\solution[1]{\vskip 0.5em \noindent\textbf{Solution:} #1}
+\newcommand\like{\par \noindent\emph{(This question is: good - bad - ugly? Difficulty: 0-10:\hskip 3em )}} 
+
+\newcommand\lecturer[1]{\textbf{#1}}
+\newcommand\hideforstudent[1]{#1}
+
+
+%\renewcommand\lecturer[1]{{\color{white} \textbf{#1} }}
+%\renewcommand\hideforstudent[1]{{\color{white} #1 }}
+%\renewcommand\solution[1]{{\color{white} \vskip 0.5em \noindent\textbf{Solution:} #1 }}
+
+
+
+\setlength{\parindent}{0cm}
+\setlength{\parskip}{0.1cm}
+
+\begin{document}
+
+Fall  2016, MATH-566
+
+\centerline{{\Large \textbf{Spanning Trees}}}
+
+
+Source: Chapter 2.1 (Bills), Chapter 6.1 of Combinatorial Optimization (Korte)
+
+Problem: Connect cities $V$ with optic cable. For every pair of cities, it is known if the cable can be built and the cost of building it: $c: V^2 \rightarrow \mathbb{R}$. 
+Which connections to build to minimize the building cost and make the network connected? (no isolated city)
+
+\question{}{
+Solve the cities and cable problem for the following diagram of cities:
+\begin{center}
+\begin{tikzpicture}[scale=2]
+\draw (0,0) grid (3,2);
+\fill
+\foreach \x in {0,1,2,3}{
+\foreach \y in {0,1,2}{ 
+(\x,\y) circle (2pt)
+}
+}
+;
+\draw 
+(0.5,0) node[below]{1}
+(1.5,0) node[below]{2}
+(2.5,0) node[below]{5}
+(0.5,1) node[below]{6}
+(1.5,1) node[below]{3}
+(2.5,1) node[below]{9}
+(0.5,2) node[below]{11}
+(1.5,2) node[below]{7}
+(2.5,2) node[below]{19}
+(0,0.5) node[left]{13}
+(0,1.5) node[left]{15}
+(1,0.5) node[left]{22}
+(1,1.5) node[left]{10}
+(2,0.5) node[left]{14}
+(2,1.5) node[left]{17}
+(3,0.5) node[left]{12}
+(3,1.5) node[left]{4}
+;
+\end{tikzpicture}
+\end{center}
+}
+
+
+A \emph{graph} $G=(V,E)$ is a pair of vertices $V$ and edges $E$, where $E$ consists of pairs of vertices.
+
+Recall definitions of \emph{circuit/cycle}, \emph{tree}, \emph{forest}, \emph{spanning tree}, \emph{connected components}, \emph{path}
+
+\textbf{Cut} for $X\subset V$ is the set of edges with exactly one endpoint in $X$.
+
+Formal definition of our problem:
+\textbf{Minimum spanning tree problem}\\
+\emph{Input:}     Graph $G=(V,E)$ and costs $c: E \rightarrow \mathbb{R}$.\\
+\emph{Output:}  Spanning tree $T$ of minimum cost.
+
+\question{}{
+If $T$ is a spanning, then the following are equivalent:
+\begin{enumerate}
+\item $T$ is minimum spanning tree
+\item For every $e=\{x,y\} \in E(G) \setminus E(T)$, no edge on the $x$-$y$-path in $T$ has higher cost than $e$.
+\item For every $e\in E(T)$, $e$ is a minimum cost edge of the \emph{cut} between the connected components in $T-e$
+\item We can order $E(T) = \{e_1,\ldots,e_{n-1}\}$ such that for each $i$ there exists a set $X_i\subset V(G)$ such that $e_i$
+is the min cost edge of cut $X_i$ and no previous edge is in the cut $X_i$.
+\end{enumerate}
+Show $1 \rightarrow 2 \rightarrow 3 \rightarrow 4$.
+Try $4 \rightarrow 1$ by taking $T$ that satisfies 4 and $T^\star$ satisfying (1) and check how they
+can differ.
+}
+\solution{
+See the book(s) for detailed solution.\\
+(1) $\rightarrow$ (2): If 2 violated, $T$ was not optimal by replacing an edge \\
+(2) $\rightarrow$ (3): if 3 violated, so is (2)\\
+(3) $\rightarrow$ (4): take any ordering from (3), it gives (4).
+(4) $\rightarrow$ (1): $T$ from (4) and $T^\star$ optimum. Let $e_i$ be the first
+$e_i \in T$, that is missing in $T^\star$.  Let the corresponding cut for $e_i$ be $X_i$.
+Add $e_i$ to $T^\star$, it contains a circuit, one other edge of the cut $X_i$ that is in $T^\star$ can be removed
+and cost of $T^\star$ decreases. 
+}
+
+\newpage
+
+\textbf{Kruskal's (greedy) algorithm [1956]}
+\begin{enumerate}
+\item sort edges of $G$ such that $c(e_1) \leq c(e_2) \leq \cdots \leq c(m)$
+\item set $T=(V,\emptyset)$
+\item for $i$ in $1$ to $m$:\\ if $T+e_i$ does not contain a circuit, then $T := T+e$.
+\end{enumerate}
+\question{}{
+Do steps of the algorithm on the graph with cities (note that the algorithm has 11 iterations where edge is added since the tree has 11 edges).
+Denote the order of edges as they enter the spanning three.
+\begin{center}
+\begin{tikzpicture}[scale=1.5]
+\draw (0,0) grid (3,2);
+\fill
+\foreach \x in {0,1,2,3}{
+\foreach \y in {0,1,2}{ 
+(\x,\y) circle (2pt)
+}
+}
+;
+\end{tikzpicture}
+\end{center}
+}
+\question{}{
+Why is the output of the algorithm correct?
+}
+\solution{
+Satisfies condition 2.
+}
+
+
+\textbf{Jarn\'{i}k's [1930] and Prims [1957] algorithm}
+\begin{enumerate}
+\item choose any $v \in V$ and $T=(\{v\},\emptyset)$
+\item while $T$ does not contain all vertices: \\
+         pick $e$ of minimum cost that has exactly one endpoint in $T$ and $T := T+e$
+\end{enumerate}
+\question{}{
+Do steps of the algorithm on the graph with cities (note that the algorithm has 11 iterations since the tree has 11 edges).
+Denote the order of edges as they enter the spanning three. Start with $v$ being the left top vertex.
+\begin{center}
+\begin{tikzpicture}[scale=1.5]
+\draw (0,0) grid (3,2);
+\fill
+\foreach \x in {0,1,2,3}{
+\foreach \y in {0,1,2}{ 
+(\x,\y) circle (2pt)
+}
+}
+;
+\end{tikzpicture}
+\end{center}
+}
+\question{}{
+Why is the output of the algorithm correct?
+}
+\solution{
+Satisfies condition 4.
+}
+
+\textbf{Bor\r{u}vka's  [1928] algorithm}
+\begin{enumerate}
+\item Let $T=(V,\emptyset)$
+\item while $T$ has more than one connected component: \\
+         in parallel, for every connected component $C$ in $T$, pick $e$ of minimum cost that has exactly one endpoint in $C$ and do $T := T+e$
+\end{enumerate}
+\question{}{
+Do steps of the algorithm on the graph with cities. Note that one iteration always gives several edges in. The number of iterations is not clear at the beginning.
+Denote the order of edges as they enter the spanning three.
+\begin{center}
+\begin{tikzpicture}[scale=1.5]
+\draw (0,0) grid (3,2);
+\fill
+\foreach \x in {0,1,2,3}{
+\foreach \y in {0,1,2}{ 
+(\x,\y) circle (2pt)
+}
+}
+;
+\end{tikzpicture}
+\end{center}
+}
+\question{}{
+Why is the output of the algorithm correct?
+}
+\solution{
+Suppose it creates a cycle. The we get  a contradiction with the choice of the edges.
+But we run into troubles if edges have the same weights.
+}
+
+Algorithmic note: Which algorithm is fastest?
+
+Complexity of algorithm counted in number of operations of CPU.
+
+Count how many times every vertex and edge is used, constant does not matter, we use $O(.)$ notation.
+
+Simple Kruskal's complexity for graph with $m$ edges and $n$ vertices:
+\begin{packeditemize}
+\item sorting takes $O(m \log(m))$
+\item for cycles is done $m$ times
+\item test for circuit can be done in $O(n)$ time
+\end{packeditemize}
+Total time: $O(m \log(m) + mn)$. Better implementation can do $O(m \log(n))$.
+
+Jarn\'{\i}k's algorithm can be implemented in $O(m + n \log(n) )$.
+
+More effective algorithms exists if weights are integers, graph is \emph{planar}, \ldots.
+ 
+
+\question{}{
+Let $G=(V,E)$ be a a graph and $c: E \rightarrow \mathbb{R}$ cost function on the edges.
+Formulate the minimum spanning tree problem using linear programming. \\
+\emph{(Don't be afraid that there are many constraints. Try to make constraint that graph has no cycles.)}
+}
+\solution{
+We let every edge $e_i$ be a variable $x_i$. 
+The objective is to minimize  $c_ix_i$. For every  $x_i$ we add $0 \leq x_i \leq 1$.
+We also can add $\sum x_i = n-1$. But mainly we need to avoid cycles.
+Description of the set of feasible solutions is
+\[
+F=\{
+x \in [0,1]^E: \sum_{e \in E(G[X])} x_e \leq |X|-1 \text{ for } \emptyset \neq X \subseteq V
+\},
+\]
+where $G[X]$ is the graph induced by vertices $X$ - contains all edges of $E$ that have both vertices in $X$.
+}
+
+\textbf{Theorem} [Edmonds 1970]
+The set of feasible solutions is \emph{integral} polytope - i.e. - every vertex of the polytope has all coordinates integers. The polytope is called $\textbf{spanning tree polytope}$.
+
+\question{}{
+Draw the spanning tree polytope for $K_3$, where $K_3$ is the complete graph on $3$ vertices.
+}
+\solution{
+Convex hull of points $\{1,1,0\}, \{0,1,1\}, \{1,0,1\}$. Notice it is two dimensional.
+}
+
+
+
+% - there are 947 cities in Iowa. The smallest city has 15 residents.)
+
+
+
+
+\end{document}
+
+
+
+
+
+

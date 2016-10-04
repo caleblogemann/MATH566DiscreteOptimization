@@ -1,0 +1,191 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[czech, english]{babel}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{tikz}
+
+
+% Itemize environment with small skips
+\newenvironment{packeditemize}{
+\begin{itemize}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{itemize}}
+
+
+% Fancy footnote....
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\usepackage{lastpage}
+\rfoot{MATH 566 - 04, page \thepage/\pageref{LastPage}}
+\cfoot{}
+\rhead{}
+\lhead{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+
+\newtheorem{theorem*}{Theorem} 
+
+% Itemize environment with small skips
+\newenvironment{packedenumerate}{
+\begin{enumerate}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{enumerate}}
+
+
+\newcounter{excounter}
+\setcounter{excounter}{1}
+\newcommand\question[2]{\vskip 1em  \noindent\textbf{\arabic{excounter}\addtocounter{excounter}{1}:} \emph{#1} \noindent#2}
+\newcommand\solution[1]{\vskip 0.5em \noindent\textbf{Solution:} #1}
+\newcommand\like{\par \noindent\emph{(This question is: good - bad - ugly? Difficulty: 0-10:\hskip 3em )}} 
+
+\newcommand\lecturer[1]{\textbf{#1}}
+\newcommand\hideforstudent[1]{#1}
+
+
+%\renewcommand\lecturer[1]{{\color{white} \textbf{#1} }}
+%\renewcommand\hideforstudent[1]{{\color{white} #1 }}
+%\renewcommand\solution[1]{{\color{white} #1 }}
+
+
+
+\setlength{\parindent}{0cm}
+\setlength{\parskip}{0.1cm}
+
+\begin{document}
+
+Fall  2016, MATH-566
+
+\centerline{{\Large \textbf{Interpretation of Duality and Duality theorem}}}
+
+
+Dualization for everyone:\\
+$A \in \mathbb{R}^{m \times n}, \mathbf{c} \in \mathbb{R}^n,  \mathbf{b} \in \mathbb{R}^m$
+\begin{center}
+\begin{tabular}{|c|c|c|}
+\hline
+                  &   primal                 &   dual   \\ \hline
+variables   &   $x_1,\ldots,x_n$  &  $y_1,\ldots,y_m$ \\
+matrix        &      $A$                 &    $A^T$  \\    
+right hand  &   $\mathbf{b}$     &  $\mathbf{c}$ \\
+objective    &   max $\mathbf{c}^T\mathbf{x}$  & min $\mathbf{b}^T\mathbf{y}$  \\
+constraint  &   $i$th constrain $\leq$    &   $y_i \geq 0$ \\
+                  &  $i$th constrain $\geq$    &   $y_i \leq 0$ \\
+                  &  $i$th constrain $=$       &   $y_i \in \mathbb{R}$ \\
+                  &   $x_i \geq 0 $                &  $i$th constrain $\geq$ \\
+                  &   $x_i \leq 0 $                 &  $i$th constrain $\leq$ \\
+                  &   $x_i \in \mathbb{R} $     &  $i$th constrain $=$ \\ \hline
+\end{tabular}
+\end{center}
+
+
+\textbf{Diet problem:}
+How much apricots ($x_1$), bananas ($x_2$) and cucumbers ($x_3$) one has to eat
+to get enough of Vit A, B, C? Minimize cost.
+
+Need to know: \% of daily value and cost:
+\[
+\begin{tabular}{|c|ccccc|}
+\hline
+                             &   A    &   C  & K  & \text{\$} &  \text{ammount} \\ \hline
+\text{apricots}       &   60  & 26 &   6  &  1.53     & 155g  \\
+\text{bananas}      &   3    & 33 &   1 &   0.37      & 225g \\
+\text{cucumbers}  &   2    &  7  & 12  &  0.18       & 133g  \\
+\hline
+\end{tabular} 
+\]
+\question{}{Write Linear Program $(P)$ solving the diet problem and write also its dual (D)}
+
+\solution{
+\begin{align*}
+(P)&~\begin{cases}
+\text{minimize}  &   1.53 x_1   + 0.37 x_2   +0.18  x_3   \\ 
+\text{s.t.}           &    60 x_1   + 3 x_2   + 2  x_3   \geq 100  \\
+                         &   26  x_1   +33 x_2   + 7 x_3   \geq 100  \\
+                         &    6 x_1   + 1 x_2   + 12 x_3   \geq 100  \\
+                         &   x_1,x_2,x_3 \geq 0
+\end{cases}
+&
+(D)&~\begin{cases}
+\text{maximize}  &   100y_1 + 100 y_2 + 100 y_3    \\ 
+\text{s.t.}           &    60 y_1   + 26 y_2   + 6  y_3   \leq 1.53  \\
+                         &      3 y_1   +33 y_2   + 1 y_3   \leq 0.37  \\
+                         &      2 y_1   + 7 y_2   + 12 y_3   \leq  0.18  \\
+\end{cases}
+\end{align*}
+
+Solution for $(P)$ is $\mathbf{x} =  (1.4,0.3,7.6)$ and the cost is \$3.62.\\
+and for $(D)$ is  $\mathbf{y} = ( 0.0209,  0.009122,  0.006191)$ and the cost is \$3.62.
+%\begin{verbatim}
+%Model fruitD
+%  Variables
+%    y[1:3] = 0, >=0
+%  End Variables
+%  Equations
+%  maximize 100*y[1] + 100*y[2] + 100*y[3]
+%   60*y[1] + 26*y[2] + 6*y[3] <= 1.53
+%   3*y[1] + 33*y[2]+1*y[3] <= 0.37
+%   2*y[1]+7*y[2]+12*y[3] <= 0.18
+%  End Equations
+%End Model
+%\end{verbatim}
+}
+
+\question{}{What are units of $y_i$ in $(D)$?  (Hint: inequalities need to make sense in units.)}
+\solution{
+Units of $y_i$ are $\frac{\$}{1\% \text{ of daily intake of vitamin}}$.
+}
+
+\newpage
+\question{}{Imagine you want to create a multivitamine pills ACK. What is the maximum price of
+one ACK pull if it has to deliver 100\% of recommended daily value of vitamins A,C, and K and
+it must beat any fruit and vegetable in terms of price?
+\emph{(If you don't manage to beat fruit and vegetable, nobody will buy your fancy ACK pill) 
+\emph{(Compute your price as a combination of prices of each of the vitamines.)}
+}
+}
+\solution{
+Same as the dual program $(D)$.
+\[
+(D)~\begin{cases}
+\text{maximize}  &   100y_1 + 100 y_2 + 100 y_3    \\ 
+\text{s.t.}           &    60 y_1   + 26 y_2   + 6  y_3   \leq 1.53  \\
+                         &      3 y_1   +33 y_2   + 1 y_3   \leq 0.37  \\
+                         &      2 y_1   + 7 y_2   + 12 y_3   \leq  0.18  \\
+\end{cases}
+\]
+}
+
+\vskip 4em
+\textbf{Duality Theorem}\\
+For the linear programs
+\[ \text{maximize } \textbf{c}^T\textbf{x} \text{ subject to } A\mathbf{x} \leq \mathbf{b} \text{ and  } \mathbf{x} \geq \mathbf{0}  \text{ \hskip 3cm }  (P)  \]
+and
+\[ \text{minimize } \textbf{b}^T\textbf{y} \text{ subject to } A^T\mathbf{y} \geq \mathbf{c} \text{ and  } \mathbf{y} \geq \mathbf{0}  \text{ \hskip 3cm }  (D) \]
+exactly one of the following possibilities occurs:
+\begin{enumerate}
+\item  Neither $(P)$ nor $(D)$ has a feasible solution.
+\item $(P)$ is unbounded and $(D)$ has no feasible solution.
+\item $(P)$ has no feasible solution and $(D)$ is unbounded.
+\item Both $(P)$ and $(D)$ have a feasiblesolution. Then both have an optimal
+solution, and if $\mathbf{x}^\star$ is an optimal solution of $(P)$ and $\mathbf{y}^\star$ is an optimal
+solution of $(D)$, then
+\[
+\textbf{c}^T\textbf{x}^\star = \textbf{b}^T\textbf{y}^\star.
+\]
+That is, the maximum of $(P)$ equals the minimum of $(D)$.
+\end{enumerate}
+
+\emph{Next goal is to prove the duality theorem.}
+
+\end{document}
+
+
+

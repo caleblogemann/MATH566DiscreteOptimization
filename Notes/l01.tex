@@ -1,0 +1,227 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[czech, english]{babel}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{tikz}
+
+
+% Itemize environment with small skips
+\newenvironment{packeditemize}{
+\begin{itemize}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{itemize}}
+
+
+% Itemize environment with small skips
+\newenvironment{packedenumerate}{
+\begin{enumerate}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{enumerate}}
+
+% Fancy footnote....
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\usepackage{lastpage}
+\rfoot{MATH 566 - 01, page \thepage/\pageref{LastPage}}
+\cfoot{}
+\rhead{}
+\lhead{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\newcounter{excounter}
+\setcounter{excounter}{1}
+\newcommand\question[2]{\vskip 1em  \noindent\textbf{\arabic{excounter}\addtocounter{excounter}{1}:} \emph{#1} \noindent#2}
+\newcommand\solution[1]{{\vskip 0.5em \noindent\textbf{Solution:} #1}}
+\renewcommand\solution[1]{{\color{white}\vskip 0.5em \noindent\textbf{Solution:} #1}}
+\newcommand\like{\par \noindent\emph{(This question is: good - bad - ugly? Difficulty: 0-10:\hskip 3em )}} 
+
+%\renewcommand\solution[1]{\vskip 0.5em \noindent\textbf{Solution \arabic{excounter}\addtocounter{excounter}{1}:}\par\noindent#1}
+%\renewcommand\question[2]{}
+
+\setlength{\parindent}{0cm}
+\setlength{\parskip}{0.1cm}
+
+\begin{document}
+%\pagestyle{empty}
+
+Fall  2016, MATH-566
+
+\centerline{{\Large \textbf{Appendix A - Linear programming}}}
+
+Discuss: class policies, hw, need for sage, outline of the class, books, graph theory
+
+Optimization problem
+\[
+(P) \begin{cases}
+\text{minimize}  & f(\textbf{x}) \\ 
+\text{s.t.}           & g_1(\textbf{x}) \leq b_1 \\
+                         &       \vdots                     \\
+                         & g_m(\textbf{x}) \leq b_m,
+\end{cases}
+\]
+where $\textbf{x} \in \mathbb{R}^n$, $f,g_i: \mathbb{R}^n \rightarrow \mathbb{R}$, $b_i \in \mathbb{R}$.
+Program $(P)$ is \emph{linear} if $f,g_i$ are linear functions. Reformulation:
+\[
+(LP) \begin{cases}
+\text{minimize}  & \textbf{c}^T \cdot \textbf{x} \\ 
+\text{s.t.}           & A \textbf{x} \leq \textbf{b},
+\end{cases}
+\]
+where $\textbf{c} \in \mathbb{R}^n$, $\textbf{b} \in \mathbb{R}^m$,
+$A \in \mathbb{R}^{m\times n}$. Also maximize, $\leq$, $=$. Program $(LP)$ if efficiently solvable.
+
+History note: Dantzig and Kantorovich
+
+\textbf{Examples of linear programming:}
+
+\textbf{Diet problem:}
+How much apricots ($x_1$), bananas ($x_2$) and cucumbers ($x_3$) one has to eat
+to get enough of Vit A, B, C? Minimize cost.
+
+Need to know: \% of daily value and cost:
+\[
+\begin{tabular}{|c|cccc|}
+\hline
+                             &   A    &   C  & K  & \text{\$} \\ \hline
+\text{apricots}       &   60  & 26 &   6  &  1.53        \\   % 155g
+\text{bananas}      &   3    & 33 &   1 &   0.37       \\   % 225g
+\text{cucumbers}  &   2    &  7  & 12  &  0.18        \\   % 133g
+\hline
+\end{tabular} 
+\]
+Does the table make sense? 
+\solution{
+There should be units for apricots, bananas and cucumbers. It is one serving, which is 155g, 225g, and 133g respectively.
+
+\[
+(LP) \begin{cases}
+\text{minimize}  &   1.53 x_1   + 0.37 x_2   +0.18  x_3   \\ 
+\text{s.t.}           &    60 x_1   + 3 x_2   + 2  x_3   \geq 100  \\
+                         &   26  x_1   +33 x_2   + 7 x_3   \geq 100  \\
+                         &    6 x_1   + 1 x_2   + 12 x_3   \geq 100  \\
+\end{cases}
+\]
+%APMonitor program. 
+%Go to \url{apmonitor.com} and paste this to their online solver:
+Solution: $(x_1,x_2,x_3) = (1.4,0.3,7.6)$ and the cost is \$3.62.
+}
+%\vskip 10em
+%\begin{verbatim}
+%Model fruit
+%  Variables
+%    x[1] = 0
+%    x[2] = 0
+%    x[3] = 0
+%  End Variables
+%  Equations
+%  minimize 1.53*x[1]+ 0.37*x[2]+0.18*x[3]
+%  60*x[1]+3*x[2]+2*x[3] >= 100
+%  26*x[1]+33*x[2]+7*x[3] >= 100
+%   6*x[1] + x[2] +12*x[3] >= 100
+%  End Equations
+%End Model
+%\end{verbatim}
+
+
+HW: Feed the professor!
+
+\textbf{Network flow:}
+Firefighters in Washington need your help them calculate how much water they could use.
+Sketch gives, water source $s$, fire location $t$ and scheme of network of pipes.
+\begin{center}
+\begin{tikzpicture}
+\draw
+(0,0) node[circle,draw](s){s}
+(2,1) node[circle,draw](a){a}
+(2,0) node[circle,draw](b){b}
+(2,-1) node[circle,draw](c){c}
+(4,0.5) node[circle,draw](d){d}
+(4,-0.5) node[circle,draw](e){e}
+(6,0) node[circle,draw](t){t}
+;
+\draw (s)--node[above]{3}(a) ;
+\draw (s)--node[above]{1}(b) ;
+\draw (s)--node[below]{1}(c) ;
+\draw (a)--node[right]{1}(b) ;
+\draw (a)--node[above]{1}(d) ;
+\draw (b)--node[above]{3}(e) ;
+\draw (c)--node[below]{3}(e) ;
+\draw (c)--node[below]{4}(d) ;
+\draw (d)--node[above]{4}(t) ;
+\draw (e)--node[below]{1}(t) ;
+\end{tikzpicture}
+\end{center}
+How to write a linear program?
+
+
+
+\newpage
+\textbf{Ropes:}
+We are producing packages of two 15cm and one 20cm long ropes (say for some kid's game).
+What is the to maximize the number of packages if we have 400 times 50cm and 100 times 65cm ropes?
+(How to cut the ropes?)
+ 
+\solution{
+\#15 cm = $A$,  \#20 cm = $B$, 
+
+\begin{align*}
+50cm &= 15+15+20   \ldots x_1 \ldots 2A+B\\
+          &= 20+20         \ldots x_2 \ldots      2B\\
+          &= 15+15+15   \ldots x_3 \ldots      3A
+\end{align*}
+\begin{align*}
+65cm &= 20+20+20        \ldots y_1 \ldots 3B\\
+          &= 15+15+15+15         \ldots y_2 \ldots  4A\\
+          &= 20+15+15+15   \ldots y_3 \ldots   B+3A\\
+          &= 20+20+15         \ldots y_4 \ldots   2B+A
+\end{align*}
+
+\[
+(LP)
+\begin{cases} \text{maximize}   &p \\
+\text{s.t.}     &     p \leq \frac{1}{2}  A  \\
+          &     p \leq B\\
+          &     A = 2 x_1 + 3 x_3+4 y_2+3 y_3+y_4 \\
+          &     B = x_1+  2x_2 + 3y_1 + y_3 + 2y_4 \\
+           &   400 \geq x_1+x_2+x_3\\
+           &   100 \geq y_1+y_2+y_3
+\end{cases}
+\]
+%Model ropes
+%  Variables
+%    x[1:3] = 0, >=0
+%    y[1:4] = 0, >= 0
+%    A = 0
+%    B = 0
+%    p = 0
+%  End Variables
+%  Equations
+%  maximize p 
+%  p <= 0.5 * A
+%  p <= B
+%  A = 2*x[1] + 3*x[3]+4*y[2]+3*y[3]+y[4]
+%  B = x[1]+  2*x[2] + 3*y[1] + y[3] + 2*y[4]
+%  400 >= x[1]+x[2]+x[3]
+%  100 >= y[1]+y[2]+y[3]+y[4]
+%  End Equations
+%End Model
+Solution:
+\[
+p=528.5, x_1 = 400, x_2=0, x_3=0, y_1=14.28, y_2=0 y_3= 85.71, y_4=0
+\]
+We are missing that $x_i,y_j$ are actually integers!
+}
+
+\end{document}
+
+
+

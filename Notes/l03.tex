@@ -1,0 +1,243 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[czech, english]{babel}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{tikz}
+
+
+% Itemize environment with small skips
+\newenvironment{packeditemize}{
+\begin{itemize}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{itemize}}
+
+
+% Fancy footnote....
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\usepackage{lastpage}
+\rfoot{MATH 566 - 03, page \thepage/\pageref{LastPage}}
+\cfoot{}
+\rhead{}
+\lhead{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+
+\newtheorem{theorem*}{Theorem} 
+
+% Itemize environment with small skips
+\newenvironment{packedenumerate}{
+\begin{enumerate}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{enumerate}}
+
+
+\newcounter{excounter}
+\setcounter{excounter}{1}
+\newcommand\question[2]{\vskip 1em  \noindent\textbf{\arabic{excounter}\addtocounter{excounter}{1}:} \emph{#1} \noindent#2}
+\newcommand\solution[1]{\vskip 0.5em \noindent\textbf{Solution:} #1}
+\newcommand\like{\par \noindent\emph{(This question is: good - bad - ugly? Difficulty: 0-10:\hskip 3em )}} 
+
+\newcommand\lecturer[1]{\textbf{#1}}
+\newcommand\hideforstudent[1]{#1}
+
+
+%\renewcommand\lecturer[1]{{\color{white} \textbf{#1} }}
+%\renewcommand\hideforstudent[1]{{\color{white} #1 }}
+%\renewcommand\solution[1]{{\color{white} #1 }}
+
+
+
+\setlength{\parindent}{0cm}
+\setlength{\parskip}{0.1cm}
+
+\begin{document}
+
+Fall  2016, MATH-566
+
+\centerline{{\Large \textbf{Introduction to the Duality for Linear Programming}}}
+
+Let
+\[
+(P) \begin{cases}
+\text{maximize} &   2x_1 + 3x_2 \\
+\text{s.t.}   & 4x_1 + 8x_2 \leq 12\\
+        & 2x_1 + x_2   \leq 3  \\
+        & 3x_1 + 2x_2 \leq 4  \\
+        & x_1 \geq 0 \\
+        & x_2 \geq 0
+\end{cases}
+\]
+
+\question{}{
+Without solving $(P)$ itself, is it possible to provide an upper bound on the value of $(P)$ by using equation $4x_1 + 8x_2 \leq 12$?
+}
+
+\solution{
+Yes - easily:
+\[2x_1 + 3x_4  \leq 4x_1 + 8x_2 \leq 12\]
+so the maximum is at most 12.
+We can even improve it by
+\[2x_1 + 3x_4  \leq \frac{1}{2}\left(4x_1 + 8x_2\right) \leq 6.\]
+This gives maximum is at most 6.
+}
+
+\question{}{
+Without solving $(P)$, is it possible to provide an upper bound on the value of $(P)$ using equations
+$4x_1 + 8x_2 \leq 12$ and $2x_1 + x_2   \leq 3$?
+}
+\solution{
+\begin{align*}
+4x_1 + 8x_2  \leq 12 &~  \\
+ 2x_1 + x_2   \leq 3  &~\\
++~ \rule{3cm}{0.2mm} &~\\
+ 6x_1 + 9x_2   \leq 15  &~
+\end{align*}
+Now we get $2x_1 + 3x_4 \leq \frac{1}{3}\left( 6x_1 + 9x_2 \right) \leq 5$.
+}
+
+\question{}{
+Without solving $(P)$, how would you try to find the  combination of constraints that provides the best upper bound?
+(solution might be another linear program, call it $(D)$)
+}
+\solution{
+We try to combine the three constraints (not the non-negativity constraints) and obtain an upper bound.
+Say the first constraints is multiplied by $y_1$, the second by $y_2$ and third by $y_3$.
+
+So we have a combination of
+\begin{align*}
+y_1 &\cdot \left( 4x_1 + 8x_2  \leq 12  \right)  \\
+y_2 &\cdot \left( 2x_1 + x_2   \leq 3   \right) \\
+y_3 & \cdot \left( 3x_1 + 2x_2 \leq 4 \right )
+\end{align*}
+\textbf{what else $y_i$ satisfies?} If $y_i < 0$, inequality is reversed, so $y_i \geq 0$ 
+We need the left hand sides to be at least $2x_1 + 3x_4$, hence
+\begin{align*}
+y_1 \cdot 4x_1 + y_2 \cdot 2x_1 + y_3 \cdot 3x_1 &\geq 2x_1 \\
+y_1 \cdot 8x_2 + y_2 \cdot x_2 + y_3 \cdot 2x_2 &\geq 3x_2 
+\end{align*}
+Next, we want to minimize the right hand side, which is $12y_1 + 3y_2 + 4y_3$.
+It gives a linear program $(D)$:
+\[
+(D) \begin{cases}
+\text{minimize}&   12y_1 + 3y_2 + 4y_3  \\
+\text{s.t.}   & 4y_1 + 2y_2 + 3y_3  \geq  2\\
+        & 8y_1 + y_2  + 2y_3   \geq 3 \\
+        & y_1,y_2,y_2 \geq 0
+\end{cases}
+\]
+}
+
+\begin{packeditemize}
+\item $(D)$ gives an upper bound on $(P)$
+\item $(P)$ gives a lower bound on $(D)$
+\end{packeditemize}
+
+\question{}{
+Are solutions $\mathbf{x} = (\frac{1}{2},\frac{5}{4})$ of $(P)$ and $\mathbf{y} = (\frac{5}{16},0,\frac{1}{4})$ for $(D)$ optimal solutions?
+}
+\solution{
+Yes! They are optimal solutions, because they satisfy constraints and values of the objective functions are the same.
+}
+
+\question{}{
+Find the dual program $(D)$  to
+\[
+(P) 
+\begin{cases}
+\text{maximize} &  \mathbf{c}^T\mathbf{x} \\
+\text{s.t.}            &   A\mathbf{x} \leq \mathbf{b} \\
+                          &  \mathbf{x} \geq 0
+\end{cases}
+\]
+}
+
+\solution{
+\[
+(D) 
+\begin{cases}
+\text{minimize} &  \mathbf{b}^T\mathbf{y} \\
+\text{s.t.}            &   A^T \mathbf{y} \geq \mathbf{c} \\
+                          &  \mathbf{y} \geq 0
+\end{cases}
+\]
+}
+
+
+\question{}{
+Find the dual program $(D)$  to
+\[
+(P) 
+\begin{cases}
+\text{minimize} &  \mathbf{c}^T\mathbf{x} \\
+\text{s.t.}            &   A\mathbf{x} = \mathbf{b} \\
+                          &  \mathbf{x} \geq 0
+\end{cases}
+\]
+}
+
+\solution{
+We first rewrite $A\mathbf{x} = \mathbf{b}$ as
+$A\mathbf{x} \geq \mathbf{b}$  and $-A\mathbf{x} \geq -\mathbf{b}$  \\
+Then we get
+\begin{align*}
+(P)&~
+\begin{cases}
+\text{minimize} &  \mathbf{c}^T\mathbf{x} \\
+\text{s.t.}            &    A\mathbf{x} \geq \mathbf{b} \\
+                          &   -A\mathbf{x} \geq -\mathbf{b} \\
+                          &  \mathbf{x} \geq 0
+\end{cases}
+&
+(D)&~ 
+\begin{cases}
+\text{maximize} &  \mathbf{b, -b}^T (\mathbf{u,v}) \\
+\text{s.t.}            &   A^T\mathbf{u} -A^T\mathbf{v} \leq \mathbf{c} \\
+                          &  \mathbf{u}, \mathbf{v} \geq 0
+\end{cases}
+\end{align*}
+Let $\mathbf{y} = \mathbf{u}-\mathbf{v}$. Then we can write 
+\[
+(D)~ 
+\begin{cases}
+\text{maximize} &  \mathbf{b,}^T (\mathbf{y}) \\
+\text{s.t.}            &   A^T\mathbf{y} \leq \mathbf{c} 
+\end{cases}
+\]
+Note that $\mathbf{y}$ can be negative.
+}
+
+\end{document}
+
+Dualization for everyone:\\
+$A \in \mathbb{R}^{m \times n}, \mathbf{c} \in \mathbb{R}^n,  \mathbf{b} \in \mathbb{R}^m$
+\begin{center}
+\begin{tabular}{|c|c|c|}
+\hline
+                  &   primal                 &   dual   \\ \hline
+variables   &   $x_1,\ldots,x_n$  &  $y_1,\ldots,y_m$ \\
+matrix        &      $A$                 &    $A^T$  \\    
+right hand  &   $\mathbf{b}$     &  $\mathbf{c}$ \\
+objective    &   max $\mathbf{c}^T\mathbf{x}$  & min $\mathbf{b}^T\mathbf{y}$  \\
+constraint  &   $i$th constrain $\leq$    &   $y_i \geq 0$ \\
+                  &  $i$th constrain $\geq$    &   $y_i \leq 0$ \\
+                  &  $i$th constrain $=$       &   $y_i \in \mathbb{R}$ \\
+                  &   $x_i \geq 0 $                &  $i$th constrain $\geq$ \\
+                  &   $x_i \leq 0 $                 &  $i$th constrain $\leq$ \\
+                  &   $x_i \in \mathbb{R} $     &  $i$th constrain $=$ \\ \hline
+\end{tabular}
+\end{center}
+
+
+\end{document}
+
+
+

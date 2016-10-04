@@ -1,0 +1,124 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[czech, english]{babel}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{tikz}
+
+
+% Itemize environment with small skips
+\newenvironment{packeditemize}{
+\begin{itemize}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{itemize}}
+
+
+% Fancy footnote....
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\usepackage{lastpage}
+\rfoot{MATH 566 - 05, page \thepage/\pageref{LastPage}}
+\cfoot{}
+\rhead{}
+\lhead{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+
+\newtheorem{theorem*}{Theorem} 
+
+% Itemize environment with small skips
+\newenvironment{packedenumerate}{
+\begin{enumerate}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{enumerate}}
+
+
+\newcounter{excounter}
+\setcounter{excounter}{1}
+\newcommand\question[2]{\vskip 1em  \noindent\textbf{\arabic{excounter}\addtocounter{excounter}{1}:} \emph{#1} \noindent#2}
+\newcommand\solution[1]{\vskip 0.5em \noindent\textbf{Solution:} #1}
+\newcommand\like{\par \noindent\emph{(This question is: good - bad - ugly? Difficulty: 0-10:\hskip 3em )}} 
+
+\newcommand\lecturer[1]{\textbf{#1}}
+\newcommand\hideforstudent[1]{#1}
+
+
+%\renewcommand\lecturer[1]{{\color{white} \textbf{#1} }}
+%\renewcommand\hideforstudent[1]{{\color{white} #1 }}
+%\renewcommand\solution[1]{{\color{white} #1 }}
+
+
+
+\setlength{\parindent}{0cm}
+\setlength{\parskip}{0.1cm}
+
+\begin{document}
+
+Fall  2016, MATH-566
+
+\centerline{{\Large \textbf{Separation theorem}}}
+
+How to show that two convex sets are disjoint?
+
+\begin{theorem*}
+Let $C,D \subseteq \mathbb{R}^d$ are convex sets and $C \cap D = \emptyset$ then there exists a hyperplane separating $C$ and $D$.
+That is, exists $\mathbf{a} \in \mathbb{R}^d$, $b \in \mathbb{R}$ such that \\
+$\forall \mathbf{x} \in C,  \mathbf{a}^T \mathbf{x} \leq b$ \\
+$\forall \mathbf{x} \in D,  \mathbf{a}^T \mathbf{x} \geq b$ 
+\end{theorem*}
+Separation can be strict if $C$ and $D$ closed and one bounded.
+\begin{center}
+\begin{tikzpicture}
+\draw(0,0) node[circle,draw]{$C$} (2,0) node[rectangle,draw]{$D$};
+\draw(1,-1) -- (1,1) node[label=right:{$\textbf{a}^T\textbf{x}=\textbf{b}$}]{} ;
+\end{tikzpicture}
+\end{center}
+
+\question{}{Why is the theorem true if $C$ and $D$ are compact?}
+
+\solution{
+If both $C$ and $D$ compact, consider $\mathbf{c} \in C$ and $\mathbf{d} \in D$ such that $\|\mathbf{c}-\mathbf{d}\|$ is minimized.
+That is, $\mathbf{c}$ and $\mathbf{d}$ are the closest points. They exist since $C$ and $D$ are compact and the
+distance is a continuous function. Let $z = \frac{\mathbf{c}+\mathbf{d}}{2}$, that is, $z$ is in the middle
+between $\mathbf{c}$ and $\mathbf{d}$. Considet a hyperplane $H$ perpendicular to segment $\mathbf{c}\mathbf{d}$
+and containing $\mathbf{z}$. Claim is that it is the desired hyperplane $H$. 
+If $H$ is not separating, then we find a contradiction with $\mathbf{c}$ and $\mathbf{d}$ being the closest.
+}
+
+\question{}{Why is the theorem true if $C$ compact and $D$ closed?}
+\solution{
+Assume $D_M$ being $D$ intersected with a huge, but still bounded set $M$. Then we can still argue that there are two
+closest points and eventually it will be the closest points even if $M$ grows.
+\vskip 4em
+}
+
+\question{}{Why is the theorem true in general?}
+\solution{
+Suppose $C$ and $D$ are general convex sets. We create a sequence of compact sets, that approximate $C_i$ and $D_i$ that are in limit going to $C$ and $D$. We can separate  $C_i$ and $D_i$  by the first case by a hyperplane $H_i$. It it possible to show that $H_i$ is converging and it is converging to a separating hyperplane for $C$ and $D$.
+
+Recall that $B(\mathbf{s},r) = \{ \mathbf{x} : \|\mathbf{x}-\mathbf{s}\| \leq r  \}$ is a ball centered at $\mathbf{s}$ of radius $r$.
+Suppose $\mathbf{0} \in C$. We define $C_1 \subseteq C_2 \subseteq C_3 \subseteq \cdots$ by letting $C_i = \left(1-\frac{1}{i}\right)C \cap B(\mathbf{0}, i)$. 
+Notice that $C_i$'s are compact and $C = \cup_i C_i$.
+
+We create similar sets for $D_i$ and  then $H_i$ is a hyperplane separating $C_i$ from $D_i$.
+}
+
+\solution{
+Note that compactness of at least one of the sets is needed for for strict separation.
+}
+
+
+
+
+
+\end{document}
+
+
+

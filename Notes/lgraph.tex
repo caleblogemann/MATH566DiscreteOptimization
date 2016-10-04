@@ -1,0 +1,329 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[czech, english]{babel}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{tikz}
+
+
+% Itemize environment with small skips
+\newenvironment{packeditemize}{
+\begin{itemize}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{itemize}}
+
+
+% Fancy footnote....
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\usepackage{lastpage}
+\rfoot{MATH 566 - GT, page \thepage/\pageref{LastPage}}
+\cfoot{}
+\rhead{}
+\lhead{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+
+\newtheorem{theorem*}{Theorem} 
+
+% Itemize environment with small skips
+\newenvironment{packedenumerate}{
+\begin{enumerate}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{enumerate}}
+
+
+\newcounter{excounter}
+\setcounter{excounter}{1}
+\newcommand\question[2]{\vskip 1em  \noindent\textbf{\arabic{excounter}\addtocounter{excounter}{1}:} \emph{#1} \noindent#2}
+\newcommand\solution[1]{\vskip 0.5em \noindent\textbf{Solution:} #1}
+\newcommand\like{\par \noindent\emph{(This question is: good - bad - ugly? Difficulty: 0-10:\hskip 3em )}} 
+
+\newcommand\lecturer[1]{\textbf{#1}}
+\newcommand\hideforstudent[1]{#1}
+
+
+%\renewcommand\lecturer[1]{{\color{white} \textbf{#1} }}
+%\renewcommand\hideforstudent[1]{{\color{white} #1 }}
+%\renewcommand\solution[1]{{\color{white} #1 }}
+
+
+
+\setlength{\parindent}{0cm}
+\setlength{\parskip}{0.1cm}
+
+\begin{document}
+
+Fall  2016, MATH-566
+
+\centerline{{\Large \textbf{Graph Theory - Quick Run Trough Definitions}}}
+
+
+
+A \textbf{simple graph} $G$ is an ordered pair $(V, E)$ of \textbf{vertices} $V$ and
+\textbf{edges} $E$, where $E \subseteq \{ \{u,v\}: u,v \in V, u \neq v  \}$.
+
+$|V|$ is \textbf{order} of $G$
+
+$|E|$ is \textbf{size} of $G$
+
+Vertices of $G$ are denoted by $V(G)$ and edges of $G$ by $E(G)$.
+
+If $\{u,v\} \in E$, then $u$ and $v$ are \textbf{adjacent} and called \textbf{neighbors}.
+
+If $u \in V$ and $e \in E$ satisfy $v \in e$, then $v$ and $e$ are \textbf{incident}. 
+
+$\{u,v\}$ can be simplified to $uv$.
+
+Edges are \textbf{adjacent} if they share vertices.
+
+\textbf{Drawing} of $G$ \emph{assigns point} to $V$ and \emph{curves} to $E$, where endpoints of $uv$ are $u$ and $v$.
+
+If $V(G) = \emptyset$ then $G$ is a \emph{null} graph.
+
+Graph $H$ is \textbf{subgraph} of  a graph $G$ if $V(H) \subseteq V(G)$ and $E(H) \subseteq E(G)$, notation $H \subseteq G$.
+
+$H$ is a \textbf{proper subgraph} if $H \subseteq G$, $H \neq G$ (and $H$ is not a null graph).
+
+$H$ is a \textbf{spanning subgraph} if $H \subseteq G$ and $V(H) = V(G)$
+
+$H$ is a \textbf{induced subgraph} if $H \subseteq G$ and $\forall u,v \in V(H), uv \in E(G) \Rightarrow uv \in E(H)$.
+
+If $X \in V(G)$, then $G[X]$ denotes induced subgraph $H$ of $G$ where $V(H) = X$.
+
+We use $+$ and $-$ to denote adding edges or vertices to graph.
+
+\textbf{Walk} in a graph $G$ is a sequence $v_1,e_1,v_2,e_2,v_3,\ldots,v_n$, where $v_i \in V(G)$ and $e_i \in E(G)$, where consecutive entries are incident.
+
+\textbf{Trail} is a walk without repeated edges.
+
+\textbf{Path} is a walk without repeated vertices.
+
+If walk,trail,path starts with $u$ and ends with $v$, it is called $u-v$ walk,trail,path.
+
+Length of a walk,trail,path is the number of edges.
+
+\textbf{Theorem 1.6} If a graph $G$ contains $u-v$ walk, it also contains $u-v$ path.
+\vskip 4em
+
+
+\textbf{Distance} of $u$ and $v$ is the length of a shortest $u-v$ path, denoted $d(u,v)$.
+
+\textbf{Diameter} of $G$, denoted by $diam(G)$ is maximum of $d(u,v)$ over all $u,v \in V$.
+
+%A $u-v$ path of length $d(u,v)$ is called \textbf{geodesic}.
+
+Walk/Trail is \emph{closed} if it is $u-u$ walk/trail. Otherwise it is \emph{open}.
+
+\textbf{Circuit} is a closed trail. 
+
+Closed trail with no repetition of vertices (except first and last) is \textbf{cycle}.
+
+Graph is \textbf{conneted} if for all $u,v \in V$ exists $u-v$ walk.
+
+If graph in not connected, it is \textbf{disconneted}.
+ 
+\emph{Connected} \textbf{component} of $G$ is a connected subgraph of $G$
+that is not a proper subgraph of any other connected subgraph of $G$.
+
+Graph $G$ is a \textbf{union} of graph $G_1,\ldots,G_k$ if $G$ can be partitioned
+into  $G_1,\ldots,G_k$. Notation  $G = G_1 \cup G_2 \cup \cdots \cup G_k$.
+
+\question{1.3}{
+Let $S = \{2,3,4,7,11,13\}$. Draw the graph $G$ whose vertex set is $S$ and
+such that $ij \in E(G)$ for all $i,j \in S$ if $i+j \in S$ or $|i-j| \in S$.
+What is $|E(G)|$ and $|V(G)|$? What is diameter of $G$?
+}
+
+
+
+\question{}{
+For the depicted graph $G$, give an example of each of the following or explain why no such example exists.
+\begin{center}
+\begin{tikzpicture}[every node/.style={inner sep=1.8pt,fill,circle}]
+\draw
+(0,0) -- (4,0) (0,1) -- (4,1) (0,2) -- (4,2) (0,2)--(2,1)--(4,2)
+(0,0) node[label=left:$x$]{}  -- (0,1) node[label=left:$u$]{} -- (0,2) node[label=left:$r$]{}
+(2,0) node[label=below:$y$]{}  -- (2,1) node[label=below right:$v$]{} -- (2,2) node[label=above:$s$]{}
+(4,0) node[label=right:$z$]{}  -- (4,1) node[label=right:$w$]{} -- (4,2) node[label=right:$t$]{}
+;
+\end{tikzpicture}
+\end{center}
+\begin{packeditemize}
+\item[(a)] An $x-y$ walk of length 6.
+\item[(b)] A $v-w$ trail that is not a $v-w$ path.
+\item[(c)] An $r-z$ path of length 2.
+\item[(d)] An $x-z$ path of length 3.
+\item[(e)] An $x-t$ path of length $d(x, t)$.
+\item[(f)] A circuit of length 10.
+\item[(g)] A cycle of length 8.
+\item[(h)] A geodesic whose length is $diam(G)$.
+\end{packeditemize}
+}
+
+
+%\question{Theorem 1.7}{
+%Let $R$ be the relation defined on the vertex set of a graph $G$ by $u\ R\ v$, where $u,v \in V(G)$, if $u$ is connected to $v$, that is, if $G$ contains a $u-v$ path. Show that $R$ is an equivalence relation. 
+%What are equivalence classes of $R$?
+%}
+%
+%\question{Theorem 1.8}
+%{Let $G$ be a graph of order 3 or more. If $G$ contains two distinct vertices $u$ and $v$ such that $G-u$ and $G-v$ are connected, then $G$ itself is connected.}
+
+\question{1.15}{
+Draw all connected graphs of order 5 in which the distance between every two distinct vertices is odd. Explain why you know that you have drawn all such graphs.
+}
+
+%\question{1.17}{
+%(a) Prove that if $P$ and $Q$ are two longest paths in a connected graph, then $P$ and $Q$ have at least one vertex in common.\\
+%(b) Prove or disprove: Let $G$ be connected graph of diameter $k$. If $P$ and $Q$ are two geodesics of length $k$ in $G$, then $P$ and $Q$ have at least one vertex in common.
+%}
+
+
+
+\textbf{Path} $P_n$ of length $n-1$ has vertices $v_1,\ldots,v_n$ and edges $v_{i}v_{i+1}$
+for all $1 \leq i \leq n-1$.
+
+\begin{center}
+\begin{tikzpicture}
+\draw[every node/.style={inner sep=1.8pt,fill,circle}]
+(0,0) node[label=below:$v_1$]{}
+(3,0) node[label=below:$v_1$]{} -- ++(1,0)node[label=below:$v_2$]{} 
+(7,0) node[label=below:$v_1$]{} -- ++(1,0)node[label=below:$v_2$]{}  -- ++(1,0)node[label=below:$v_3$]{} 
+;
+\draw
+(-0.75,-0.2) node{$P_1$:}
+(3-0.75,-0.2) node{$P_2$:}
+(7-0.75,-0.2) node{$P_3$:}
+;
+\end{tikzpicture}
+\end{center}
+
+\textbf{Cycle} $C_n$ of length $n$ if obtained from $P_n = v_1,\ldots,v_n$ by adding edge $v_1v_n$
+
+\begin{center}
+\begin{tikzpicture}
+\draw[every node/.style={inner sep=1.8pt,fill,circle}]
+(0,0)  +(90:0.5)node(a){}  +(210:0.5)node(b){}  +(330:0.5)node(c){}
+(a)--(b)--(c)--(a)
+(4,0)  +(45:0.6)node(a){}  +(135:0.6)node(b){}  +(225:0.6)node(c){} +(315:0.6)node(d){}
+(a)--(b)--(c)--(d)--(a)
+(8,0) \foreach \x in {0,1,2,3,4}{ +(90+72*\x:0.7)node(x\x){} }
+(x0)--(x1)--(x2)--(x3)--(x4)--(x0)
+;
+\draw
+(-1,0) node{$C_3$:}
+(2.8,0) node{$C_4$:}
+(6.8,0) node{$C_5$:}
+;
+\end{tikzpicture}
+\end{center}
+
+\textbf{Complete} graph $K_n$ has $n$ vertices and for all $u,v \in V(K_n), uv \in E(K_n)$, i.e. \emph{all} edges.
+
+\begin{center}
+\begin{tikzpicture}
+\draw[every node/.style={inner sep=1.8pt,fill,circle}]
+(-6,0) node(a){} 
+(-3,0)  +(90:0.5)node(a){}  +(270:0.5)node(b){} 
+(a)--(b)
+(0,0)  +(90:0.5)node(a){}  +(210:0.5)node(b){}  +(330:0.5)node(c){}
+(a)--(b)--(c)--(a)
+(4,0)  +(45:0.6)node(a){}  +(135:0.6)node(b){}  +(225:0.6)node(c){} +(315:0.6)node(d){}
+(a)--(b)--(c)--(d)--(a)--(c)(b)--(d)
+(8,0) \foreach \x in {0,1,2,3,4}{ +(90+72*\x:0.7)node(x\x){} }
+(x0)--(x1)--(x2)--(x3)--(x4)--(x0)--(x2)--(x4)--(x1)--(x3)--(x0)
+;
+\draw
+(-7.2,0) node{$K_1$:}
+(-4,0) node{$K_2$:}
+(-1,0) node{$K_3$:}
+(2.8,0) node{$K_4$:}
+(6.8,0) node{$K_5$:}
+;
+\end{tikzpicture}
+\end{center}
+
+\question{}{
+What is $|E(K_n)|$?
+}
+
+The \textbf{complement} $\overline{G}$ of a graph $G$ is graph where $V(\overline{G}) = V(G)$ and 
+$uv \in E(G)$ iff $uv \not\in E(\overline{G})$.
+
+Complement of complete graph is \textbf{empty} graph (or \textbf{independent set}).
+
+\textbf{Theorem 1.11} If $G$ is  disconnected then $\overline{G}$ is connected.
+
+\vskip 4em
+
+Graph $G$ is \textbf{bipartite} if $V(G) = X \cup Y$, where $G[X]$ and $G[Y]$ are empty graphs.
+
+
+\textbf{Theorem 1.12}
+Graph $G$ is bipartite iff $G$ does not contain an odd cycle.
+\vskip 12em
+
+
+
+\textbf{Complete bipartite} graph $K_{m,n}$ is a bipartite graph with parts $|V_1|=m$ and $|V_2|=n$ and
+for all $u \in V_1$ and $v \in V_2$ we have $uv \in E(K_{m,n})$.
+
+$K_{1,n}$ is called a \textbf{star}.
+
+
+\textbf{Multigraph} is a graph where edges can have multiplicities (\textbf{multiedges}) and \textbf{loops} (edge $vv$).
+
+\textbf{Directed graph} (or digraph) has edges as ordered pairs rather then sets of size two.
+
+\textbf{Oriented graph} is a graph where edges are oriented (directed).
+
+\question{}{
+What is the difference between directed graph and oriented graph?
+}
+\vskip 2em
+\textbf{Hypergraph} is a graph where edges are any subsets of vertices (not just size 2).
+
+
+\textbf{Degree} of a vertex $v$ is the number of edges incident with $v$ (loop counts 2$\times$), denoted by 
+$deg(v)$ or $d(v)$.
+
+In digraph we count \textbf{in-degree} $d^-(v)$ and \textbf{out-degree} $d^+(v)$.
+
+\textbf{Neighborhood} of a vertex $v$ is the set of vertices adjacent to $v$, denoted by $N(v)$.
+
+Note $deg(v) = |N(v)|$ for \emph{simple} graphs.
+
+Vertex $v$ is \textbf{isolated} if $d(v) = 0$.
+
+Vertex $v$ is \textbf{leaf} if $d(v) = 1$.
+
+The \textbf{minimum degree} of $G$ is $\delta(G) = \min_{v\in V(G)} d(v)$.
+
+The \textbf{maximum degree} of G is $\Delta(G) = \max_{v\in V(G)} d(v)$.
+
+\textbf{Theorem 2.1}
+If a graph $G$ has $m$ edges when
+\[
+\sum_{v \in V(G)} deg(v) = 2m
+\]
+\vskip 3em
+
+A vertex of even degree is called an \textbf{even vertex}, while a vertex of odd degree is an \textbf{odd vertex}.
+
+\textbf{Corollary 2.3} Every graph has an even number of odd vertices.
+\vskip 3em
+
+
+
+\end{document}
+
+
+
