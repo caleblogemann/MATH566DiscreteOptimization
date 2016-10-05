@@ -1,29 +1,29 @@
-#def kruskal(vertexList, edgeList, costList)
-import itertools as it
-vertexList=[]
-for i in range(10):
-    vertexList.append(vector([random()*10, random()*10]))
+def kruskal(vertexList, edgeList, costList):
+    numVertices = len(vertexList)
+    numEdges = len(edgeList)
 
-edgeList = list(it.combinations(range(10), 2))
-numVertices = len(vertexList)
-numEdges = len(edgeList)
+    # sort edges by cost
+    s = sorted(zip(edgeList, costList), key=lambda pair:pair[1])
+    edgeList = [x for (x, y) in s]
+    costList = [y for (x, y) in s]
 
-costList = []
-for i in range(numEdges):
-    u = vertexList[edgeList[i][0]]
-    v = vertexList[edgeList[i][1]]
-    costList.append(norm(u - v))
+    # create list of edges in tree
+    treeEdgeList = []
+    # create a list of ids of which tree each vertex is in
+    vertexTreeIds = range(numVertices)
 
-# sort edges by cost
-s = sorted(zip(edgeList, costList), key=lambda pair:pair[1])
-edgeList = [x for (x, y) in s]
-costList = [y for (x, y) in s]
+    for i in range(numEdges):
+        # take edge of minimum cost
+        edge = edgeList[i]
+        u = edge[0]
+        v = edge[1]
+        # check if vertices are in the same subtree
+        if vertexTreeIds[u] != vertexTreeIds[v]:
+            treeEdgeList.append(edge)
+            # update tree ids if added edge to spanning tree
+            oldId = vertexTreeIds[v]
+            for j in range(numVertices):
+                if vertexTreeIds[j] == oldId:
+                    vertexTreeIds[j] = vertexTreeIds[u]
 
-treeEdgeList = []
-#treeSet = {set(x) for x in vertexList}
-
-for i in range(numEdges):
-    if True:
-        treeEdgeList.append(edgeList[i])
-
-#return 
+    return treeEdgeList

@@ -2,7 +2,7 @@
 # Notes:
 #  - pick any algorithm for minimum spanning three you like
 #  - no need to optimize the running time
-#
+import itertools as it
 
 # This plots vertices as red dots and blue edges connecting them
 def plot_vertices_edges(vertices, edges):
@@ -15,24 +15,20 @@ def plot_vertices_edges(vertices, edges):
        
 # Generate 10 random vertices in 10x10 grid
 def generate_random_vertices():
-    vertices=[]
+    vertexList=[]
     for i in range(10):
-        vertices.append((random()*10, random()*10))
-    return vertices
+        vertexList.append((random()*10, random()*10))
+    return vertexList
 
-# This is the function that you need to write
-def compute_minimum_spannig_tree(vertices):
-    n = len(vertices)
-    edges_in_tree = [[0,1],[1,2],[5,6]]
-    
-    edges_in_tree = []
-    vertex_components = range(n)
-    
-    # Write your code here please....
-    return edges_in_tree
-    
+vertexList = generate_random_vertices()
+edgeList = list(it.combinations(range(10), 2))
+costList = []
+for edge in edgeList:
+    u = vertexList[edge[0]]
+    v = vertexList[edge[1]]
+    costList.append(sqrt((u[0]-v[0])^2 + (u[1] - v[1])^2))
 
-vertices = generate_random_vertices()
-edges = compute_minimum_spannig_tree(vertices)
+load('kruskal.sage')
+edges = kruskal(vertexList, edgeList, costList)
 
-plot_vertices_edges(vertices, edges)
+plot_vertices_edges(vertexList, edges)
