@@ -11,12 +11,14 @@ Midterm I
 
 %\lstinputlisting[language=Sage]{03_2.sage}
 \begin{enumerate}
-  \item % #1
+  \item % #1 Done
     Suppose you are making a schedule for an airport.
-    There are $n$ arriving flights. Every airplane $j$ has a possible time arrival  in interval $[a_j,b_j]$
+    There are $n$ arriving flights.
+    Every airplane $j$ has a possible time arrival  in interval $[a_j,b_j]$
     (plane can fly faster or slower). 
-    Determine the actual arrival schedule for each airplane such that the smallest gap between consecutive flights is maximized
-    and for all  $j$, airplane $j$ arrives before $j+1$.
+    Determine the actual arrival schedule for each airplane such that the
+    smallest gap between consecutive flights is maximized
+    and for all $j$, airplane $j$ arrives before $j+1$.
     Formulate a linear program that solves the problem.
 
     \emph{
@@ -27,6 +29,58 @@ Midterm I
       airplane arrives AFTER the second one although the it would be feasible with respect to $[a_i,b_i]$s
       (it is easier to solve if the order is fixed).)
     }
+
+    First I will define a new set of variables, $t_j$ for $1 \le j \le n$, to
+    be the time that plane $j$ arrives at the airport.
+    Clearly we must have the constraints
+    \begin{align*}
+      t_j \ge a_j \\
+      t_j \le b_j
+    \end{align*}
+    for all $j$, such  that $1 \le j \le n$.
+    These constraints force each plane to arrive inside of the allowed interval
+    $\br{a_j, b_j}$.
+    Also if the order that the planes arrive is to be enforced, the constraints
+    \[
+      t_{j+1} - t_{j} \ge 0
+    \]
+    are required for $1 \le j \le n-1$.
+    Lastly we need to set the objective function for this linear program.
+    Our objective function needs to maximize the smallest time gap
+    $t_{j+1} - t_j$ or in other words
+    $\max* \min*_{1 \le j \le n-1}\p{t_{j+1} - t_j}$.
+    I am going to create another variable $m$ to be this minimum value, that is
+    \[
+      m = \min*_{1 \le j \le n-1}\p{t_{j+1} - t_j}
+    \]
+    In this case the objective function just becomes $\max* m$.
+    However we need constraints to insure that $m$ does in fact equal the
+    minimum value.
+    I will use the following constraints
+    \[
+      m \le t_{j+1} - t_j
+    \]
+    for all $j$ such that $1 \le j \le n-1$.
+    These constraints guarantee that
+    \[
+      m \le \min*_{1 \le j \le n-1}\p{t_{j+1} - t_j}.
+    \]
+    With the addition of the objective function maximizing $m$, we will achieve
+    equality.
+    Therefore the entire linear program that solves this problem is
+    \[
+      (P) =
+      \begin{cases}
+        \text{maximiz}    & m \\
+        \text{subject to} & t_j \ge a_j         \quad 1 \le j \le n \\
+                          & t_j \le b_j         \quad 1 \le j \le n \\
+                          & t_{j+1} - t_j \ge 0 \quad 1 \le j \le n-1 \\
+                          & m \le t_{j+1} - t_j \quad 1 \le j \le n-1 \\
+      \end{cases}
+    \]
+    Note that there is no minimum value of $m$ and we aren't enforcing
+    nonnegativity to the variables $t_j$ as the intervals $\br{a_j, b_j}$
+    supersede these conditions.
 
   \item % #2
     Solve the following linear program $(P)$ using simplex method.
