@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[     46626,        914]
-NotebookOptionsPosition[     45714,        880]
-NotebookOutlinePosition[     46308,        903]
-CellTagsIndexPosition[     46204,        898]
+NotebookDataLength[     46835,        917]
+NotebookOptionsPosition[     45923,        883]
+NotebookOutlinePosition[     46517,        906]
+CellTagsIndexPosition[     46413,        901]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -314,7 +314,8 @@ Cell[BoxData[
       RowBox[{"y", ",", 
        RowBox[{"-", ".5"}], ",", "1.5"}], "}"}], ",", 
      RowBox[{"Frame", "\[Rule]", "False"}], ",", 
-     RowBox[{"Axes", "\[Rule]", "True"}]}], "]"}], ",", 
+     RowBox[{"Axes", "\[Rule]", "True"}], ",", 
+     RowBox[{"BoundaryStyle", "\[Rule]", "Dashed"}]}], "]"}], ",", 
    RowBox[{"Graphics", "[", 
     RowBox[{"{", 
      RowBox[{
@@ -346,7 +347,8 @@ Cell[BoxData[
      RowBox[{"\"\<x\>\"", ",", "\"\<y\>\""}], "}"}]}]}], "]"}]], "Input",
  CellChangeTimes->{{3.682810200297422*^9, 3.68281033690923*^9}, {
   3.68281037797252*^9, 3.682810421755537*^9}, {3.682810501563142*^9, 
-  3.682810553761201*^9}, {3.682810596865642*^9, 3.682810642270253*^9}}],
+  3.682810553761201*^9}, {3.682810596865642*^9, 3.682810642270253*^9}, {
+  3.682810835438221*^9, 3.682810875249796*^9}}],
 
 Cell[BoxData[
  GraphicsBox[{GraphicsComplexBox[CompressedData["
@@ -559,7 +561,7 @@ numa5Tdmr+8Ka3les3grlA3P5G3hM1Jno+5tCZ9ZOqu0B52lb0K58Jn6d/gM
           
           "]]}]}, {}, {}, {}, {}, {}}, {
       {RGBColor[0.368417, 0.506779, 0.709798], AbsoluteThickness[1.6], 
-       LineBox[CompressedData["
+       Dashing[{Small, Small}], LineBox[CompressedData["
 1:eJwt0udXDXAcx/F7kUR2omFkJSIke69siawiQqSSyv7XrJSVZGcVLUQpK3u+
 HB68zvvz/T2459xzb1xOUfqhYCAQuEArVZzwcJxXdozGEs0whlLIGMYymnHE
 8/eDJpDIeCYxkSKmMJXJTCOZw8xgJtOZzSyKmcd85rKQBZSwhKUsZjnLKGUl
@@ -571,7 +573,7 @@ qXGn6DntriF04547Sc9qV+1CkLvuBD2jAf0tv7jDKPdpPapv9TafeEOBt3x+
 dP7///8BRgFcug==
         "]]}, 
       {RGBColor[0.880722, 0.611041, 0.142051], AbsoluteThickness[1.6], 
-       LineBox[CompressedData["
+       Dashing[{Small, Small}], LineBox[CompressedData["
 1:eJwl0mdXzwEYx+Ff/6xehvcjFJUtpRAaVkoZ2UV29t4UUfaIrITIylZIQkl2
 Itc5HlznfM732X3O3TshLTo1LAiCCjaGgiCdWyxhDaspog81ZLCN7eygLw/I
 ZDd72Et/HjGdAxykmGieksVhSjnCQF6QTTnHOE4sDczgFKc5wyDekMN5KrjA
@@ -609,7 +611,8 @@ ejJ3KKSLv2xiErdZyh86Q////h8p8Hkh
   Ticks->{Automatic, Automatic}]], "Output",
  CellChangeTimes->{{3.682810262923252*^9, 3.682810338955288*^9}, {
   3.682810404781341*^9, 3.6828104230816393`*^9}, {3.6828105072085342`*^9, 
-  3.682810554303547*^9}, {3.682810610136291*^9, 3.6828106429212313`*^9}}]
+  3.682810554303547*^9}, {3.682810610136291*^9, 3.6828106429212313`*^9}, {
+  3.682810842214397*^9, 3.6828108769443827`*^9}}]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -891,13 +894,13 @@ StyleDefinitions->"Default.nb"
 (*CellTagsOutline
 CellTagsIndex->{
  "Info-3309577c-72f4-41b5-a202-60c4dc9fd3a4"->{
-  Cell[31402, 620, 1482, 25, 112, "Print",
+  Cell[31611, 623, 1482, 25, 112, "Print",
    CellTags->"Info-3309577c-72f4-41b5-a202-60c4dc9fd3a4"]}
  }
 *)
 (*CellTagsIndex
 CellTagsIndex->{
- {"Info-3309577c-72f4-41b5-a202-60c4dc9fd3a4", 46078, 892}
+ {"Info-3309577c-72f4-41b5-a202-60c4dc9fd3a4", 46287, 895}
  }
 *)
 (*NotebookFileOutline
@@ -907,18 +910,17 @@ Cell[580, 22, 1586, 41, 156, "Input"],
 Cell[2169, 65, 12390, 224, 783, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[14596, 294, 1990, 54, 222, "Input"],
-Cell[16589, 350, 14660, 261, 811, "Output"]
+Cell[14596, 294, 2098, 56, 255, "Input"],
+Cell[16697, 352, 14761, 262, 811, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[31286, 616, 113, 2, 56, "Input"],
-Cell[31402, 620, 1482, 25, 112, "Print",
+Cell[31495, 619, 113, 2, 56, "Input"],
+Cell[31611, 623, 1482, 25, 112, "Print",
  CellTags->"Info-3309577c-72f4-41b5-a202-60c4dc9fd3a4"]
 }, Open  ]],
-Cell[32899, 648, 12811, 230, 260, InheritFromParent]
+Cell[33108, 651, 12811, 230, 260, InheritFromParent]
 }
 ]
 *)
 
 (* End of internal cache information *)
-
