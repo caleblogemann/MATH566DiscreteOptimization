@@ -15,7 +15,7 @@ Midterm I
     Suppose you are making a schedule for an airport.
     There are $n$ arriving flights.
     Every airplane $j$ has a possible time arrival  in interval $[a_j,b_j]$
-    (plane can fly faster or slower). 
+    (plane can fly faster or slower).
     Determine the actual arrival schedule for each airplane such that the
     smallest gap between consecutive flights is maximized
     and for all $j$, airplane $j$ arrives before $j+1$.
@@ -82,20 +82,69 @@ Midterm I
     nonnegativity to the variables $t_j$ as the intervals $\br{a_j, b_j}$
     supersede these conditions.
 
-  \item % #2
+  \item % #2 Done
     Solve the following linear program $(P)$ using simplex method.
     \[
-    (P) = 
-    \begin{cases}
-    \text{maximize}  &x_1+x_2 \\
-    \text{subject to}  & x_1 \leq 1 \\
-                              & -x_1 + x_2 \leq 1 \\
-                              & x_1,x_2 \geq 0
-    \end{cases}
+      (P) =
+      \begin{cases}
+        \text{maximize}    &x_1+x_2 \\
+        \text{subject to}  & x_1 \leq 1 \\
+                           & -x_1 + x_2 \leq 1 \\
+                           & x_1,x_2 \geq 0
+      \end{cases}
     \]
     Check your solution using computer program (APMonitor, Sage,\ldots).
     Plot the set of feasible solutions and mark the optimum.
     Solving using simplex method means make the sequence of simplex tables.
+
+    First I will solve this problem using the simplex method.
+    First I will introduce slack variables so that the new linear program is
+    \[
+      (P) =
+      \begin{cases}
+        \text{maximize}    &x_1+x_2 \\
+        \text{subject to}  & x_1 + x_3 \leq 1 \\
+                           & -x_1 + x_2 + x_4 \leq 1 \\
+                           & x_1,x_2,x_3,x_4 \geq 0
+      \end{cases}
+    \]
+    The initial basic feasible solution for this linear program is
+    \begin{align*}
+      x_3 &= 1 - x_1 \\
+      x_4 &= 1 + x_1 - x_2 \\
+      z &= 0 + x_1 + x_2
+    \end{align*}
+    First $x_1$ can be increased by $1$.
+    \begin{align*}
+      x_1 &= 1 - x_3 \\
+      x_4 &= 2 - x_2 - x_3\\
+      z &= 1 + x_2 - x_3
+    \end{align*}
+    Next $x_2$ can be increased by $2$.
+    \begin{align*}
+      x_1 &= 1 - x_3 \\
+      x_2 &= 2 - x_3 - x_4\\
+      z &= 3 - 2x_3 - x_4
+    \end{align*}
+    Now all of the coefficients of the variables in the objective function
+    are negative so this is the optimal solution.
+    The optimal solution is $x_1 = 1$, $x_2 = 2$, and $z = 3$.
+
+    Next I will check this solution using sage.
+    The following script solves this linear program.
+    \lstinputlisting[language=Sage]{midterm_2.sage}
+    The following is the output of this script.
+    \begin{verbatim}
+      Objective Value: 3.0
+      x_1 = 1.0
+      x_2 = 2.0
+    \end{verbatim}
+
+    Lastly I will show a plot of the feasible region, along with the optimal
+    solution and the path that I took in the simplex method to get there.
+    \begin{center}
+      \includegraphics[scale=.5]{Figures/midterm_3.png}
+    \end{center}
 
   \item % #3 Done
     Consider the following algorithm. Input is a connected graph $G=(V,E)$ and
@@ -135,21 +184,103 @@ Midterm I
       \includegraphics[scale=.5]{Figures/midterm_2.png}
     \end{center}
 
-  \item % #4
-    Consider the following problem. 
+  \item % #4 Done
+    Consider the following problem.
     Input is a connected graph $G=(V,E)$ and a cost function $c:E \rightarrow \RR$.
     Let $T$ be a spanning tree of $G$. The cost of $T$ is defined as the largest cost of an edge
-    in $T$: 
+    in $T$:
     \[
       c(T) = \max*\{c(e): e \in E(T)\}.
     \]
     Problem is to find a minimum spanning tree with respect to $c$\\
     Do both a) and b):
     \begin{enumerate}
-      \item[(a)]
+      \item[(a)] % Done
         Formulate the problem using integer programming
-      \item[(b)]
+
+        Let $\set{x_e}$ be a set of binary variables where $x_e$ corresponds to
+        whether $e \in E(T)$, the alternative minimum spanning tree, for every edge,
+        $e \in E$.
+        Let $n = \abs{V}$ and $m = \abs{E}$.
+        First note that the alternative minimum spanning tree must be a spanning
+        tree, so the constraints associated with a spanning tree must also be
+        associated with this alternative spanning tree.
+        Namely this implies that $T$ must have $n - 1$ edges or
+        \[
+          \sum{e \in E}{}{x_e} = n - 1
+        \]
+        Also $T$ must not contain any cycles.
+        This can be expressed with the constraints
+        \[
+          \sum{e \in E(G[X])}{}{x_e} \le \abs{X} - 1 \quad \forall \emptyset \neq X \subset V
+        \]
+
+        Lastly we need to add the objective function.
+        The objective function is trying to minimize the maximum cost edge in
+        $T$ or
+        \[
+          \min* \max*_{e \in E}{x_e c(e)}
+        \]
+        I will create a new variable $m$ to represent the maximum cost of an
+        edge in $E(T)$, that is
+        \[
+          m = \max*_{e \in E}{x_e c(e)}
+        \]
+        Now in order to enforce this equality certain constraints are needed.
+        First $m$ must be larger than any single cost of an edge in $E(T)$.
+        This requires the constraints
+        \[
+          m \ge x_e c(e)
+        \]
+        for all $e \in E$.
+        This makes $m$ larger than $c(e)$ only if $e \in E(T)$.
+        Lastly if we add the objective function $\min* m$, this will force
+        equality.
+        These are all the constraints that are required, so the full integer
+        linear program is
+        \[
+          (P) =
+          \begin{cases}
+            \text{minimize}   & m \\
+            \text{subject to} & \sum{e \in E}{}{x_e} = n - 1 \\
+                              & \sum{e \in E(G[X])}{}{x_e} \le \abs{X} - 1 \quad \forall X \subset V, X \neq \emptyset\\
+                              & m \ge x_e c(e) \quad \forall e \in E \\
+                              & x_e \ge 0 \quad \forall e \in E \\
+                              & x_1 \le 1 \quad \forall e \in E \\
+                              & x_e \in \ZZ \quad \forall e \in E 
+          \end{cases}
+        \]
+
+      \item[(b)] % Done
         Find an algorithm for solving this problem in polynomial time and prove its correctness.
+
+        \begin{proof}
+          First I will show that any minimum spanning tree is also an
+          alternative minimum spanning tree.
+          Let $G = (V, E)$ be a graph with a minimum spanning tree $T$.
+          It has been shown previously that if $T$ is a minimum spanning tree,
+          then for every $e \in E(T)$, $e$ is a minimum cost edge of the cut between
+          the connected components in $T - e$.
+          Consider the edge $e_{max} \in E(T)$ such that $c(e_{max}) \ge c(e)$
+          for all $e \in E(T)$.
+          Therefore $e_{max}$ is the minimum cost edge of the cut between the
+          connected components of $T - e_{max}$.
+          If $T$ was not a alternative minimum tree, then there would be a
+          lower cost edge in the cut between connected components of
+          $T - e_{max}$.
+          Since $e_{max}$ is the minimum cost edge, this implies that $T$ is
+          also a alternative minimum spanning tree.
+          Therefore any minimum spanning tree is also an alternative minimum
+          spanning tree.
+          Clearly not all alternative MSTs are MSTs, but all MSTs are alternative
+          MSTs.
+          This implies that any algorithm that finds a minimum spanning tree
+          also finds an alternative minimum spanning tree.
+          Therefore I can pick any algorithm that finds a minimum spanning
+          tree in polynomial time as my algorithm.
+          Kruskal's algorithm can be implemented in $O(m \log{n})$.
+          This is better than $m^2$ so it is certainly polynomial.
+        \end{proof}
     \end{enumerate}
 \end{enumerate}
 \end{document}
