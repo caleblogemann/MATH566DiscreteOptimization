@@ -1,0 +1,124 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{fullpage}
+\usepackage{tikz}
+\usetikzlibrary{shadings}
+\usepackage{amsmath}
+\usepackage{hyperref}
+
+\newcounter{excounter}
+\setcounter{excounter}{1}
+\newcommand\question[2]{\vskip 1em  \noindent\textbf{\arabic{excounter}\addtocounter{excounter}{1}:} (\emph{#1}) \newline \noindent#2}
+\newcommand\hint[1]{ \newline \noindent\textit{Hint: #1}}
+\newcommand\solution[1]{\vskip 0.5em \noindent\textbf{Solution:}\par\noindent#1}
+\renewcommand\solution[1]{ }
+
+
+
+\begin{document}
+%\pagestyle{empty}
+\large
+
+{\bf MATH-566 \hspace{1cm} HW 3}
+\vskip 1em
+Due \textbf{Sep 21} before class. Just bring it before the class and it will be collected there.
+%The solution has to be typed (using \LaTeX or print of the sage program).
+
+
+\question{Farkas Lemma}{
+Show that 
+\begin{center}
+ $A\mathbf{x} = \mathbf{b}$ has a non-negative solution iff $\forall \mathbf{y} \in \mathbb{R}^m$ with $\mathbf{y}^TA \geq \mathbf{0}^T$
+implies $\mathbf{y}^T\mathbf{b} \geq 0$
+\end{center}
+implies
+\begin{center}
+$A\mathbf{x} \leq \mathbf{b}$ has a non-negative solution iff $\forall \mathbf{y} \in \mathbb{R}^m$, $\mathbf{y} \geq \mathbf{0}$ 
+with $\mathbf{y}^TA \geq \mathbf{0}^T$  implies $\mathbf{y}^T\mathbf{b} \geq \mathbf{0}$.
+\end{center}
+}
+
+
+
+\question{Fitting line as linear program}{
+Some university in Iowa  was measuring the loudness of the fan's screaming during
+the first touchdown of the local team. The measurements contain loudness in dB and the number
+of people at the stadium in thousands. 
+\begin{center}
+\begin{tabular}{|r|c|c|c|c|c|c|}
+\hline
+\# fans &    53  &   55   &  59    &   61.5  & 61.5  \\  
+\hline
+dB       &   90   &   94   &  95    &  100  & 105  \\
+\hline
+\end{tabular}
+\end{center}
+Find a line $y = ax+b$ \emph{best} fitting the data. There are several different
+notions of best fitting. Commonly used is least squares that is minimizing 
+$\sum_{i}(ax_i+b - y_i)^2$. But big outliers move the result a lot (and it is troublesome
+to do it using linear programming).
+Use the one that minimizes the sum of differences. That is
+\[
+\sum_{i}|ax_i+b - y_i|.
+\]
+Write a linear program that solves the problem and solve it for the ``measured'' data.
+
+\emph{(Fun facts: 
+The Seattle Seahawks, who boast that their fans caused a small earthquake after a 2011 touchdown, acclaimed their crowd’s record 136.6-decibel noise level this September after an effort orchestrated by the fan group Volume 12.
+The loudest crowd roar at a sports stadium is 142.2 db and was achieved by fans of the Kansas City Chiefs, at Arrowhead Stadium in Kansas City, Missouri, on 29 September 2014.)}
+}
+
+
+
+\question{Scheduling participants}{
+Suppose you are preparing a schedule for classes.
+You have fixed number of classes and students.
+Every student told you which classes (s)he wants to attend.
+However, you do not have enough time slots to run all classes sequentially so you need to
+make some classes run in parallel.
+Create a schedule and argue why it is the best schedule in the sense that
+people \emph{as few conflicts as possible}.
+You should be able  to justify the optimality of the schedule in some sense.
+
+Make schedule with 3 and with 4 timeslots. Assume that there is no limit on
+how many classes can run in one timeslot.
+
+Row corresponds to one class, columns corresponds to one students. 1 means
+the student wants to attend the class.
+}
+
+{
+\tiny
+\begin{verbatim}
+[[0,0,0,1,0,1,0,1,0,0,1,0,1,0,0,1,1,1,1,1,1,1,1,0,1,1,1,1,0,0,1,0,0,0,1,1,1,1,1,1,0,1,1,1,1,1,1,0,0,1,0,1,0,0],
+[1,1,1,1,0,1,0,1,0,0,0,1,1,1,0,0,0,0,0,0,1,0,1,0,0,0,0,0,1,1,0,1,0,0,1,0,0,0,1,0,1,0,1,0,0,0,0,1,0,0,1,1,1,0],
+[1,0,1,0,1,0,1,0,1,1,1,1,0,0,1,1,1,1,1,1,0,0,0,1,1,1,0,1,0,0,0,1,0,0,1,1,0,1,1,1,0,1,1,1,1,1,0,0,0,1,1,0,0,0],
+[0,0,1,0,0,0,1,0,0,1,1,0,0,0,0,1,0,0,0,0,0,0,0,0,1,1,0,0,0,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,1,1,1,0,1,1,0,0,0,0],
+[1,0,0,1,0,1,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,1,0,1,0,0,1,0,1,0,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0],
+[0,1,1,1,1,0,0,0,1,1,1,1,1,0,1,0,1,1,0,1,0,0,0,0,0,1,0,0,0,1,1,0,0,1,1,0,1,1,1,1,0,0,0,1,1,1,1,0,0,1,0,1,0,1],
+[0,0,1,1,0,1,1,0,0,1,1,1,0,1,1,0,1,1,0,1,0,1,1,0,0,1,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,1,1,0,1,1,0,0,1,0,1,1,0],
+[1,0,0,0,0,1,1,0,1,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,1,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,1,0,1,0,1,0,0,0,0,0],
+[0,1,0,0,0,1,1,0,1,0,1,0,0,0,0,1,1,1,0,1,0,1,1,1,1,1,0,0,0,0,1,0,1,0,0,0,1,0,1,1,0,0,1,1,1,0,1,0,0,0,0,1,0,1],
+[1,1,1,1,0,1,0,1,0,0,0,1,1,1,0,0,0,0,0,0,1,0,1,0,0,0,0,0,1,1,0,1,0,0,1,0,0,0,1,0,1,0,1,0,0,0,0,1,0,0,1,1,1,0],
+[1,0,1,0,1,0,1,0,1,1,1,1,0,0,1,1,1,1,1,1,0,0,0,0,1,1,0,1,0,0,0,1,0,0,1,1,0,1,1,1,0,1,1,1,1,1,0,0,0,1,1,0,0,0],
+[0,0,1,0,0,0,1,0,0,1,1,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,1,1,0,1,1,0,0,0,0],
+[1,0,0,1,0,1,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,1,0,1,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0]]
+\end{verbatim}
+}
+See the latex source on black board to copy the matrix easily.
+I suggest to use Sage (or Matlab) to deal with the data.
+
+PS: These data are real - they are not made up.
+
+
+\end{document}
+
+
+
+
+
+
+
+
+
+

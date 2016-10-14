@@ -1,0 +1,107 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{fullpage}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric}
+\usetikzlibrary{arrows}
+\usepackage{amsmath}
+\usepackage{hyperref}
+
+\newcounter{excounter}
+\setcounter{excounter}{1}
+\newcommand\question[2]{\vskip 1em  \noindent\textbf{\arabic{excounter}\addtocounter{excounter}{1}:} (\emph{#1}) \newline \noindent#2}
+\newcommand\hint[1]{ \newline \noindent\textit{Hint: #1}}
+\newcommand\solution[1]{\vskip 0.5em \noindent\textbf{Solution:}\par\noindent#1}
+
+\renewcommand\solution[1]{ }
+
+
+
+\begin{document}
+\pagestyle{empty}
+\large
+
+{\bf MATH-566 \hspace{1cm} Midterm 1}
+\vskip 1em
+Due \textbf{Oct 7} before class. Just bring it before the class and it will be collected there.
+If you need more time (some unexpected even may happen), let me know BEFORE the deadline.
+
+\question{LP application}{
+Suppose you are making a schedule for an airport.
+There are $n$ arriving flights. Every airplane $j$ has a possible time arrival  in interval $[a_j,b_j]$
+(plane can fly faster or slower). 
+Determine the actual arrival schedule for each airplane such that the smallest gap between consecutive flights is maximized
+and for all  $j$, airplane $j$ arrives before $j+1$.
+Formulate a linear program that solves the problem.
+
+\emph{
+(Example: Suppose there are three airplanes. They have arrival intervals $[1,5],[2,7],[6,7]$.
+Then we can assign arrival times to the airplanes, for example $2,4.5,6.2$. The smallest
+gap in this schedule is $1.7$ between the second and third airplane. The number $1.7$
+is the number we want to maximize. Notice that we do not allow schedule $4,2,7$, where the first
+airplane arrives AFTER the second one although the it would be feasible with respect to $[a_i,b_i]$s
+(it is easier to solve if the order is fixed).)
+}
+}
+
+
+
+
+
+
+\question{Simplex Method}{
+Solve the following linear program $(P)$ using simplex method.
+\[
+(P) = 
+\begin{cases}
+\text{maximize}  &x_1+x_2 \\
+\text{subject to}  & x_1 \leq 1 \\
+                          & -x_1 + x_2 \leq 1 \\
+                          & x_1,x_2 \geq 0
+\end{cases}
+\]
+Check your solution using computer program (APMonitor, Sage,\ldots).
+Plot the set of feasible solutions and mark the optimum.
+Solving using simplex method means make the sequence of simplex tables.
+}
+
+
+
+\question{Special Minimum Spanning Tree Algorithm}{
+Consider the following algorithm. Input is a connected graph $G=(V,E)$ and a cost function $c:E \rightarrow \mathbb{R}$.
+Start with $H$ being a copy of $G$.
+First, the edges $E$ are ordered such that $c(e_1) \geq c(e_2) \geq \ldots \geq c(e_m)$.
+Then process edges one by one according to the ordering.
+Processing edge $e_i$ means looking if $H-e_i$ connected. If $H-e_i$ is connected, then $e_i$ is
+removed from $H$. Otherwise $e_i$ is kept in $H$. After all edges are processed, the resulting $H$ is the output.
+Now you can pick what to do. Either a) or b):\\
+a) implement the algorithm and use as inputs the same graph we used for the minimum spanning tree\\
+b) prove that the algorithm produces minimum spanning tree.
+}
+
+\question{Alternative MST problem}{
+Consider the following problem. 
+Input is a connected graph $G=(V,E)$ and a cost function $c:E \rightarrow \mathbb{R}$.
+Let $T$ be a spanning tree of $G$. The cost of $T$ is defined as the largest cost of an edge
+in $T$: 
+\[
+c(T) = \max\{c(e): e \in E(T)   \}.
+\]
+Problem is to find a minimum spanning tree with respect to $c$\\
+Do both a) and b):\\
+a) formulate the problem using integer programming\\
+b) Find an algorithm for solving this problem in polynomial time and prove its correctness. 
+}
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+

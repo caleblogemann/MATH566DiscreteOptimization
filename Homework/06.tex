@@ -1,0 +1,170 @@
+\documentclass[11pt, oneside]{article}
+\usepackage[letterpaper, margin=2cm]{geometry}
+\usepackage{MATH566}
+%\usepackage{sagetex}
+
+\begin{document}
+\noindent \textbf{\Large{Caleb Logemann \\
+MATH 566 Discrete Optimization\\
+Homework 6
+}}
+
+%\lstinputlisting[language=Sage]{03_2.sage}
+\begin{enumerate}
+  \item % #1
+    Consider the graph below
+    \begin{center}
+      \tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
+      \begin{tikzpicture}[scale=2]
+        \draw
+        (0,0) node[insep,label=left:$s$](s){}
+        (1,1) node[insep,label=left:$ $](a){}
+        (1,0) node[insep,label=left:$ $](b){}
+        (1,-1) node[insep,label=left:$ $](c){}
+        (2,1) node[insep,label=left:$ $](d){}
+        (2,0) node[insep,label=left:$ $](e){}
+        (2,-1) node[insep,label=left:$ $](f){}
+        (3,0) node[insep,label=right:$t$](t){}
+        ;
+
+        \foreach \x/\y/\n in {s/a/3, a/d/7, d/t/2, s/b/4, b/e/2, e/t/5, b/f/1}{
+          \draw[-triangle 45](\x) -- node[above]{\n} (\y);
+        }
+        \foreach \x/\y/\n in {s/c/8, c/f/2, f/t/10}{
+          \draw[-triangle 45](\x) -- node[below]{\n} (\y);
+        }
+        \foreach \x/\y/\n in {c/b/2, b/a/3, d/e/5, e/f/1}{
+          \draw[-triangle 45](\x) -- node[right]{\n} (\y);
+        }
+      \end{tikzpicture}
+    \end{center}
+    Find a shortest path and prove optimality using duality (find dual LP and
+    its optimal solution)
+
+  \item % #2
+    Consider the network below with given edge values, forming an integer feasible flow.
+    Find a list of path and cycle flows whose sum is this flow.
+    \begin{center}
+      \tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
+      \begin{tikzpicture}[scale=2]
+        \draw
+        (0,0) node[circle,draw,label=left:$ $](s){s}
+        (0,1) node[insep,label=left:$ $](a){}
+        (-1,0) node[insep,label=left:$ $](b){}
+        (0,-1) node[insep,label=left:$ $](c){}
+        (1,0) node[insep,label=left:$ $](d){}
+        (3,0) node[draw,circle,label=right:$ $](t){t}
+        (3,1) node[insep,label=left:$ $](e){}
+        (2,0) node[insep,label=left:$ $](f){}
+        (3,-1) node[insep,label=left:$ $](g){}
+        (4,0) node[insep,label=left:$ $](h){}
+        ;
+        \foreach \x/\y/\n in {b/a/2, s/b/0, a/d/2, s/d/3, e/a/1, d/f/2, c/g/1, e/f/0, t/f/1, h/t/1, h/e/1}{
+          \draw[-triangle 45](\x) -- node[above]{\n} (\y);
+        }
+        \foreach \x/\y/\n in {c/b/2, f/g/3, g/h/2}{
+          \draw[-triangle 45](\x) -- node[below]{\n} (\y);
+        }
+        \foreach \x/\y/\n in {a/s/1, s/c/0, e/t/0, g/t/2, d/c/3}{
+          \draw[-triangle 45](\x) -- node[right]{\n} (\y);
+        }
+      \end{tikzpicture}
+    \end{center}
+
+  \item % #3
+    Consider the network below with given capacity and flow values. (The  edge label $f,u$ means flow-value $f$ and capacity $u$.) 
+    Find augmenting paths and augment the flow to a maximum flow.
+    Provide the list of residual graphs AND augmenting paths. It other words, run Ford-Fulkerson algorithm. 
+    \begin{center}
+      \tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
+      \begin{tikzpicture}[scale=2]
+        \draw
+        (0,0) node[insep,label=left:$s$](s){}
+        (1,1) node[insep,label=left:$ $](a){}
+        (1,0) node[insep,label=left:$ $](b){}
+        (1,-1) node[insep,label=left:$ $](c){}
+        (2,1) node[insep,label=left:$ $](d){}
+        (2,0) node[insep,label=left:$ $](e){}
+        (2,-1) node[insep,label=left:$ $](f){}
+        (3,0) node[insep,label=right:$t$](t){}
+        ;
+        \foreach \x/\y/\n in {s/a/{3,3}, a/d/{3,7}, d/t/{2,2}, s/b/{1,4}, b/e/{1,1}, e/t/{1,8}, b/f/{0,2}}{
+          \draw[-triangle 45](\x) -- node[above]{\n} (\y);
+        }
+        \foreach \x/\y/\n in {s/c/{2,8}, c/f/{2,4}, f/t/{3,6}}{
+          \draw[-triangle 45](\x) -- node[below]{\n} (\y);
+        }
+        \foreach \x/\y/\n in {c/b/{0,2}, b/a/{0,3}, d/e/{1,5}, e/f/{1,1}}{
+          \draw[-triangle 45](\x) -- node[right]{\n} (\y);
+        }
+      \end{tikzpicture}
+    \end{center}
+
+  \item % #4
+    Let $(G,u, s, t)$ be a network, and let $\delta^+(X)$ and $\delta^+(Y)$ be
+    minimum $s$-$t$-cuts in $(G,u)$.
+    Show that $\delta^+(X\cap Y)$ and $\delta^+(X \cup Y)$ are also minimum
+    $s$-$t$-cuts in $(G,u)$.
+
+  \item % #5
+    Show that in case of irrational capacities, the Ford-Fulkerson algorithm may
+    not terminate at all.
+    Hint: See the Korte book (in particular exercises on page 199.).
+    It contains the following network:
+    \begin{center}
+      \tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
+      \begin{tikzpicture}[scale=2]
+        \draw
+        (0,-0.5) node[insep,label=left:$s$](s){}
+        (1,1) node[insep,label=left:$ $](a1){}
+        (1,0) node[insep,label=left:$ $](a2){}
+        (1,-1) node[insep,label=left:$ $](a3){}
+        (1,-2) node[insep,label=left:$ $](a4){}
+        (2,1) node[insep,label=left:$ $](b1){}
+        (2,0) node[insep,label=left:$ $](b2){}
+        (2,-1) node[insep,label=left:$ $](b3){}
+        (2,-2) node[insep,label=left:$ $](b4){}
+        (3,-0.5) node[insep,label=right:$t$](t){}
+        ;
+        \foreach \x\n in {1,2,3,4}{
+          \foreach \y\n in {1,2,3,4}{
+            \draw (a\x) -- (b\y);
+          }
+        }
+        \foreach \x\n in {1,2,3,4}{
+          \draw (s) -- (a\x);
+          \draw (b\x) -- (t);
+        }
+        \draw[-triangle 45, line width=1pt](a1) --node[above]{1} (b1);
+        \draw[-triangle 45, line width=1pt](a2) --node[above]{$\sigma$} (b2);
+        \draw[-triangle 45, line width=1pt](a3) --node[above]{$\sigma^2$} (b3);
+      \end{tikzpicture}
+    \end{center}
+    Where $\sigma = \frac{\sqrt{5}-1}{2}$. Note that $\sigma$ satisfies
+    $\sigma^n = \sigma^{n+1} + \sigma^{n+2}$. All other capacities are 1.
+
+  \item % #6
+    Red-Blue meta algorithm for MST.
+    Let $G$ be a graph and $w$ be a weight assignment to $E(G)$.
+    Assume that all weights are distinct.
+    Start with all edges being uncolored.
+    Apply the following rules as long as possible.
+    \begin{itemize}
+      \item if $e \in E$ is in a cycle $C$ where $e$ is the heaviest edge, color $e$ red
+      \item if there is a cut where $e\in E$ is the lightest edge, color $e$ blue.
+    \end{itemize}
+    Claim is that blue edges form a minimum spanning tree.
+    \begin{itemize}
+      \item Show that red edge cannot be in MST.
+      \item Show that blue edge must be in MST.
+      \item Show that blue edges form a tree
+      \item Show that every edge gets colored.
+      \item Show that no edge satisfies both red and blue criteria. (i.e. every edge has one color).
+    \end{itemize}
+
+  \item % #7
+    Implement Edmons-Karp algorithm and run it on the network from question three.
+    Print the sequence of augmenting paths used by your implementation.
+    Print the flow and its value.
+\end{enumerate}
+\end{document}
