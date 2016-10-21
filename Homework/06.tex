@@ -72,9 +72,11 @@ Homework 6
     \end{center}
 
   \item % #3
-    Consider the network below with given capacity and flow values. (The  edge label $f,u$ means flow-value $f$ and capacity $u$.) 
+    Consider the network below with given capacity and flow values.
+    (The  edge label $f,u$ means flow-value $f$ and capacity $u$.) 
     Find augmenting paths and augment the flow to a maximum flow.
-    Provide the list of residual graphs AND augmenting paths. It other words, run Ford-Fulkerson algorithm. 
+    Provide the list of residual graphs AND augmenting paths.
+    It other words, run Ford-Fulkerson algorithm. 
     \begin{center}
       \tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
       \begin{tikzpicture}[scale=2]
@@ -99,6 +101,8 @@ Homework 6
         }
       \end{tikzpicture}
     \end{center}
+
+
 
   \item % #4
     Let $(G,u, s, t)$ be a network, and let $\delta^+(X)$ and $\delta^+(Y)$ be
@@ -163,8 +167,96 @@ Homework 6
     \end{itemize}
 
   \item % #7
-    Implement Edmons-Karp algorithm and run it on the network from question three.
+    Implement Edmonds-Karp algorithm and run it on the network from question three.
     Print the sequence of augmenting paths used by your implementation.
     Print the flow and its value.
+
+    I implemented the Edmonds-Karp algorithm in the following function.
+    \lstinputlisting[language=Sage]{edmondsKarp.sage}
+
+    This algorithm using a breadth first search which is implemented in the
+    following function.
+    \lstinputlisting[language=Sage]{breadthFirstSearch.sage}
+
+    In order to run this algorithm on the graph from problem 3, I first
+    relabeled the vertices in this graph.
+    The graph was relabeled as shown below.
+    \begin{center}
+      \tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
+      \begin{tikzpicture}[scale=2]
+        \draw
+        (0,0) node[insep,label=left:$s$](s){}
+        (1,1) node[insep,label=120:$a$](a){}
+        (1,0) node[insep,label=45:$b$](b){}
+        (1,-1) node[insep,label=210:$c$](c){}
+        (2,1) node[insep,label=45:$d$](d){}
+        (2,0) node[insep,label=45:$e$](e){}
+        (2,-1) node[insep,label=-45:$f$](f){}
+        (3,0) node[insep,label=right:$t$](t){}
+        ;
+        \foreach \x/\y in {s/a, a/d, d/t, s/b, b/e, e/t, b/f, s/c, c/f, f/t, c/b, b/a, d/e, e/f}{
+          \draw[-triangle 45](\x) -- (\y);
+        }
+      \end{tikzpicture}
+    \end{center}
+    \lstinputlisting[language=Sage]{06_7.sage}
+    This is the output of this script.
+    Each list is the augmenting path.
+    Each tuple is an edge in the augmenting path, with first entry the starting
+    vertex, the second entry the ending vertex, and the third entry the
+    available flow.
+    The dictionary shows the flow on each edge in the form edge:flow.
+    \begin{verbatim}
+[('s', 'a', 3), ('a', 'd', 7), ('d', 't', 2)]
+[('s', 'b', 4), ('b', 'e', 1), ('e', 't', 8)]
+[('s', 'b', 3), ('b', 'f', 2), ('f', 't', 6)]
+[('s', 'c', 8), ('c', 'f', 4), ('f', 't', 4)]
+[('s', 'a', 1), ('a', 'd', 5), ('d', 'e', 5), ('e', 't', 7)]
+[('s', 'b', 1), ('b', 'a', 3), ('a', 'd', 4), ('d', 'e', 4), ('e', 't', 6)]
+[('s', 'c', 4), ('c', 'b', 2), ('b', 'a', 2), ('a', 'd', 3),
+  ('d', 'e', 3), ('e', 't', 5)]
+{
+  ('b', 'f', 2): 2,
+  ('c', 'b', 2): 2,
+  ('b', 'a', 3): 3,
+  ('f', 't', 6): 6,
+  ('s', 'b', 4): 4,
+  ('e', 'f', 1): 0,
+  ('a', 'd', 7): 6,
+  ('s', 'c', 8): 6,
+  ('d', 'e', 5): 4,
+  ('s', 'a', 3): 3,
+  ('b', 'e', 1): 1,
+  ('c', 'f', 4): 4,
+  ('d', 't', 2): 2,
+  ('e', 't', 8): 5
+  }
+}
+    \end{verbatim}
+    This flow can also be shown on the graph as follows.
+    \begin{center}
+      \tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
+      \begin{tikzpicture}[scale=2]
+        \draw
+        (0,0) node[insep,label=left:$s$](s){}
+        (1,1) node[insep,label=120:$a$](a){}
+        (1,0) node[insep,label=45:$b$](b){}
+        (1,-1) node[insep,label=210:$c$](c){}
+        (2,1) node[insep,label=45:$d$](d){}
+        (2,0) node[insep,label=45:$e$](e){}
+        (2,-1) node[insep,label=-45:$f$](f){}
+        (3,0) node[insep,label=right:$t$](t){}
+        ;
+        \foreach \x/\y/\n in {s/a/{3,3}, a/d/{6,7}, d/t/{2,2}, s/b/{4,4}, b/e/{1,1}, e/t/{5,8}, b/f/{2,2}}{
+          \draw[-triangle 45](\x) -- node[above]{\n} (\y);
+        }
+        \foreach \x/\y/\n in {s/c/{6,8}, c/f/{4,4}, f/t/{6,6}}{
+          \draw[-triangle 45](\x) -- node[below]{\n} (\y);
+        }
+        \foreach \x/\y/\n in {c/b/{2,2}, b/a/{3,3}, d/e/{4,5}, e/f/{0,1}}{
+          \draw[-triangle 45](\x) -- node[right]{\n} (\y);
+        }
+      \end{tikzpicture}
+    \end{center}
 \end{enumerate}
 \end{document}
