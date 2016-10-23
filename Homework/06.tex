@@ -41,6 +41,68 @@ Homework 6
     Find a shortest path and prove optimality using duality (find dual LP and
     its optimal solution)
 
+    First let me redraw the graph with all of the vertices labeled.
+    \begin{center}
+      \tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
+      \begin{tikzpicture}[scale=2]
+        \draw
+        (0,0) node[insep,label=left:$s$](s){}
+        (1,1) node[insep,label=120:$a$](a){}
+        (1,0) node[insep,label=45:$b$](b){}
+        (1,-1) node[insep,label=210:$c$](c){}
+        (2,1) node[insep,label=45:$d$](d){}
+        (2,0) node[insep,label=45:$e$](e){}
+        (2,-1) node[insep,label=-45:$f$](f){}
+        (3,0) node[insep,label=right:$t$](t){}
+        ;
+
+        \foreach \x/\y/\n in {s/a/3, a/d/7, d/t/2, s/b/4, b/e/2, e/t/5, b/f/1}{
+          \draw[-triangle 45](\x) -- node[above]{\n} (\y);
+        }
+        \foreach \x/\y/\n in {s/c/8, c/f/2, f/t/10}{
+          \draw[-triangle 45](\x) -- node[below]{\n} (\y);
+        }
+        \foreach \x/\y/\n in {c/b/2, b/a/3, d/e/5, e/f/1}{
+          \draw[-triangle 45](\x) -- node[right]{\n} (\y);
+        }
+      \end{tikzpicture}
+    \end{center}
+
+    From observation it is possible to see that the shortest path is
+    $s \to b \to e \to t$ and it has weight 11.
+
+    In order to verify this, the dual of the shortest path linear program can
+    be solved.
+    The dual of the shortest path linear program is shown below
+    \[
+      \begin{array}{ll@{}ll}
+        \max* & y_t - y_s \\
+        \text{s.t.} & y_v - y_u \le c(uv) \quad \forall (u, v) \in E \\
+                    & y_s = 0
+      \end{array}
+    \]
+
+    This linear program can be solved using the following sage script.
+    \lstinputlisting[language=Sage]{06_1.sage}
+    The output of this script is as follows
+    \begin{verbatim}
+      Objective Value: 11.0
+      y[a] = 2.0
+      y[b] = 4.0
+      y[c] = 2.0
+      y[d] = 9.0
+      y[e] = 6.0
+      y[f] = 1.0
+      y[s] = 0.0
+      y[t] = 11.0
+    \end{verbatim}
+    This shows that the linear program found a path of length 11 and the results
+    show that $s \to b \to e \to t$ is adding up the weights on their
+    respective edges.
+    In other words $y[b] = 4$ and the weight from $s \to b$ is 4.
+    The weight from $b \to e$ is 2, so $y[e] = 4 + 2 = 6$, and the
+    weight from $e \to t$ is 5, so $y[t] = 6 + 5 = 11$.
+
   \item % #2
     Consider the network below with given edge values, forming an integer feasible flow.
     Find a list of path and cycle flows whose sum is this flow.
@@ -102,7 +164,31 @@ Homework 6
       \end{tikzpicture}
     \end{center}
 
-
+    First it is necessary to create the initial residual graph.
+    \begin{center}
+      \tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
+      \begin{tikzpicture}[scale=2]
+        \draw
+        (0,0) node[insep,label=left:$s$](s){}
+        (1,1) node[insep,label=left:$ $](a){}
+        (1,0) node[insep,label=left:$ $](b){}
+        (1,-1) node[insep,label=left:$ $](c){}
+        (2,1) node[insep,label=left:$ $](d){}
+        (2,0) node[insep,label=left:$ $](e){}
+        (2,-1) node[insep,label=left:$ $](f){}
+        (3,0) node[insep,label=right:$t$](t){}
+        ;
+        \foreach \x/\y/\n in {s/a/{3,3}, a/d/{3,7}, d/t/{2,2}, s/b/{1,4}, b/e/{1,1}, e/t/{1,8}, b/f/{0,2}}{
+          \draw[-triangle 45](\x) -- node[above]{\n} (\y);
+        }
+        \foreach \x/\y/\n in {s/c/{2,8}, c/f/{2,4}, f/t/{3,6}}{
+          \draw[-triangle 45](\x) -- node[below]{\n} (\y);
+        }
+        \foreach \x/\y/\n in {c/b/{0,2}, b/a/{0,3}, d/e/{1,5}, e/f/{1,1}}{
+          \draw[-triangle 45](\x) -- node[right]{\n} (\y);
+        }
+      \end{tikzpicture}
+    \end{center}
 
   \item % #4
     Let $(G,u, s, t)$ be a network, and let $\delta^+(X)$ and $\delta^+(Y)$ be
