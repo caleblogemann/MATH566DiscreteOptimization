@@ -138,7 +138,7 @@ Homework 6
     (The  edge label $f,u$ means flow-value $f$ and capacity $u$.) 
     Find augmenting paths and augment the flow to a maximum flow.
     Provide the list of residual graphs AND augmenting paths.
-    It other words, run Ford-Fulkerson algorithm. 
+    In other words, run Ford-Fulkerson algorithm. 
     \begin{center}
       \tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
       \begin{tikzpicture}[scale=2]
@@ -164,18 +164,20 @@ Homework 6
       \end{tikzpicture}
     \end{center}
 
-    First it is necessary to create the initial residual graph.
+    I will show the augmenting paths and the flow on the original graph
+    however I have attached the residual graphs on a separate sheet of paper.
+    First let me relabel the vertices.
     \begin{center}
       \tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
       \begin{tikzpicture}[scale=2]
         \draw
         (0,0) node[insep,label=left:$s$](s){}
-        (1,1) node[insep,label=left:$ $](a){}
-        (1,0) node[insep,label=left:$ $](b){}
-        (1,-1) node[insep,label=left:$ $](c){}
-        (2,1) node[insep,label=left:$ $](d){}
-        (2,0) node[insep,label=left:$ $](e){}
-        (2,-1) node[insep,label=left:$ $](f){}
+        (1,1) node[insep,label=120:$a$](a){}
+        (1,0) node[insep,label=45:$b$](b){}
+        (1,-1) node[insep,label=210:$c$](c){}
+        (2,1) node[insep,label=45:$d$](d){}
+        (2,0) node[insep,label=45:$e$](e){}
+        (2,-1) node[insep,label=-45:$f$](f){}
         (3,0) node[insep,label=right:$t$](t){}
         ;
         \foreach \x/\y/\n in {s/a/{3,3}, a/d/{3,7}, d/t/{2,2}, s/b/{1,4}, b/e/{1,1}, e/t/{1,8}, b/f/{0,2}}{
@@ -189,6 +191,118 @@ Homework 6
         }
       \end{tikzpicture}
     \end{center}
+    The initial augmenting path will be $P = s \to b \to a \to d \to e \to t$.
+    The minimum capacity over this path is 3.
+    Augmenting on this path gives the following flow.
+    \begin{center}
+      \tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
+      \begin{tikzpicture}[scale=2]
+        \draw
+        (0,0) node[insep,label=left:$s$](s){}
+        (1,1) node[insep,label=120:$a$](a){}
+        (1,0) node[insep,label=45:$b$](b){}
+        (1,-1) node[insep,label=210:$c$](c){}
+        (2,1) node[insep,label=45:$d$](d){}
+        (2,0) node[insep,label=45:$e$](e){}
+        (2,-1) node[insep,label=-45:$f$](f){}
+        (3,0) node[insep,label=right:$t$](t){}
+        ;
+        \foreach \x/\y/\n in {s/a/{3,3}, a/d/{6,7}, d/t/{2,2}, s/b/{4,4}, b/e/{1,1}, e/t/{4,8}, b/f/{0,2}}{
+          \draw[-triangle 45](\x) -- node[above]{\n} (\y);
+        }
+        \foreach \x/\y/\n in {s/c/{2,8}, c/f/{2,4}, f/t/{3,6}}{
+          \draw[-triangle 45](\x) -- node[below]{\n} (\y);
+        }
+        \foreach \x/\y/\n in {c/b/{0,2}, b/a/{3,3}, d/e/{4,5}, e/f/{1,1}}{
+          \draw[-triangle 45](\x) -- node[right]{\n} (\y);
+        }
+      \end{tikzpicture}
+    \end{center}
+
+    The second augmenting path I will use is $P = s \to c \to f \to t$ with a
+    minimum capacity of 2.
+    The new flow will be
+    \begin{center}
+      \tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
+      \begin{tikzpicture}[scale=2]
+        \draw
+        (0,0) node[insep,label=left:$s$](s){}
+        (1,1) node[insep,label=120:$a$](a){}
+        (1,0) node[insep,label=45:$b$](b){}
+        (1,-1) node[insep,label=210:$c$](c){}
+        (2,1) node[insep,label=45:$d$](d){}
+        (2,0) node[insep,label=45:$e$](e){}
+        (2,-1) node[insep,label=-45:$f$](f){}
+        (3,0) node[insep,label=right:$t$](t){}
+        ;
+        \foreach \x/\y/\n in {s/a/{3,3}, a/d/{6,7}, d/t/{2,2}, s/b/{4,4}, b/e/{1,1}, e/t/{4,8}, b/f/{0,2}}{
+          \draw[-triangle 45](\x) -- node[above]{\n} (\y);
+        }
+        \foreach \x/\y/\n in {s/c/{4,8}, c/f/{4,4}, f/t/{5,6}}{
+          \draw[-triangle 45](\x) -- node[below]{\n} (\y);
+        }
+        \foreach \x/\y/\n in {c/b/{0,2}, b/a/{3,3}, d/e/{4,5}, e/f/{1,1}}{
+          \draw[-triangle 45](\x) -- node[right]{\n} (\y);
+        }
+      \end{tikzpicture}
+    \end{center}
+
+    The third augmenting path is $P = s \to c \to b \to f \to t$ with minimum
+    capacity 1.
+    Augmenting along this path gives
+    \begin{center}
+      \tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
+      \begin{tikzpicture}[scale=2]
+        \draw
+        (0,0) node[insep,label=left:$s$](s){}
+        (1,1) node[insep,label=120:$a$](a){}
+        (1,0) node[insep,label=45:$b$](b){}
+        (1,-1) node[insep,label=210:$c$](c){}
+        (2,1) node[insep,label=45:$d$](d){}
+        (2,0) node[insep,label=45:$e$](e){}
+        (2,-1) node[insep,label=-45:$f$](f){}
+        (3,0) node[insep,label=right:$t$](t){}
+        ;
+        \foreach \x/\y/\n in {s/a/{3,3}, a/d/{6,7}, d/t/{2,2}, s/b/{4,4}, b/e/{1,1}, e/t/{4,8}, b/f/{1,2}}{
+          \draw[-triangle 45](\x) -- node[above]{\n} (\y);
+        }
+        \foreach \x/\y/\n in {s/c/{5,8}, c/f/{4,4}, f/t/{6,6}}{
+          \draw[-triangle 45](\x) -- node[below]{\n} (\y);
+        }
+        \foreach \x/\y/\n in {c/b/{1,2}, b/a/{3,3}, d/e/{4,5}, e/f/{1,1}}{
+          \draw[-triangle 45](\x) -- node[right]{\n} (\y);
+        }
+      \end{tikzpicture}
+    \end{center}
+
+    The fourth augmenting path is $P = s \to c \to b \to f \to e \to t$ with
+    minimum capacity 1.
+    Note that this is decreasing the flow on $f \to e$.
+    \begin{center}
+      \tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
+      \begin{tikzpicture}[scale=2]
+        \draw
+        (0,0) node[insep,label=left:$s$](s){}
+        (1,1) node[insep,label=120:$a$](a){}
+        (1,0) node[insep,label=45:$b$](b){}
+        (1,-1) node[insep,label=210:$c$](c){}
+        (2,1) node[insep,label=45:$d$](d){}
+        (2,0) node[insep,label=45:$e$](e){}
+        (2,-1) node[insep,label=-45:$f$](f){}
+        (3,0) node[insep,label=right:$t$](t){}
+        ;
+        \foreach \x/\y/\n in {s/a/{3,3}, a/d/{6,7}, d/t/{2,2}, s/b/{4,4}, b/e/{1,1}, e/t/{5,8}, b/f/{2,2}}{
+          \draw[-triangle 45](\x) -- node[above]{\n} (\y);
+        }
+        \foreach \x/\y/\n in {s/c/{6,8}, c/f/{4,4}, f/t/{6,6}}{
+          \draw[-triangle 45](\x) -- node[below]{\n} (\y);
+        }
+        \foreach \x/\y/\n in {c/b/{2,2}, b/a/{3,3}, d/e/{4,5}, e/f/{0,1}}{
+          \draw[-triangle 45](\x) -- node[right]{\n} (\y);
+        }
+      \end{tikzpicture}
+    \end{center}
+    This is last augmenting path, and so this flow is optimal.
 
   \item % #4
     Let $(G,u, s, t)$ be a network, and let $\delta^+(X)$ and $\delta^+(Y)$ be
@@ -232,6 +346,9 @@ Homework 6
     \end{center}
     Where $\sigma = \frac{\sqrt{5}-1}{2}$. Note that $\sigma$ satisfies
     $\sigma^n = \sigma^{n+1} + \sigma^{n+2}$. All other capacities are 1.
+
+    In order to show that the Ford-Fulkerson algorithm may not terminate it must
+    be shown that there is an infinite sequence of augmenting paths.
 
   \item % #6
     Red-Blue meta algorithm for MST.
