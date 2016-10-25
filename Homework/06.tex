@@ -11,7 +11,7 @@ Homework 6
 
 %\lstinputlisting[language=Sage]{03_2.sage}
 \begin{enumerate}
-  \item % #1
+  \item % #1 Done
     Consider the graph below
     \begin{center}
       \tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
@@ -103,7 +103,7 @@ Homework 6
     The weight from $b \to e$ is 2, so $y[e] = 4 + 2 = 6$, and the
     weight from $e \to t$ is 5, so $y[t] = 6 + 5 = 11$.
 
-  \item % #2
+  \item % #2 Done
     Consider the network below with given edge values, forming an integer feasible flow.
     Find a list of path and cycle flows whose sum is this flow.
     \begin{center}
@@ -133,7 +133,167 @@ Homework 6
       \end{tikzpicture}
     \end{center}
 
-  \item % #3
+    Gallai; Ford and Fulkerson proved a theorem that stated that any flow can be
+    decomposed into $s$-$t$ paths, $\mathcal{P}$ and circuits $\mathcal{C}$ with weight function
+    $w:\mathcal{P} \cup \mathcal{C} \to \RR^{+}$, such that
+    \begin{align*}
+      f(e) &= \sum{e \in P \in \mathcal{P}}{}{w(P)} + \sum{e \in C \in \mathcal{C}}{}{w(C)} \\
+      value(f) &= \sum{P \in \mathcal{P}}{}{w(P)} \\
+      \abs{\mathcal{P} + \mathcal{C}} &\le \abs{E(G)}
+    \end{align*}
+    In order to find such a decomposition I will first relabel all of the
+    vertices as follows.
+    \begin{center}
+      \tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
+      \begin{tikzpicture}[scale=2]
+        \draw
+        (0,0) node[circle,draw,label=left:$ $](s){s}
+        (0,1) node[insep,label=135:$a$](a){}
+        (-1,0) node[insep,label=left:$b$](b){}
+        (0,-1) node[insep,label=225:$c$](c){}
+        (1,0) node[insep,label=45:$d$](d){}
+        (3,0) node[draw,circle,label=right:$ $](t){t}
+        (3,1) node[insep,label=45:$e$](e){}
+        (2,0) node[insep,label=135:$f$](f){}
+        (3,-1) node[insep,label=315:$g$](g){}
+        (4,0) node[insep,label=right:$h$](h){}
+        ;
+        \foreach \x/\y/\n in {b/a/2, s/b/0, a/d/2, s/d/3, e/a/1, d/f/2, c/g/1, e/f/0, t/f/1, h/t/1, h/e/1}{
+          \draw[-triangle 45](\x) -- node[above]{\n} (\y);
+        }
+        \foreach \x/\y/\n in {c/b/2, f/g/3, g/h/2}{
+          \draw[-triangle 45](\x) -- node[below]{\n} (\y);
+        }
+        \foreach \x/\y/\n in {a/s/1, s/c/0, e/t/0, g/t/2, d/c/3}{
+          \draw[-triangle 45](\x) -- node[right]{\n} (\y);
+        }
+      \end{tikzpicture}
+    \end{center}
+
+    Now one way this flow can be decomposed is by using 1 path and 3 circuits
+    as follows.
+    The one $s$-$t$ path is $P = s \to d \to f \to g \to t$ with weight $w(P) = 2$.
+    \begin{center}
+      \tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
+      \begin{tikzpicture}[scale=2]
+        \draw
+        (0,0) node[circle,draw,label=left:$ $](s){s}
+        (0,1) node[insep,label=135:$a$](a){}
+        (-1,0) node[insep,label=left:$b$](b){}
+        (0,-1) node[insep,label=225:$c$](c){}
+        (1,0) node[insep,label=45:$d$](d){}
+        (3,0) node[draw,circle,label=right:$ $](t){t}
+        (3,1) node[insep,label=45:$e$](e){}
+        (2,0) node[insep,label=135:$f$](f){}
+        (3,-1) node[insep,label=315:$g$](g){}
+        (4,0) node[insep,label=right:$h$](h){}
+        ;
+        \foreach \x/\y/\n in {b/a/, s/b/, a/d/, s/d/2, e/a/, d/f/2, c/g/, e/f/, t/f/, h/t/, h/e/}{
+          \draw[-triangle 45](\x) -- node[above]{\n} (\y);
+        }
+        \foreach \x/\y/\n in {c/b/, f/g/2, g/h/}{
+          \draw[-triangle 45](\x) -- node[below]{\n} (\y);
+        }
+        \foreach \x/\y/\n in {a/s/, s/c/, e/t/, g/t/2, d/c/}{
+          \draw[-triangle 45](\x) -- node[right]{\n} (\y);
+        }
+      \end{tikzpicture}
+    \end{center}
+
+    The first circuit is $C_1 = d \to c \to b \to a \to d$ with weight $w(C_1) = 2$.
+    \begin{center}
+      \tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
+      \begin{tikzpicture}[scale=2]
+        \draw
+        (0,0) node[circle,draw,label=left:$ $](s){s}
+        (0,1) node[insep,label=135:$a$](a){}
+        (-1,0) node[insep,label=left:$b$](b){}
+        (0,-1) node[insep,label=225:$c$](c){}
+        (1,0) node[insep,label=45:$d$](d){}
+        (3,0) node[draw,circle,label=right:$ $](t){t}
+        (3,1) node[insep,label=45:$e$](e){}
+        (2,0) node[insep,label=135:$f$](f){}
+        (3,-1) node[insep,label=315:$g$](g){}
+        (4,0) node[insep,label=right:$h$](h){}
+        ;
+        \foreach \x/\y/\n in {b/a/2, s/b/, a/d/2, s/d/, e/a/, d/f/, c/g/, e/f/, t/f/, h/t/, h/e/}{
+          \draw[-triangle 45](\x) -- node[above]{\n} (\y);
+        }
+        \foreach \x/\y/\n in {c/b/2, f/g/, g/h/}{
+          \draw[-triangle 45](\x) -- node[below]{\n} (\y);
+        }
+        \foreach \x/\y/\n in {a/s/, s/c/, e/t/, g/t/, d/c/2}{
+          \draw[-triangle 45](\x) -- node[right]{\n} (\y);
+        }
+      \end{tikzpicture}
+    \end{center}
+
+    The second circuit is $C_2 = a \to s \to d \to c \to g \to h \to e \to a$
+    with weight $w(C_2) = 1$.
+    \begin{center}
+      \tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
+      \begin{tikzpicture}[scale=2]
+        \draw
+        (0,0) node[circle,draw,label=left:$ $](s){s}
+        (0,1) node[insep,label=135:$a$](a){}
+        (-1,0) node[insep,label=left:$b$](b){}
+        (0,-1) node[insep,label=225:$c$](c){}
+        (1,0) node[insep,label=45:$d$](d){}
+        (3,0) node[draw,circle,label=right:$ $](t){t}
+        (3,1) node[insep,label=45:$e$](e){}
+        (2,0) node[insep,label=135:$f$](f){}
+        (3,-1) node[insep,label=315:$g$](g){}
+        (4,0) node[insep,label=right:$h$](h){}
+        ;
+        \foreach \x/\y/\n in {b/a/, s/b/, a/d/, s/d/1, e/a/1, d/f/, c/g/1, e/f/, t/f/, h/t/, h/e/1}{
+          \draw[-triangle 45](\x) -- node[above]{\n} (\y);
+        }
+        \foreach \x/\y/\n in {c/b/, f/g/, g/h/1}{
+          \draw[-triangle 45](\x) -- node[below]{\n} (\y);
+        }
+        \foreach \x/\y/\n in {a/s/1, s/c/, e/t/, g/t/, d/c/1}{
+          \draw[-triangle 45](\x) -- node[right]{\n} (\y);
+        }
+      \end{tikzpicture}
+    \end{center}
+
+    The third and final circuit is $C_3 = f \to g \to h \to t \to f$ with
+    weight $w(C_3) = 1$.
+    \begin{center}
+      \tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
+      \begin{tikzpicture}[scale=2]
+        \draw
+        (0,0) node[circle,draw,label=left:$ $](s){s}
+        (0,1) node[insep,label=135:$a$](a){}
+        (-1,0) node[insep,label=left:$b$](b){}
+        (0,-1) node[insep,label=225:$c$](c){}
+        (1,0) node[insep,label=45:$d$](d){}
+        (3,0) node[draw,circle,label=right:$ $](t){t}
+        (3,1) node[insep,label=45:$e$](e){}
+        (2,0) node[insep,label=135:$f$](f){}
+        (3,-1) node[insep,label=315:$g$](g){}
+        (4,0) node[insep,label=right:$h$](h){}
+        ;
+        \foreach \x/\y/\n in {b/a/, s/b/, a/d/, s/d/, e/a/, d/f/, c/g/, e/f/, t/f/1, h/t/1, h/e/}{
+          \draw[-triangle 45](\x) -- node[above]{\n} (\y);
+        }
+        \foreach \x/\y/\n in {c/b/, f/g/1, g/h/1}{
+          \draw[-triangle 45](\x) -- node[below]{\n} (\y);
+        }
+        \foreach \x/\y/\n in {a/s/, s/c/, e/t/, g/t/, d/c/}{
+          \draw[-triangle 45](\x) -- node[right]{\n} (\y);
+        }
+      \end{tikzpicture}
+    \end{center}
+
+    This set of paths and circuits with corresponding weight function satisfies
+    all three of the properties stated in the Theorem.
+    The sum of these paths and circuits results in the original flow.
+    The sum of the weights on the paths is equal to the value of the flow.
+    Also the number of paths and circuits is less than the number of edges of
+    $G$.
+
+  \item % #3 Done
     Consider the network below with given capacity and flow values.
     (The  edge label $f,u$ means flow-value $f$ and capacity $u$.) 
     Find augmenting paths and augment the flow to a maximum flow.
@@ -192,7 +352,7 @@ Homework 6
       \end{tikzpicture}
     \end{center}
     The initial augmenting path will be $P = s \to b \to a \to d \to e \to t$.
-    The minimum capacity over this path is 3.
+    The minimum capacity over this path is $\gamma = 3$.
     Augmenting on this path gives the following flow.
     \begin{center}
       \tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
@@ -220,7 +380,7 @@ Homework 6
     \end{center}
 
     The second augmenting path I will use is $P = s \to c \to f \to t$ with a
-    minimum capacity of 2.
+    minimum capacity of $\gamma = 2$.
     The new flow will be
     \begin{center}
       \tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
@@ -248,7 +408,7 @@ Homework 6
     \end{center}
 
     The third augmenting path is $P = s \to c \to b \to f \to t$ with minimum
-    capacity 1.
+    capacity, $\gamma = 1$.
     Augmenting along this path gives
     \begin{center}
       \tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
@@ -276,7 +436,7 @@ Homework 6
     \end{center}
 
     The fourth augmenting path is $P = s \to c \to b \to f \to e \to t$ with
-    minimum capacity 1.
+    minimum capacity, $\gamma = 1$.
     Note that this is decreasing the flow on $f \to e$.
     \begin{center}
       \tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
@@ -305,10 +465,17 @@ Homework 6
     This is last augmenting path, and so this flow is optimal.
 
   \item % #4
-    Let $(G,u, s, t)$ be a network, and let $\delta^+(X)$ and $\delta^+(Y)$ be
+    Let $(G, u, s, t)$ be a network, and let $\delta^+(X)$ and $\delta^+(Y)$ be
     minimum $s$-$t$-cuts in $(G,u)$.
     Show that $\delta^+(X\cap Y)$ and $\delta^+(X \cup Y)$ are also minimum
-    $s$-$t$-cuts in $(G,u)$.
+    $s$-$t$-cuts in $(G, u, s, t)$.
+
+    \begin{proof}
+      Let $(G, u, s, t)$ be a network with edges $E$ and vertices $V$.
+      Let $X, Y \subset V$ such that $\delta^+(X)$ and $\delta^+(Y)$ are minimum
+      $s$-$t$ cuts.
+      Consider $X \cap Y$
+    \end{proof}
 
   \item % #5
     Show that in case of irrational capacities, the Ford-Fulkerson algorithm may
@@ -369,7 +536,7 @@ Homework 6
       \item Show that no edge satisfies both red and blue criteria. (i.e. every edge has one color).
     \end{itemize}
 
-  \item % #7
+  \item % #7 Done
     Implement Edmonds-Karp algorithm and run it on the network from question three.
     Print the sequence of augmenting paths used by your implementation.
     Print the flow and its value.
