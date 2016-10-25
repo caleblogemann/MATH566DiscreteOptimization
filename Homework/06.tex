@@ -474,7 +474,25 @@ Homework 6
       Let $(G, u, s, t)$ be a network with edges $E$ and vertices $V$.
       Let $X, Y \subset V$ such that $\delta^+(X)$ and $\delta^+(Y)$ are minimum
       $s$-$t$ cuts.
-      Consider $X \cap Y$
+      Note that by a theorem by Ford-Fulkerson the maximum value of the flow is
+      equal to the capacity of $\delta^+(X)$ and $\delta^+(Y)$ as there are both
+      minimum cuts.
+      Let
+      \[
+        m = \sum{e \in \delta^+(X)}{}{u(e)}
+      \]
+      Consider the following sets of edges.
+      \begin{align*}
+        A &= \set{(v, w) : v \in X, v \not\in Y, w \not\in X, w \not\in Y} \\
+        B &= \set{(v, w) : v \in X, v \in Y, w \in X, w \not\in Y} \\
+        C &= \set{(v, w) : v \in X, v \in Y, w \not\in X, w \in Y} \\
+        D &= \set{(v, w) : v \not\in X, v \in Y, w \not\in X, w \not\in Y} \\
+        E &= \set{(v, w) : v \in X, v \in Y, w \not\in X, w \not\in Y} \\
+      \end{align*}
+      The sets $\delta^+(X)$ and $\delta^+(Y)$ can be partitioned in terms of
+      these sets.
+      Notice $\delta^+(X) = A \cup C \cup E$, because edges from $X$ to $X^c$ may
+      also go from $Y$ to $Y$, $Y^c
     \end{proof}
 
   \item % #5
@@ -487,14 +505,14 @@ Homework 6
       \begin{tikzpicture}[scale=2]
         \draw
         (0,-0.5) node[insep,label=left:$s$](s){}
-        (1,1) node[insep,label=left:$ $](a1){}
-        (1,0) node[insep,label=left:$ $](a2){}
-        (1,-1) node[insep,label=left:$ $](a3){}
-        (1,-2) node[insep,label=left:$ $](a4){}
-        (2,1) node[insep,label=left:$ $](b1){}
-        (2,0) node[insep,label=left:$ $](b2){}
-        (2,-1) node[insep,label=left:$ $](b3){}
-        (2,-2) node[insep,label=left:$ $](b4){}
+        (1,1) node[insep,label=135:$ $](a1){}
+        (1,0) node[insep,label=135:$ $](a2){}
+        (1,-1) node[insep,label=225:$ $](a3){}
+        (1,-2) node[insep,label=225:$ $](a4){}
+        (2,1) node[insep,label=45:$ $](b1){}
+        (2,0) node[insep,label=45:$ $](b2){}
+        (2,-1) node[insep,label=315:$ $](b3){}
+        (2,-2) node[insep,label=315:$ $](b4){}
         (3,-0.5) node[insep,label=right:$t$](t){}
         ;
         \foreach \x\n in {1,2,3,4}{
@@ -516,6 +534,38 @@ Homework 6
 
     In order to show that the Ford-Fulkerson algorithm may not terminate it must
     be shown that there is an infinite sequence of augmenting paths.
+    First let me relabel the vertices of the graph.
+    \begin{center}
+      \tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
+      \begin{tikzpicture}[scale=2]
+        \draw
+        (0,-0.5) node[insep,label=left:$s$](s){}
+        (1,1) node[insep,label=135:$a$](a1){}
+        (1,0) node[insep,label=135:$b$](a2){}
+        (1,-1) node[insep,label=225:$c$](a3){}
+        (1,-2) node[insep,label=225:$d$](a4){}
+        (2,1) node[insep,label=45:$e$](b1){}
+        (2,0) node[insep,label=45:$f$](b2){}
+        (2,-1) node[insep,label=315:$g$](b3){}
+        (2,-2) node[insep,label=315:$h$](b4){}
+        (3,-0.5) node[insep,label=right:$t$](t){}
+        ;
+        \foreach \x\n in {1,2,3,4}{
+          \foreach \y\n in {1,2,3,4}{
+            \draw (a\x) -- (b\y);
+          }
+        }
+        \foreach \x\n in {1,2,3,4}{
+          \draw (s) -- (a\x);
+          \draw (b\x) -- (t);
+        }
+        \draw[-triangle 45, line width=1pt](a1) --node[above]{1} (b1);
+        \draw[-triangle 45, line width=1pt](a2) --node[above]{$\sigma$} (b2);
+        \draw[-triangle 45, line width=1pt](a3) --node[above]{$\sigma^2$} (b3);
+      \end{tikzpicture}
+    \end{center}
+
+    Consider the following augmenting paths.
 
   \item % #6
     Red-Blue meta algorithm for MST.
