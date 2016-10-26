@@ -464,7 +464,7 @@ Homework 6
     \end{center}
     This is last augmenting path, and so this flow is optimal.
 
-  \item % #4
+  \item % #4 Done
     Let $(G, u, s, t)$ be a network, and let $\delta^+(X)$ and $\delta^+(Y)$ be
     minimum $s$-$t$-cuts in $(G,u)$.
     Show that $\delta^+(X\cap Y)$ and $\delta^+(X \cup Y)$ are also minimum
@@ -474,25 +474,84 @@ Homework 6
       Let $(G, u, s, t)$ be a network with edges $E$ and vertices $V$.
       Let $X, Y \subset V$ such that $\delta^+(X)$ and $\delta^+(Y)$ are minimum
       $s$-$t$ cuts.
+      First let me introduce a notation for summing the capacities of a set
+      of edges.
+      \[
+        U(Z) = \sum{e \in Z}{}{u(e)}
+      \]
       Note that by a theorem by Ford-Fulkerson the maximum value of the flow is
       equal to the capacity of $\delta^+(X)$ and $\delta^+(Y)$ as there are both
       minimum cuts.
       Let
       \[
-        m = \sum{e \in \delta^+(X)}{}{u(e)}
+        m = U(\delta^+(X))
       \]
-      Consider the following sets of edges.
+      This also implies that
+      \[
+        m = U(\delta^+(Y))
+      \]
+
+      Notice that their are four possibilities for edges in $\delta^+(X)$.
+      Edges can go from $Y \to Y$, from $Y \to Y^c$, from $Y^c \to Y$, and from
+      $Y^c \to Y^c$.
+      Based on this observation consider the following sets of edges.
       \begin{align*}
-        A &= \set{(v, w) : v \in X, v \not\in Y, w \not\in X, w \not\in Y} \\
-        B &= \set{(v, w) : v \in X, v \in Y, w \in X, w \not\in Y} \\
+        A &= \set{(v, w) : v \in X, v \not\in Y, w \not\in X, w \in Y} \\
+        B &= \set{(v, w) : v \in X, v \not\in Y, w \not\in X, w \not\in Y} \\
         C &= \set{(v, w) : v \in X, v \in Y, w \not\in X, w \in Y} \\
-        D &= \set{(v, w) : v \not\in X, v \in Y, w \not\in X, w \not\in Y} \\
-        E &= \set{(v, w) : v \in X, v \in Y, w \not\in X, w \not\in Y} \\
+        D &= \set{(v, w) : v \in X, v \in Y, w \not\in X, w \not\in Y} \\
+        E &= \set{(v, w) : v \in X, v \in Y, w \in X, w \not\in Y} \\
+        F &= \set{(v, w) : v \not\in X, v \in Y, w \not\in X, w \not\in Y} \\
+        G &= \set{(v, w) : v \not\in X, v \in Y, w \in X, w \not\in Y} \\
       \end{align*}
+      Note that these sets are mutually disjoint.
       The sets $\delta^+(X)$ and $\delta^+(Y)$ can be partitioned in terms of
       these sets.
-      Notice $\delta^+(X) = A \cup C \cup E$, because edges from $X$ to $X^c$ may
-      also go from $Y$ to $Y$, $Y^c
+      In fact $\delta^+(X) = A \cup B \cup C \cup D$ and
+      $\delta^+(Y) = D \cup E \cup F \cup G$.
+      Since we have partitioned $\delta^+(X)$ and $\delta^+(Y)$, we can sum up
+      the capacities as follows
+      \begin{align*}
+        U(\delta^+(X)) &= U(A) + U(B) + U(C) + U(D) \\
+        U(\delta^+(Y)) &= U(D) + U(E) + U(F) + U(G) 
+        \intertext{This implies that}
+        m &= U(A) + U(B) + U(C) + U(D) \\
+        m &= U(D) + U(E) + U(F) + U(G) 
+      \end{align*}
+
+      Now consider the cuts $\delta^+(X \cap Y)$ and $\delta^+(X \cup Y)$.
+      Since these sets are cuts they must be greater than the value of minimum
+      cut, the following inequalities hold.
+      \begin{align*}
+        m \le U(\delta^+(X \cap Y)) \\ 
+        m \le U(\delta^+(X \cup Y)) \\ 
+      \end{align*}
+      Now consider how we might partition these cuts in terms of the sets that
+      were created earlier.
+      The set $\delta^+(X \cap Y)$ is the set of all edges from both
+      $X$ and $Y$, to either $X^c$ or $Y^c$, therefore
+      $\delta^+(X \cap Y) = C \cup D \cup E$.
+      The set $\delta^+(X \cup Y)$ is the set of all edges from $X$ or $Y$,
+      to $X^c \cap Y^c$, so $\delta^+(X \cup Y) = B \cup D \cup F$.
+      Using these partitions we can consider
+      \begin{align*}
+        2m &\le U(\delta^+(X \cap Y)) + U(\delta^+(X \cup Y)) \\
+        &\le U(C) + U(D) + U(E) + U(B) + U(D) + U(F)
+        \intertext{Since $u$ is a positive function, $U(A) > 0$ and $U(G) > 0$, so}
+        &\le U(A) + U(B) + U(C) + U(D) + U(D) + U(E) + U(F) + U(D) \\
+        &\le U(\delta^+(X)) + U(\delta^+(Y)) \\
+        &\le 2m
+      \end{align*}
+      This shows that $U(\delta^+(X \cap Y)) + U(\delta^+(X \cup Y)) = 2m$.
+      Since each cut individually is greater than $m$ it follows that
+      \begin{align*}
+        U(\delta^+(X \cap Y)) &= m \\
+        U(\delta^+(X \cup Y)) &= m
+      \end{align*}
+      Since these cut's capacity are equal to the maximum flow, they must be
+      minimum cuts.
+      This shows that $\delta^+(X \cap Y)$ and $\delta^+(X \cup Y)$ are both
+      minimum cuts.
     \end{proof}
 
   \item % #5
@@ -562,10 +621,57 @@ Homework 6
         \draw[-triangle 45, line width=1pt](a1) --node[above]{1} (b1);
         \draw[-triangle 45, line width=1pt](a2) --node[above]{$\sigma$} (b2);
         \draw[-triangle 45, line width=1pt](a3) --node[above]{$\sigma^2$} (b3);
+        \draw[-triangle 45, line width=1pt](a4) --node[above]{$1$} (b4);
       \end{tikzpicture}
     \end{center}
+    Also note that I am going to change the capacities on all other
+    edges to $100$, except for $(d, h)$ where $u((d, h)) = 1$.
+    This is just to make sure that the capacities on other edges are
+    large enough that the flow on these edges doesn't need to be considered.
+    This way only the flow on the edges $(a, e)$, $(b, f)$, $(c, g)$, and
+    $(d, h)$ needs to be considered, which I will name $e_1$, $e_2$, $e_3$,
+    and $e_4$ respecitively
 
     Consider the following augmenting paths.
+    \begin{align*}
+      P_1 &= s \to a \to e \to t \\
+      P_2 &= s \to b \to f \to d \to e \to a \to g \to d \to h \to t \\
+      P_3 &= s \to a \to e \to d \to f \to b \to e \to t \\
+      P_4 &= s \to d \to h \to b \to f \to d \to e \to a \to h \to t \\
+      P_5 &= s \to a \to e \to b \to h \to d \to e \to t
+    \end{align*}
+    These paths have the following effects $P_1$ initializes the flow by
+    increasing across $e_1$.
+    The path $P_2$ increases along $e_2$ and $e_4$ and decreases $e_1$.
+    The path $P_3$ increases along $e_1$ and decreases along $e_2$.
+    The path $P_4$ increases along $e_4$ and $e_2$ and decreases $e_1$.
+    The path $P_5$ is similar to $P_1$ and increases $e_1$ and decreases $e_4$.
+    If we augment on $P_1$ and then cycle $P_2$ through $P_4$ the flows on the
+    main edges are described in the following table.
+    \begin{table}
+      \centering
+      \begin{tabular}{cccc}
+        \toprule
+        Path & $f(e_1)$ & $f(e_2)$ & $f(e_4)$ \\
+        \midrule
+        $P_1$ & 1              & 0                   & 0              \\
+        $P_2$ & $1 - \sigma$   & $\sigma$            & $1 - \sigma^2$ \\
+        $P_3$ & 1              & 0                   & $1 - \sigma^2$ \\
+        $P_4$ & $1 - \sigma^2$ & $\sigma - \sigma^3$ & 1              \\
+        $P_5$ & 1              & $\sigma - \sigma^3$ & $1 - \sigma^2$ \\
+        $P_2$ & $1 - \sigma^3$ & $\sigma$            & $1 - \sigma^4$ \\
+        $P_3$ & 1              & $\sigma - \sigma^3$ & $1 - \sigma^4$ \\
+        $P_4$ & $1 - \sigma^4$ & $\sigma - \sigma^5$ & 1              \\
+        $P_5$ & 1              & $\sigma - \sigma^5$ & $1 - \sigma^4$ \\
+        \bottomrule
+      \end{tabular}
+      \caption{Flows}
+    \end{table}
+    This shows that $4k$ augmenting path the flow on $e_1$ will be
+    $1 - \sigma^{2k}$ and $f(e_2) = \sigma - \sigma^{2k+1}$.
+    So this shows that this series of augmenting paths will not terminate, and
+    thus the Ford-Fulkerson algorithm does not necessarily terminate for
+    irrational capacities.
 
   \item % #6
     Red-Blue meta algorithm for MST.
