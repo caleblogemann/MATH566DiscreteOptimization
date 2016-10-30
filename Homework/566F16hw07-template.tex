@@ -1,0 +1,126 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{fullpage}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric}
+\usetikzlibrary{arrows}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{verbatim}
+
+\newcounter{excounter}
+\setcounter{excounter}{1}
+\newcommand\question[2]{\vskip 1em  \noindent\textbf{\arabic{excounter}\addtocounter{excounter}{1}:} (\emph{#1}) \newline \noindent#2}
+\newcommand\hint[1]{ \newline \noindent\textit{Hint: #1}}
+\newcommand\solution[1]{\vskip 0.5em \noindent\textbf{Solution:}\par\noindent#1}
+
+\renewcommand\solution[1]{ }
+
+
+
+\begin{document}
+\large
+
+{\bf MATH-566 \hspace{1cm} HW 7}
+\vskip 1em
+Due \textbf{Nov 2} before class. Just bring it before the class and it will be collected there.
+
+
+\question{Nice cuts}{
+A cut of $G$ is \emph{minimal} if there is no cut of $G$ properly contained in it. Prove that the random contraction algorithm returns only minimal cuts.
+}
+
+\question{Deterministic Minimum Cuts}{
+Implement Node Identification Minimum Cut Algorithm.
+Try it on the following graph:
+\begin{center}
+\tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
+\begin{tikzpicture}[scale=1.3]
+\draw
+(0,0) node[insep,label=below:$g$](g){}
+(2,0) node[insep,label=below:$f$](f){}
+(2,1) node[insep,label=right:$e$](e){}
+(2,2) node[insep,label=right:$a$](a){}
+(1,3) node[insep,label=above:$b$](b){}
+(0,1) node[insep,label=below left:$d$](d){}
+(0,2) node[insep,label=above:$c$](c){}
+(-1,1) node[insep,label=left:$h$](h){}
+;
+\draw
+\foreach \x/\y/\t in {g/f/6, d/e/3, c/a/2, c/b/3, b/a/5,h/c/2, h/d/1}{
+(\x)--node[pos=0.5,label=above:$\t$]{} (\y)
+}
+(h)--node[pos=0.5,label=below:$5$]{} (g)
+\foreach \x/\y/\t in {g/d/2, d/c/4, f/e/2, e/a/3}{
+(\x)--node[pos=0.5,label=right:$\t$]{} (\y)
+}
+;
+\end{tikzpicture}
+\end{center}
+}
+
+\question{Random Contraction Algorithm}{
+Implement Random Contraction Algorithm.
+Try it on the following graph. 
+Run it many times and based on your experiment conclude what is the probability that that your algorithm succeeds on this graph.
+\begin{center}
+\tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
+\begin{tikzpicture}[scale=1.3]
+\draw
+(0,0) node[insep,label=below:$g$](g){}
+(2,0) node[insep,label=below:$f$](f){}
+(2,1) node[insep,label=right:$e$](e){}
+(2,2) node[insep,label=right:$a$](a){}
+(1,3) node[insep,label=above:$b$](b){}
+(0,1) node[insep,label=below left:$d$](d){}
+(0,2) node[insep,label=above:$c$](c){}
+(-1,1) node[insep,label=left:$h$](h){}
+;
+\draw
+\foreach \x/\y/\t in {g/f/6, d/e/3, c/a/2, c/b/3, b/a/5,h/c/2, h/d/1}{
+(\x)--node[pos=0.5,label=above:$\t$]{} (\y)
+}
+(h)--node[pos=0.5,label=below:$5$]{} (g)
+\foreach \x/\y/\t in {g/d/2, d/c/4, f/e/2, e/a/3}{
+(\x)--node[pos=0.5,label=right:$\t$]{} (\y)
+}
+;
+\end{tikzpicture}
+\end{center}
+}
+
+\question{Gomory-Hu Tree}{
+Construct Gomory-Hu Tree for the following graph using the algorithm
+from the class. 
+Numbers on edges correspond to capacities.
+Show Show steps after every new cut.
+\begin{center}
+\tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
+\begin{tikzpicture}
+\draw
+\foreach \x/\a in {0/a,60/b,120/c,180/d,240/e,300/f}{
+(\x:2.5) node[insep](\a){}
+}
+(a)--node[right]{1} (b) -- node[above]{3} (c) -- node[left]{2}(d) -- node[below]{1}(e) -- node[below]{3}(f) -- node[right]{1}(a)
+(b) -- node[below]{2} (d) -- node[below]{1}(f) -- node[right]{2}(b)
+;
+\end{tikzpicture}
+\end{center}
+}
+
+Check your answer with Sage using method \verb|Graph.gomory_hu_tree()|. Do not implement it yourself, just run it.
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
