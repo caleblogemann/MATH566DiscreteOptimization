@@ -20,31 +20,12 @@ def randomContraction(original_graph, numTrials):
             w = edge[1]
             contractVertices(graph, v, w)
 
-        cut = graph.get_vertices().values()[1]
-        cut_value = 0
-        for edge in original_graph.edges():
-            if edge[0] in cut and edge[1] not in cut:
-                cut_value += edge[2]
-            elif edge[1] in cut and edge[0] not in cut:
-                cut_value += edge[2]
+        cut = graph.get_vertices().values()[0]
+        vertices = graph.vertices()
+        cut_value = graph.edge_label(vertices[0], vertices[1])
 
         if cut_value < minimum_cut_value or minimum_cut_value == None:
             minimum_cut = cut
             minimum_cut_value = cut_value
 
     return (minimum_cut, minimum_cut_value)
-
-def contractVertices(graph, v, w):
-    graph.set_vertex(v, graph.get_vertex(v).union(graph.get_vertex(w)))
-    for x in graph.neighbors(w):
-        if x != v:
-            weight = graph.edge_label(w, x)
-            if x in graph.neighbors(v):
-                graph.set_edge_label(x, v, graph.edge_label(x, v) + weight)
-            else:
-                graph.add_edge(v, x, weight)
-
-    graph.delete_vertex(w)
-
-    return None
-

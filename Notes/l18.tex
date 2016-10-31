@@ -1,0 +1,676 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[czech, english]{babel}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric}
+\usetikzlibrary{shapes.multipart}
+\usepackage{hyperref}
+
+
+% Itemize environment with small skips
+\newenvironment{packeditemize}{
+\begin{itemize}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{itemize}}
+
+
+% Fancy footnote....
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\usepackage{lastpage}
+\rfoot{MATH 566 - 18, page \thepage/\pageref{LastPage}}
+\cfoot{}
+\rhead{}
+\lhead{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+
+\newtheorem{theorem*}{Theorem} 
+
+% Itemize environment with small skips
+\newenvironment{packedenumerate}{
+\begin{enumerate}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{enumerate}}
+
+
+\newcommand{\vc}[1]{\ensuremath{\vcenter{\hbox{#1}}}}
+
+\newcounter{excounter}
+\setcounter{excounter}{1}
+\newcommand\question[2]{\vskip 1em  \noindent\textbf{\arabic{excounter}\addtocounter{excounter}{1}:} \emph{#1} \noindent#2}
+\newcommand\solution[1]{\vskip 0.5em \noindent\textbf{Solution:} #1}
+%\newcommand\like{\par \noindent\emph{(This question is: good - bad - ugly? Difficulty: 0-10:\hskip 3em )}} 
+
+\newcommand\lecturer[1]{\textbf{#1}}
+\newcommand\hideforstudent[1]{#1}
+
+
+\renewcommand\lecturer[1]{{\color{white} \textbf{#1} }}
+\renewcommand\hideforstudent[1]{{\color{white} #1 }}
+%\renewcommand\solution[1]{{\color{white} \vskip 0.5em \noindent\textbf{Solution:} #1 }}
+
+
+
+\setlength{\parindent}{0cm}
+\setlength{\parskip}{0.1cm}
+
+\begin{document}
+
+Fall  2016, MATH-566
+
+\centerline{{\Large \textbf{Gomory-Hu Trees}}}
+
+Let $G=(V,E)$ be an \textbf{undirected} graph and $u: E \rightarrow \mathbb{R}_+$ be capacities on edges.
+
+\textbf{Problem:} Compute minimum $s$-$t$-cut for all pairs $(s,t) \in V^2$. 
+
+Simple solution: Run $\binom{n}{2}$ times maximum-flow algorithm (it gives minimum cut too).
+
+Better solution: Run $(n-1)$ times maximum-flow algorithm. Due to Gomory-Hu.
+
+Denote the minimum capacity of $s$-$t$-cut by $\lambda_{st}$.
+
+
+\question{}{
+Show that for any $i,j,k \in V(G)$, $\lambda_{ik} \geq \min\{\lambda_{ij}, \lambda_{jk}\}$.
+}
+\solution{
+Consider minimum $i$-$k$-cut $\delta(A)$, where $i \in A \subset V$.
+If $j \in k$, then $A$ is also $j$-$k$-cut. Hence $\lambda_{ik} \geq \lambda_{jk}$. The other
+case is symmetrical.
+}
+
+A tree $T$ is a \textbf{Gomory-Hu Tree} for $(G,u)$ if $V(T) = V(G)$ and $\forall s,t \in V$
+\[
+\lambda_{st} = \min_{e \in E(P_{st})} u(\delta_G(C_e)),
+\]
+where $P_{st}$ is the unique $s$-$t$-path in $T$,
+$C_e$ is the set of vertices in the same connected component of $T-e$ as $s$
+and  $\delta_G(C_e)$ is the cut defined by $C_e$ in $G$.
+
+Example of $G$, where $u: E \rightarrow 1$ is a constant. The tree $T$ is then a star.
+\begin{center}
+\tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
+\begin{tikzpicture}[scale=0.8]
+\draw (0,0)node[insep](a){} -- (2,0) node[insep](x){};
+\draw (0,1)node[insep](b){} -- (2,1) node[insep](y){};
+\draw (0,2)node[insep](c){} -- (2,2) node[insep](z){};
+\draw (a)--(y)--(c)--(x)--(b)--(z)--(a);
+\end{tikzpicture}
+\hskip 3em
+\begin{tikzpicture}[scale=0.8]
+\draw (0,0)node[insep](a){}  (2,0) node[insep](x){};
+\draw (0,1)node[insep](b){}  (2,1) node[insep](y){};
+\draw (0,2)node[insep](c){}  -- (2,2) node[insep](z){};
+\draw (x)--(c)--(y) (b) -- (c) to[bend right=30] (a);
+\end{tikzpicture}
+\end{center}
+
+\question{}{
+Find Gomory-Hu tree for the following graph with weights on edges.
+\begin{center}
+\tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
+\begin{tikzpicture}[scale=1.5]
+\draw (0,0)node[insep](x){} -- node[right]{6} ++(50:1) node[insep](y){}
+(x)  -- node[left]{4} ++(130:1) node[insep](z){}
+(z) -- node[above]{3} (y)
+(z)  -- node[left]{6} ++(50:1) node[insep](w){}
+(y) -- node[right]{3} (w)
+
+ (2,0)node[insep](a){} -- node[right]{6} ++(50:1) node[insep](b){}
+(a)  -- node[left]{4} ++(130:1) node[insep](c){}
+(b) -- node[above]{3} (c)
+(c)  -- node[left]{6} ++(50:1) node[insep](d){}
+(b) -- node[right]{3} (d)
+
+(a)-- node[below]{5} (x)
+(w)-- node[above]{5} (d)
+;
+\end{tikzpicture}
+\hskip 4em
+\begin{tikzpicture}[scale=1.5]
+\draw (0,0)node[insep](x){} ++(50:1) node[insep](y){}
+(x)  ++(130:1) node[insep](z){}
+(z)   ++(50:1) node[insep](w){}
+ (2,0)node[insep](a){}  ++(50:1) node[insep](b){}
+(a)   ++(130:1) node[insep](c){}
+(c)   ++(50:1) node[insep](d){}
+;
+\end{tikzpicture}
+\end{center}
+}
+
+
+Algorithm:
+\begin{enumerate}
+\item $T=(\{V\},\emptyset)$
+\item while exists $X \in V(T)$, where $|X| \geq 2$,
+\item \hskip 4em pick any $s$, $t$ in $X$   \label{alg:X}
+\item \hskip 4em contract vertices of all nodes other  than $X$
+\item \hskip 4em find minimum $s$-$t$-cut $A \cup B = V$
+\item \hskip 4em replace $X$ in $V(T)$ by edge $\{\{A\cap X\}, \{B \cap X\}\}$.
+\end{enumerate}
+
+\newpage
+
+Sketch of one iteration:
+\begin{center}
+\vc{
+\begin{tikzpicture}
+\draw (0,0) node[draw,circle](x){$X$};
+\draw (x)  ++(45:1.5) node[draw,circle](c){$C$};
+\draw (x)  ++(135:1.5) node[draw,circle](d){$D$} ++(180:1.5) node[draw,circle](e){$E$};
+\draw (x)  ++(225:1.5) node[draw,circle](f){$F$} ++(180:1.5) node[draw,circle](g){$G$};
+\draw (x) --(c) (x)--(d)--(e) (x)--(f)--(g);
+\end{tikzpicture}
+}
+\hskip 3em
+\vc{
+\begin{tikzpicture}
+\draw (0,0) node [circle split,draw](x){$A\cap X$ \nodepart{lower} $B\cap X$};
+\draw (x)  ++(45:1.5) node[draw,circle](c){$C$};
+\draw (x)  ++(135:1.5) node[draw,circle](d){$D$} ++(180:1.5) node[draw,circle](e){$E$};
+\draw (x)  ++(225:1.5) node[draw,circle](f){$F$} ++(180:1.5) node[draw,circle](g){$G$};
+\draw (x) --(c) (x)--(d)--(e) (x)--(f)--(g);
+\end{tikzpicture}
+}
+\hskip 3em
+\vc{
+\begin{tikzpicture}
+\draw (0,0) node [circle,draw](a){$A\cap X$};
+\draw (0,-2) node [circle,draw](b){$B\cap X$};
+\draw (a)  ++(45:1.5) node[draw,circle](c){$C$};
+\draw (a)  ++(135:1.5) node[draw,circle](d){$D$} ++(180:1.5) node[draw,circle](e){$E$};
+\draw (b)  ++(225:1.5) node[draw,circle](f){$F$} ++(180:1.5) node[draw,circle](g){$G$};
+\draw (a) --(c) (a)--(d)--(e) (b)--(f)--(g) (a)--(b);
+\end{tikzpicture}
+}
+\end{center}
+
+\question{}{
+Run the algorithm on the graph from question 2.
+\begin{center}
+\tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
+\begin{tikzpicture}[scale=1.5]
+\draw (0,0)node[insep](x){} -- node[right]{6} ++(50:1) node[insep](y){}
+(x)  -- node[left]{4} ++(130:1) node[insep](z){}
+(z) -- node[above]{3} (y)
+(z)  -- node[left]{6} ++(50:1) node[insep](w){}
+(y) -- node[right]{3} (w)
+
+ (2,0)node[insep](a){} -- node[right]{6} ++(50:1) node[insep](b){}
+(a)  -- node[left]{4} ++(130:1) node[insep](c){}
+(b) -- node[above]{3} (c)
+(c)  -- node[left]{6} ++(50:1) node[insep](d){}
+(b) -- node[right]{3} (d)
+
+(a)-- node[below]{5} (x)
+(w)-- node[above]{5} (d)
+;
+\end{tikzpicture}
+\hskip 4em
+\begin{tikzpicture}[scale=1.5]
+\draw (0,0)node[insep](x){} ++(50:1) node[insep](y){}
+(x)  ++(130:1) node[insep](z){}
+(z)   ++(50:1) node[insep](w){}
+ (2,0)node[insep](a){}  ++(50:1) node[insep](b){}
+(a)   ++(130:1) node[insep](c){}
+(c)   ++(50:1) node[insep](d){}
+;
+\end{tikzpicture}
+\end{center}
+}
+
+
+
+\question{(Cuts are submodular)}{
+That is, let $A,B \subset V$. Show that
+\[
+u (\delta(A \cup B)) + u (\delta(A\cap B)) \leq u(\delta(A)) + u(\delta(B)).
+\]
+}
+\solution{
+All edges on the left are counted on the right but edges going between $A \setminus B$ and $B \setminus A$
+are missing on the left hand side. The dashed edges are missing.
+\begin{center}
+\begin{tikzpicture}
+\draw(0,0) ellipse(1cm and 0.5cm);
+\draw(1,0) ellipse(1cm and 0.5cm);
+\draw (-0.5,0) node {$A$} (1.5,0) node {$B$};
+\draw (-0.2,0.2)-- ++(150:1) (1.7,0.2)-- ++(30:1) (0.5,0.2) -- ++(90:1) (0.6,-0.1) -- ++(0:0.6) (0.4,-0.1) -- ++(180:0.6)
+;
+\draw[dashed, line width =1pt] 
+(0,-0.4) to[bend right=40] (1,-0.4)
+;
+\end{tikzpicture}
+\end{center}
+}
+
+
+\question{Algorithm creates optimal cuts}{
+Let $s,t \in V$ and let $A \subset V$ such that $\delta(A)$ is a minimum $s$-$t$-cut. 
+Let $s',t' \in V \setminus A$. Let $(G',u')$ be obtained from $G$ by contracting vertices
+of $A$ into one vertex $a'$. Let $K \subset(G')$ such that $\delta_{G'}(K \cup \{a'\})$ is
+a minimum $s'$-$t'$-cut in $G'$. Show that $\delta_{G}(K \cup A)$ is a minimum $s'$-$t'$-cut
+in $G$. \\
+Proof beginning: Assume $\delta(C)$ is a minimum $s'$-$t'$ cut in $G$. 
+Show that $\delta(C\cup A)$ is also a minimum $s'$-$t'$ cut in $G$.  Wlog $s \in A\cap C$.
+\begin{center}
+\tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
+\begin{tikzpicture}
+\draw
+(0,0) circle (2cm)
+(0,-2.3) -- (0,2.3) node[left]{$A$} node[right]{$V(G)\setminus A$}
+(0,0) ++(225:1) node[insep,label=below:$s$]{}
+(0,0) ++(315:1) node[insep,label=below:$s'$]{}
+(0,0) ++(45:1) node[insep,label=above:$t'$]{}
+;
+\draw[dashed]
+(-2.3,0) -- (2.3,0) node[above]{$V(G)\setminus C$} node[below]{$C$}
+;
+\end{tikzpicture}
+\end{center}
+} 
+\solution{
+By submodularity, we have
+\[
+u (\delta(A \cup C)) + u (\delta(A\cap C)) \leq u(\delta(A)) + u(\delta(C))
+\]
+Observe that $\delta(A\cap C)$ is an $s$-$t$-cut. Hence
+$u(\delta(A)) \leq u(\delta(A\cap C))$. Therefore $u (\delta(A \cup C))  \leq u(\delta(C))$
+and $\delta(A \cup C)$ is also minimum $s'$-$t'$-cut.
+}
+
+
+\question{}{
+Let $T$ be a tree during the run of algorithm. Let $e \in E(T)$ be any edge of $T$. Denote the endpoints of $e$ by  $X$ and $Y$.
+Show that there are vertices $x \in X$ and $y \in Y$ such that $e$ describes a minimum $x$-$y$ cut.
+
+\emph{The algorithm produces tree that works like Gomory-Hu tree at least for vertices
+adjacent in the tree.}
+}
+
+Proof start:
+At the beginning of the algorithm (or after the first iteration, the observation is true.
+Let $X$ and $s$, $t$ be from step \ref{alg:X}. The new edge $A\cap X$ to $B\cap X$ is correct due to $s,t$.
+Edges not incident with $X$ are also correct. Remaining are edges that used to be incident 
+with $X$ but now are incident with $A\cap X$ (or $B \cap X$).
+
+Suppose the edge $YX$ had vertices $y$ and $x$. If $Y$ is in the  $A$ part of $s$-$t$-cut
+and $x$ is in the other part, the edge $Y,(X \cap A)$ needs to be verified to satisfy the conclusion.
+\begin{center}
+\tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
+\begin{tikzpicture}
+\draw (0,0) node [circle,draw,inner sep=17pt](a){} node[below]{$A\cap X$};
+\draw (2,0) node [circle,draw,inner sep=17pt](b){}   node[below]{$B\cap X$};
+\draw (a)  ++(180:2) node[draw,circle,inner sep=17pt](c){} node[below]{$Y$};
+\draw (c) -- (a) -- (b);
+\draw (-2,0.2)  node[insep,label=above:$y$]{};
+\draw (0,0.2)  node[insep,label=above:$s$]{};
+\draw (1.7,0.2)  node[insep,label=above:$t$]{};
+\draw (2.3,0.2)  node[insep,label=above:$x$]{};
+\end{tikzpicture}
+\end{center}
+
+\solution{
+We show $\lambda_{sy} = \lambda_{yt}$, which gives the desired conclusion.
+We get
+\[
+\lambda_{sy} \geq \min\{ \lambda_{st}, \lambda_{tx}, \lambda_{xy} \}
+\]
+If we contract $B \cap X$ to one vertex, $\lambda_{sy}$ does not change.
+Hence
+\[
+\lambda_{sy} \geq \min\{ \lambda_{st}, \lambda_{xy} \}
+\]
+Now $A$-$B$-cut separates $x$ and $y$, hence $\lambda_{st} \geq \lambda_{xy}$ and we have
+\[
+\lambda_{sy} \geq \lambda_{xy} \}
+\]
+On the other hand, $X$-$Y$ cut has size $\lambda_{xy}$
+and it is also $s$-$y$-cut. Hence \[
+\lambda_{sy} \leq \lambda_{xy} 
+\]
+and the equality is proved.
+}
+
+\newpage
+
+\question{}{
+Show that the tree produced by the algorithm is indeed a Gomory-Hu tree.
+}
+\solution{
+Let $u,v$ be two vertices. Let $P_{uv}= (u=x_1,x_2,\ldots,x_n=v)$ be the path with endpoints $u$ and $v$ in $T$.
+
+Observe
+\[
+\lambda_{uv} \geq \min_{1 \leq i \leq n-1} \{ \lambda_{x_ix_{i+1}} \}
+\]
+Since $\lambda_{x_ix_{i+1}}$ is obtained by edge $x_ix_{i+1}$ in the tree, we are done.
+}
+
+\vfill
+
+
+\newpage
+
+\question{Gomory-Hu Tree}{
+Construct Gomory-Hu Tree for the following graph using the algorithm
+from the class. Numbers
+on edges correspond to capacities.
+\begin{center}
+\tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
+\begin{tikzpicture}
+\draw
+\foreach \x/\a in {0/a,60/b,120/c,180/d,240/e,300/f}{
+(\x:2.5) node[insep](\a){}
+}
+(a)--node[right]{2} (b) -- node[above]{1} (c) -- node[left]{2}(d) -- node[below]{2}(e) -- node[below]{1}(f) -- node[right]{1}(a)
+(b) -- node[below]{3} (d) -- node[below]{2}(f) -- node[right]{3}(b)
+;
+\end{tikzpicture}
+\end{center}
+% TODO: Check your answer with Sage. Is the tree unique?
+}
+\solution{
+
+Here is a more detailed outline of the run of the algorithm. 
+First we assign labels to vertices.
+\tikzstyle{vertex_style}=[circle, draw, inner sep=2pt]
+\tikzstyle{dot_style}=[circle, draw,fill=black,radius=0.002pt,inner sep=1pt]
+
+% For vertical centering
+%\newcommand{\vc}[1]{\ensuremath{\vcenter{\hbox{#1}}}}
+
+\begin{center}
+\begin{tikzpicture}[scale=0.8]
+
+\node[vertex_style](1) at (2,2) {$ v_1 $};
+\node[vertex_style](2) at (4,2) {$ v_2 $};
+\node[vertex_style](3) at (0,0) {$ v_3 $};
+\node[vertex_style](4) at (6,0) {$ v_4 $};
+\node[vertex_style](5) at (2,-2) {$ v_5 $};
+\node[vertex_style](6) at (4,-2) {$ v_6 $};
+
+\draw (1) --node[above]{$1$} (2);
+\draw (2)--node[right]{$3$} (6) ;
+\draw (2)--node[right]{$2$} (4) ;
+\draw (3) --node[below]{$3$} (2);
+\draw (3)--node[above]{$2$} (6) ;
+\draw (3)--node[above]{$2$} (1) ;
+\draw (3)--node[below]{$2$} (5) ;
+\draw (4)  --node[right]{$1$} (6);
+\draw (5) --node[below]{$ 1 $} (6);
+\end{tikzpicture}
+\end{center}
+Start with $ T=(\{V(G)\},\emptyset) $:
+\vc{
+\begin{tikzpicture}
+\node[vertex_style] at (0,0) {\begin{tikzpicture}
+\node[dot_style](1) at (0.5,0.5) {};
+\node[dot_style](2) at (1,0.5) {};
+\node[dot_style](3) at (0,0) {};
+\node[dot_style](4) at (1.5,0) {};
+\node[dot_style](5) at (0.5,-0.5) {};
+\node[dot_style](6) at (1,-0.5) {};
+
+\draw (1) -- (2);
+\draw (2)--(6) ;
+\draw (2)--(4) ;
+\draw (3) --(2);
+\draw (3)--(6) ;
+\draw (3)--(1) ;
+\draw (3)--(5) ;
+\draw (4)  --(6);
+\draw (5) --(6);
+\end{tikzpicture}};
+\end{tikzpicture}
+}
+pick $ v_1,v_2 $, then the cut is
+\vc{
+\begin{tikzpicture}
+\node[dot_style](1) at (1,1) {};
+\node[dot_style](2) at (2,1) {};
+\node[dot_style](3) at (0,0) {};
+\node[dot_style](4) at (3,0) {};
+\node[dot_style](5) at (1,-1) {};
+\node[dot_style](6) at (2,-1) {};
+
+\draw (1) -- (2);
+\draw (2)--(6) ;
+\draw (2)--(4) ;
+\draw (3) --(2);
+\draw (3)--(6) ;
+\draw (3)--(1) ;
+\draw (3)--(5) ;
+\draw (4)  --(6);
+\draw (5) --(6);
+\draw[color=red,line width=1pt] (0,0.3)--(1.7,1.2);
+\end{tikzpicture}
+}\\
+ Then $ T $ is 
+ \vc{
+ \begin{tikzpicture}
+ \node[vertex_style](X) at (0,0) {\begin{tikzpicture}
+ 
+ \node[dot_style](2) at (1,0.5) {};
+ \node[dot_style](3) at (0,0) {};
+ \node[dot_style](4) at (1.5,0) {};
+ \node[dot_style](5) at (0.5,-0.5) {};
+ \node[dot_style](6) at (1,-0.5) {};
+ 
+ \draw (2)--(6) ;
+ \draw (2)--(4) ;
+ \draw (3) --(2);
+ \draw (3)--(6) ;
+ \draw (3)--(5) ;
+ \draw (4)  --(6);
+ \draw (5) --(6);
+ \end{tikzpicture}};
+ \node[vertex_style](1) at (-2,0) {$ v_1 $};
+ \draw (1)--node[above]{3}(X);
+ \end{tikzpicture}
+ }
+ pick $ v_2,v_3 $, then the cut is
+ \vc{
+ \begin{tikzpicture}
+ \node[dot_style](1) at (1,1) {};
+ \node[dot_style](2) at (2,1) {};
+ \node[dot_style](3) at (0,0) {};
+ \node[dot_style](4) at (3,0) {};
+ \node[dot_style](5) at (1,-1) {};
+ \node[dot_style](6) at (2,-1) {};
+ 
+ \draw (1) -- (2);
+ \draw (2)--(6) ;
+ \draw (2)--(4) ;
+ \draw (3) --(2);
+ \draw (3)--(6) ;
+ \draw (3)--(1) ;
+ \draw (3)--(5) ;
+ \draw (4)  --(6);
+ \draw (5) --(6);
+ \draw[color=red, line width=1pt] (1.5,-1.2)--(1.5,1.2);
+ \end{tikzpicture}
+ }\\
+ Then $ T $ is
+ \vc{
+  \begin{tikzpicture}
+  \node[vertex_style](X) at (0,0) {\begin{tikzpicture}
+  
+  \node[dot_style](2) at (1,0.5) {};
+  \node[dot_style](4) at (1.5,0) {};
+  \node[dot_style](6) at (1,-0.5) {};
+  
+  \draw (2)--(6) ;
+  \draw (2)--(4) ;
+  \draw (4)  --(6);
+  \end{tikzpicture}};
+  \node[vertex_style](1) at (-5,0) {$ v_1 $};
+  \node[vertex_style](Y) at (-3,0) {\begin{tikzpicture}
+    
+    \node[vertex_style](3) at (0,0.5) {$ v_3 $};
+    \node[vertex_style](5) at (0,-0.5) {$ v_5 $};
+    
+    \draw (3)--(5) ;
+    \end{tikzpicture}};
+  \draw (1)--node[above]{3}(Y);
+  \draw(X)--node[above]{7}(Y);
+  \end{tikzpicture}
+  }
+pick $ v_3,v_5 $, then the cut is
+\vc{
+ \begin{tikzpicture}
+ \node[dot_style](1) at (1,1) {};
+ \node[vertex_style](3) at (0,0) {$ v_3 $};
+ \node[dot_style](246) at (2,0) {};
+ \node[vertex_style](5) at (1,-1) {$ v_5 $};
+ 
+ \draw (3)--node[above]{5}(246) ;
+ \draw (246)--node[above]{1}(1) ;
+ \draw (3)--node[left]{2}(1) ;
+ \draw (3)--node[below]{2}(5) ;
+ \draw (5) --node[below]{1}(246);
+ \draw[color=red, line width=1pt] (0,-0.5)--(2,-0.5);
+ \end{tikzpicture}
+ }
+ \\
+ Then $ T $ is
+ \vc{
+   \begin{tikzpicture}
+   \node[vertex_style](X) at (0,0) {\begin{tikzpicture}
+   
+   \node[dot_style](2) at (1,0.5) {};
+   \node[dot_style](4) at (1.5,0) {};
+   \node[dot_style](6) at (1,-0.5) {};
+   
+   \draw (2)--(6) ;
+   \draw (2)--(4) ;
+   \draw (4)  --(6);
+   \end{tikzpicture}};
+   \node[vertex_style](1) at (-3,0) {$ v_1 $};
+   \node[vertex_style](3) at (-1.5,0) {$ v_3 $};
+   \node[vertex_style](5) at (-1.5,-1) {$ v_5 $};
+   \draw(X)--node[above]{7}(3);
+   \draw(1)--node[above]{3}(3);
+   \draw(5)--node[right]{3}(3);
+   \end{tikzpicture}
+   }
+   pick $ v_2,v_4 $, then the cut is
+   \vc{
+   \begin{tikzpicture}
+   \node[dot_style](135) at (0,0){};
+   \node[vertex_style](2) at (1,1){$ v_2 $};
+   \node[vertex_style](4) at (2,0){$ v_4 $};
+   \node[vertex_style](6) at (1,-1){$ v_6 $};
+   \draw(2)--node[above]{4}(135);
+   \draw(2)--node[above]{2}(4);
+   \draw(2)--node[right]{3}(6);
+   \draw(6)--node[below]{1}(4);
+   \draw(6)--node[below]{3}(135);
+   \draw[color=red, line width=1pt](1.4,-1.2)--(1.4,1.2);
+   \end{tikzpicture}
+   }
+   \\
+ Then $ T $ is
+\vc{
+   \begin{tikzpicture}
+   \node[vertex_style](X) at (0,0) {\begin{tikzpicture}
+   
+   \node[vertex_style](2) at (0,0.5) {$ v_2 $};
+   \node[vertex_style](6) at (0,-0.5) {$ v_6 $};
+   
+   \draw (2)--(6) ;
+   \end{tikzpicture}};
+   \node[vertex_style](1) at (-3.5,0) {$ v_1 $};
+   \node[vertex_style](3) at (-2,0) {$ v_3 $};
+   \node[vertex_style](5) at (-2,-1.3) {$ v_5 $};
+   \node[vertex_style](4) at (2,0){$ v_4 $};
+   \draw(X)--node[above]{7}(3);
+   \draw(1)--node[above]{3}(3);
+   \draw(5)--node[right]{3}(3);
+   \draw(X)--node[above]{3}(4);
+   \end{tikzpicture}
+}
+   pick $ v_2,v_6 $, then the cut is
+\vc{
+   \begin{tikzpicture}
+	 \node[dot_style](135) at (0,0){};
+     \node[vertex_style](2) at (1,1){$ v_2 $};
+     \node[dot_style](4) at (2,0){};
+     \node[vertex_style](6) at (1,-1){$ v_6 $};
+     \draw(2)--node[above]{4}(135);
+     \draw(2)--node[above]{2}(4);
+     \draw(2)--node[right]{3}(6);
+     \draw(6)--node[below]{1}(4);
+     \draw(6)--node[below]{3}(135);
+     
+     \node(l)at (0,-1){};
+     \node(r)at (2,-1){};
+     \draw[color=red, line width=1pt](l.90)..controls +(90:5mm) and +(90:10mm)..(r.90);
+    
+   \end{tikzpicture}
+ }\\
+    Then $ T $ is
+    \vc{
+      \begin{tikzpicture}
+      \node[vertex_style](2) at (0,0) {$ v_2 $};
+      \node[vertex_style](1) at (-3,0) {$ v_1 $};
+      \node[vertex_style](3) at (-1.5,0) {$ v_3 $};
+      \node[vertex_style](5) at (-1.5,-1.5) {$ v_5 $};
+      \node[vertex_style](4) at (1.5,0){$ v_4 $};
+      \node[vertex_style](6) at (0,-1.5){$ v_6 $};
+      \draw(2)--node[above]{7}(3);
+      \draw(1)--node[above]{3}(3);
+      \draw(5)--node[right]{3}(3);
+      \draw(2)--node[above]{3}(4);
+      \draw(2)--node[right]{7}(6);
+      
+      \end{tikzpicture}}
+      
+So in the form of $ G $:
+\vc{
+      \begin{tikzpicture}[thick,scale=0.8]
+      
+      \node[vertex_style](1) at (2,2) {$ v_1 $};
+      \node[vertex_style](2) at (4,2) {$ v_2 $};
+      \node[vertex_style](3) at (0,0) {$ v_3 $};
+      \node[vertex_style](4) at (6,0) {$ v_4 $};
+      \node[vertex_style](5) at (2,-2) {$ v_5 $};
+      \node[vertex_style](6) at (4,-2) {$ v_6 $};
+      
+      
+      \draw (2)--node[right]{$7$} (6) ;
+      \draw (2)--node[right]{$3$} (4) ;
+      \draw (3) --node[below]{$7$} (2);
+      \draw (3)--node[above]{$3$} (1) ;
+      \draw (3)--node[below]{$3$} (5) ;
+      \end{tikzpicture}
+      }
+      
+Note that the tree is not unique and that there are many different ones.
+The tree depends on the order of cuts. But it should still have
+a path of length 2 with edges of value 7 and three additional leaves with edges
+of value 3.\\
+}    
+
+
+%\emph{Next time: Minimum Cost Flows - only briefly}
+
+\end{document}
+
+
+
+
+
+

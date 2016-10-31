@@ -8,12 +8,7 @@ def nodeIdentification(original_graph):
     while graph.order() > 1:
         legal_ordering = findLegalOrdering(graph)
         cut = graph.get_vertex(legal_ordering[-1])
-        cut_value = 0
-        for edge in original_graph.edges():
-            if edge[0] in cut and edge[1] not in cut:
-                cut_value += edge[2]
-            elif edge[1] in cut and edge[0] not in cut:
-                cut_value += edge[2]
+        cut_value = sum([e[2] for e in G.edges_incident(legal_ordering[-1])])
 
         if cut_value < minimum_cut_value or minimum_cut_value == None:
             minimum_cut = cut
@@ -41,6 +36,7 @@ def findLegalOrdering(graph):
                 max_capacity_vertex = v
 
         legal_ordering.append(max_capacity_vertex)
+        vertices_remaining.remove(max_capacity_vertex)
 
     return legal_ordering
 
