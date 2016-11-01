@@ -8,7 +8,7 @@ def nodeIdentification(original_graph):
     while graph.order() > 1:
         legal_ordering = findLegalOrdering(graph)
         cut = graph.get_vertex(legal_ordering[-1])
-        cut_value = sum([e[2] for e in G.edges_incident(legal_ordering[-1])])
+        cut_value = sum([e[2] for e in graph.edges_incident(legal_ordering[-1])])
 
         if cut_value < minimum_cut_value or minimum_cut_value == None:
             minimum_cut = cut

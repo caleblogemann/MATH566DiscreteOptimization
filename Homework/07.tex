@@ -11,12 +11,41 @@ Homework 7
 
 %\lstinputlisting[language=Sage]{03_2.sage}
 \begin{enumerate}
-  \item % #1
+  \item % #1 Done
     A cut of $G$ is \emph{minimal} if there is no cut of $G$ properly contained
     in it.
     Prove that the random contraction algorithm returns only minimal cuts.
 
-  \item % #2
+    \begin{proof}
+      Let $G$ be a connected graph and let the set of edges
+      $E = \set{e_1, \ldots, e_k}$ be a cut returned by the random contraction
+      algorithm.
+      Now suppose $E$ is not a minimal cut, that is there exists a proper subset
+      $F \subset E$ that is also a cut of $G$.
+      Thus there is an edge $e$, such that $e \in E$ and $e \not\in F$.
+      Let $E$ be the cut between the set of vertices $X$ and $\bar{X}$ of $G$.
+      Since $e \in E$, that implies that $e = \set{a, b}$ where $a \in X$ and
+      $b \in \bar{X}$.
+      Since $E$ was the cut returned by the random contraction algorithm, this
+      implies that at the last step $X$ and $\bar{X}$ were both contracted to a
+      single vertex.
+      If a set of vertices is contracted to a single vertex they must have been
+      connected in the original graph, because the algorithm only contracts
+      along edges.
+      Thus the $X$ and $\bar{X}$ when considered as subgraphs must be connected.
+      Now consider the cut $F$, since the cut is a subset of $E$, the sets $X$
+      and $\bar{X}$ are still connected with edges in $F$ removed.
+      Now consider $u \in X$ and $v \in \bar{X}$, since $X$ is connected there
+      exists a path in $G/F$ from $u$ to $a$, and since $\bar{X}$ is connected
+      there is a path from $b$ to $v$.
+      Now since $e \not\in F$, there is a path from $u$ tp $v$.
+      This shows that there is a path from any two vertices in $G/F$, and thus
+      $F$ is not a cut at all.
+      Since $F$ is not a cut, $E$ must be a minimal cut, showing that the
+      random contraction algorithm does return minimal cuts.
+    \end{proof}
+
+  \item % #2 Done
     Implement Node Identification Minimum Cut Algorithm.
     Try it on the following graph:
     \begin{center}
@@ -54,8 +83,12 @@ Homework 7
     \lstinputlisting[language=Sage]{07_2.sage}
 
     The output of this script is
+    \begin{verbatim}
+      minimum cut: set(['h', 'g', 'f'])
+      minimum cut value: 7
+    \end{verbatim}
 
-  \item % #3
+  \item % #3 Done
     Implement Random Contraction Algorithm.
     Try it on the following graph. 
     Run it many times and based on your experiment conclude what is the probability that that your algorithm succeeds on this graph.
@@ -93,7 +126,40 @@ Homework 7
     algorithm on the graph given for this problem.
     \lstinputlisting[language=Sage]{07_3.sage}
 
-  \item % #4
+    The output of this script is shown below.
+    As it can be seen with a hundred trials the algorithm finds the minimum
+    cut.
+    \begin{verbatim}
+      minimum cut: set(['a', 'c', 'b', 'e', 'd'])
+      minimum cut value: 7
+    \end{verbatim}
+
+    Also the script computes an experimental probability that the algorithm
+    finds the correct minimum cut, based on the number of trials that are run.
+    Note the interesting fact that at just 20 trials the probability of finding
+    the right cut is over 90\%.
+    This is much higher than the lower bound given in the notes.
+    \begin{center}
+    \begin{tabular}{cc}
+      \toprule
+      number of trials & success percentage \\
+      \midrule
+       1 & 0.126 \\
+       5 & 0.438 \\
+      10 & 0.668 \\
+      15 & 0.834 \\
+      20 & 0.918 \\
+      25 & 0.956 \\
+      30 & 0.972 \\
+      35 & 0.980 \\
+      40 & 0.992 \\
+      45 & 0.992 \\
+      50 & 0.998 \\
+      \bottomrule
+    \end{tabular}
+    \end{center}
+
+  \item % #4 Done
     Construct Gomory-Hu Tree for the following graph using the algorithm from the class. 
     Numbers on edges correspond to capacities.
     Show Show steps after every new cut.
