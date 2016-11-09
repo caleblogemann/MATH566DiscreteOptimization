@@ -42,7 +42,7 @@ and boundary in vertices.
 \end{center}
 
 \begin{enumerate}
-  \item % #1
+  \item % #1 Done
     Consider the following $b$-flow $f$ in $M$.
     \begin{center}
       \begin{tikzpicture}[xscale=2]
@@ -73,49 +73,220 @@ and boundary in vertices.
     \end{center}
 
     Compute the cost of $f$.
-
     Start computing the minimum cost $b$-flow by finding a sequence of augmenting cycles starting from $f$.
-    (No need to use minimum mean cycles, do two augmentations. No need to solve it to optimality.)
 
+    First I will compute the cost of the given flow $f$. 
+    \[
+      1 \times -2 + 2 \times 5 + 2 \times -3 + 1 \times -1 + 1 \times 2 +
+      1 \times 1 + 1 \times 4 + 2 \times 2 + 2 \times 0 + 2 \times 0 = 12
+    \]
+    The cost of this flow is 12.
+
+    Now I will do 2 augmentations of this flow, first the residual graph must be
+    computed, I relabeled the vertices while doing this.
+    The boundaries at each vertex are not important for this algorithm as the
+    augmentations preserve this property.
     \begin{center}
       \begin{tikzpicture}[xscale=2,yscale=1.7]
         \draw 
-        (0,0) node[draw,circle](x){$-4$}
-        (4,0) node[draw,circle](y){$2$}
-        (0,4) node[draw,circle](z){$1$}
-        (4,4) node[draw,circle](w){$-3$}
-        (2,1) node[draw,circle](a){$3$}
-        (1,2) node[draw,circle](b){$-3$}
-        (2,3) node[draw,circle](c){$4$}
-        (3,2) node[draw,circle](d){$0$}
+        (0,4) node[draw,circle](a){$a$}
+        (4,4) node[draw,circle](b){$b$}
+        (4,0) node[draw,circle](c){$c$}
+        (0,0) node[draw,circle](d){$d$}
+        (2,3) node[draw,circle](e){$e$}
+        (3,2) node[draw,circle](f){$f$}
+        (2,1) node[draw,circle](g){$g$}
+        (1,2) node[draw,circle](h){$h$}
         ;
         %%% Labels below
-        \foreach \x/\y/\l in {y/x/{a} , b/z/{b}, w/d/{c},c/b/{d},d/c/{e},a/b/{f},d/a/{g},
-          c/z/{h}, w/c/{i}, w/z/{j}, a/x/{k}, y/a/{l}, y/d/{m}  }{
+        \foreach \x/\y/\l in {c/d/2, h/a/3, e/h/-1, f/e/-2, g/h/-2,
+          e/a/5, b/a/2, g/d/0, c/g/-4, c/f/-1}{
           \draw[-triangle 45](\x) to[bend left=5] node[below]{\l}(\y);
         }
         %%% Labels above
-        \foreach \x/\y/\l in {y/x/{a} , b/z/{b}, w/d/{c},c/b/{d},d/c/{e},a/b/{f},d/a/{g},
-          c/z/{h}, w/c/{i}, w/z/{j}, a/x/{k}, y/a/{l}, y/d/{m}  }{
-          \draw[-triangle 45](\y) to[bend left=5] node[above]{\l}(\x);
+        \foreach \x/\y/\l in {d/c/-2, f/b/1, h/e/1, e/f/2, g/f/1,
+          a/e/-5, e/b/5, a/b/-2, d/g/0, g/c/4, f/c/1}{
+          \draw[-triangle 45](\x) to[bend left=5] node[above]{\l}(\y);
         }
         %%% Labels left
-        \foreach \x/\y/\l in {x/z/{n}, y/w/{o} }{
+        \foreach \x/\y/\l in {d/a/2, c/b/0}{
           \draw[-triangle 45](\x) to[bend left=5]  node[left]{\l}(\y);
         }
         %%% Labels right
-        \foreach \x/\y/\l in {x/z/{n}, y/w/{o} }{
-          \draw[-triangle 45](\y) to[bend left=5]  node[right]{\l}(\x);
+        \foreach \x/\y/\l in {b/c/0}{
+          \draw[-triangle 45](\x) to[bend left=5]  node[right]{\l}(\y);
         }
       \end{tikzpicture}
     \end{center}
 
-  \item % #2
+    The first negative cycle that I will augment along the cycle
+    $c \to d \to g \to c$, the value of this cycle is $-6$.
+    The minimum available capacity along this cycle is 1 along the $g \to d$
+    edge.
+    The new flow is shown below, and the value of this new flow is $6$.
+    \begin{center}
+      \begin{tikzpicture}[xscale=2]
+        \draw 
+        (0,4) node[draw,circle](z){$a$}
+        (4,4) node[draw,circle](w){$b$}
+        (4,0) node[draw,circle](y){$c$}
+        (0,0) node[draw,circle](x){$d$}
+        (2,3) node[draw,circle](c){$e$}
+        (3,2) node[draw,circle](d){$f$}
+        (2,1) node[draw,circle](a){$g$}
+        (1,2) node[draw,circle](b){$h$}
+        ;
+        \foreach \x/\y/\l in {y/x/{1} , z/b/{2}, d/w/{0},c/b/{1},c/d/{1},a/b/{0},a/d/{0},
+            c/z/{2}, w/c/{0}}{
+          \draw[-triangle 45](\x)--node[below]{\l}(\y);
+        }
+        \foreach \x/\y/\l in {z/w/{1}, a/x/{3}, a/y/{0}, d/y/{1} }{
+          \draw[-triangle 45](\x)--node[above]{\l}(\y);
+        }
+        \foreach \x/\y/\l in {x/z/{0} }{
+          \draw[-triangle 45](\x)--node[left]{\l}(\y);
+        }
+        \foreach \x/\y/\l in {y/w/{2} }{
+          \draw[-triangle 45](\x)--node[right]{\l}(\y);
+        }
+      \end{tikzpicture}
+    \end{center}
+
+    The new residual graph is shown below.
+    \begin{center}
+      \begin{tikzpicture}[xscale=2,yscale=1.7]
+        \draw 
+        (0,4) node[draw,circle](a){$a$}
+        (4,4) node[draw,circle](b){$b$}
+        (4,0) node[draw,circle](c){$c$}
+        (0,0) node[draw,circle](d){$d$}
+        (2,3) node[draw,circle](e){$e$}
+        (3,2) node[draw,circle](f){$f$}
+        (2,1) node[draw,circle](g){$g$}
+        (1,2) node[draw,circle](h){$h$}
+        ;
+        %%% Labels below
+        \foreach \x/\y/\l in {c/d/2, h/a/3, e/h/-1, f/e/-2, g/h/-2,
+          e/a/5, b/a/2, c/f/-1}{
+          \draw[-triangle 45](\x) to[bend left=5] node[below]{\l}(\y);
+        }
+        %%% Labels above
+        \foreach \x/\y/\l in {d/c/-2, f/b/1, h/e/1, e/f/2, g/f/1,
+          a/e/-5, e/b/5, a/b/-2, d/g/0, g/c/4, f/c/1}{
+          \draw[-triangle 45](\x) to[bend left=5] node[above]{\l}(\y);
+        }
+        %%% Labels left
+        \foreach \x/\y/\l in {d/a/2, c/b/0}{
+          \draw[-triangle 45](\x) to[bend left=5]  node[left]{\l}(\y);
+        }
+        %%% Labels right
+        \foreach \x/\y/\l in {b/c/0}{
+          \draw[-triangle 45](\x) to[bend left=5]  node[right]{\l}(\y);
+        }
+      \end{tikzpicture}
+    \end{center}
+
+    The next cycle I will augment on is $a \to e \to h \to a$, which has
+    value $-3$.
+    The minimum capacity on this cycle is $2$.
+    The new flow will have value $0$, and is shown below.
+    \begin{center}
+      \begin{tikzpicture}[xscale=2]
+        \draw 
+        (0,4) node[draw,circle](z){$a$}
+        (4,4) node[draw,circle](w){$b$}
+        (4,0) node[draw,circle](y){$c$}
+        (0,0) node[draw,circle](x){$d$}
+        (2,3) node[draw,circle](c){$e$}
+        (3,2) node[draw,circle](d){$f$}
+        (2,1) node[draw,circle](a){$g$}
+        (1,2) node[draw,circle](b){$h$}
+        ;
+        \foreach \x/\y/\l in {y/x/{1} , z/b/{0}, d/w/{0}, c/b/{3}, c/d/{1}, a/b/{0}, a/d/{0},
+            c/z/{0}, w/c/{0}}{
+          \draw[-triangle 45](\x)--node[below]{\l}(\y);
+        }
+        \foreach \x/\y/\l in {z/w/{1}, a/x/{3}, a/y/{0}, d/y/{1} }{
+          \draw[-triangle 45](\x)--node[above]{\l}(\y);
+        }
+        \foreach \x/\y/\l in {x/z/{0} }{
+          \draw[-triangle 45](\x)--node[left]{\l}(\y);
+        }
+        \foreach \x/\y/\l in {y/w/{2} }{
+          \draw[-triangle 45](\x)--node[right]{\l}(\y);
+        }
+      \end{tikzpicture}
+    \end{center}
+    From problem 2 we know that this is the optimal min flow on this network.
+
+  \item % #2 Done
     Solve minimum cost $b$-flow for $M$ using linear programming.
     That is, formulate the problem using linear programming and solve it
     using Sage or APMonitor. Then draw the resulting network.
 
+    First I will relabel the nodes with letters in order to better describe the
+    flow.
+    \begin{center}
+      \begin{tikzpicture}[xscale=2]
+        \draw 
+        (0,4) node[draw,circle](z){$a$}
+        (4,4) node[draw,circle](w){$b$}
+        (4,0) node[draw,circle](y){$c$}
+        (0,0) node[draw,circle](x){$d$}
+        (2,3) node[draw,circle](c){$e$}
+        (3,2) node[draw,circle](d){$f$}
+        (2,1) node[draw,circle](a){$g$}
+        (1,2) node[draw,circle](b){$h$}
+        ;
+        \foreach \x/\y/\l in {y/x/{2} , z/b/{2}, d/w/{0},c/b/{1},c/d/{1},a/b/{0},a/d/{0},
+            c/z/{2}, w/c/{0}}{
+          \draw[-triangle 45](\x)--node[below]{\l}(\y);
+        }
+        \foreach \x/\y/\l in {z/w/{1}, a/x/{2}, a/y/{1}, d/y/{1} }{
+          \draw[-triangle 45](\x)--node[above]{\l}(\y);
+        }
+        \foreach \x/\y/\l in {x/z/{0} }{
+          \draw[-triangle 45](\x)--node[left]{\l}(\y);
+        }
+        \foreach \x/\y/\l in {y/w/{2} }{
+          \draw[-triangle 45](\x)--node[right]{\l}(\y);
+        }
+      \end{tikzpicture}
+    \end{center}
+    In order to solve the min flow problem we can consider the flow on each
+    edge, which I will denote $f(e)$ for each edge in $E(G)$.
+    Let $c(e)$ be the cost of edge $e$, $u(e)$ be the capacity of each edge,
+    and $b(v)$ be the boundary at vertex $v$.
+    Any solution needs to satisfy two types of constraints.
+    First the flow must be greater than zero and less than the capacity,
+    symbolically this can be expressed as
+    \[
+      0 \le f(e) \le u(e)
+    \]
+    for all $e \in E(G)$.
+    Second the difference between the flow out and the flow in of each vertex
+    must be the boundary of each vertex, symbolically this can expressed as
+    \[
+      \sum*{(u, v) \in E(G)}{}{f((u, v))} - \sum*{(v, u) \in E(G)}{}{f((v, u))} = b(v)
+    \]
+    for each vertex $v$ in $V(G)$.
+
+    Also the objective function for this linear program is minimizing the
+    flow times the cost of each edge.
+    Therefore the entire linear program is
+    \[
+      (P)
+      \begin{cases} 
+        \text{minimize }   & \sum*{e \in E(G)}{}{c(e) f(e)} \\
+        \text{subject to } & f(e) \le u(e) \quad \forall e \in E(G) \\
+                           & \sum*{e = (u, v) \in E(G)}{}{f(e)} - \sum*{e = (v, u) \in E(G)}{}{f(e)} = b(v) \quad \forall v \in V(G) \\
+                           & f(e) \ge 0 \quad \forall e \in E(G)
+      \end{cases}
+    \]
+
+    This linear program can be solved using the following Sage script.
     \lstinputlisting[language=Sage]{08_2.sage}
+    The output of this script is shown below.
     \begin{verbatim}
       Objective Value: 0.0
       f[('a', 'b')] = 2.0
@@ -134,11 +305,11 @@ and boundary in vertices.
       f[('g', 'f')] = 0.0
       f[('g', 'h')] = 0.0
     \end{verbatim}
-    This shows that the minimum cost 
+    This shows that the minimum cost is 0 and the flow is shown below.
     \begin{center}
       \begin{tikzpicture}[xscale=2]
         \draw 
-        (0,0) node[draw,circle](x){$-4$}
+        (0,0) node[draw,circle](x){$-4$} 
         (4,0) node[draw,circle](y){$2$}
         (0,4) node[draw,circle](z){$1$}
         (4,4) node[draw,circle](w){$-3$}
@@ -147,17 +318,17 @@ and boundary in vertices.
         (2,3) node[draw,circle](c){$4$}
         (3,2) node[draw,circle](d){$0$}
         ;
-        \foreach \x/\y/\l in {y/x/{2} , z/b/{2}, d/w/{0},c/b/{1},c/d/{1},a/b/{0},a/d/{0},
-            c/z/{2}, w/c/{0}}{
+        \foreach \x/\y/\l in {y/x/{1} , z/b/{0}, d/w/{0},c/b/{3},c/d/{0},a/b/{0},a/d/{0},
+            c/z/{1}, w/c/{0}}{
           \draw[-triangle 45](\x)--node[below]{\l}(\y);
         }
-        \foreach \x/\y/\l in {z/w/{1}, a/x/{2}, a/y/{1}, d/y/{1} }{
+        \foreach \x/\y/\l in {z/w/{2}, a/x/{3}, a/y/{0}, d/y/{0} }{
           \draw[-triangle 45](\x)--node[above]{\l}(\y);
         }
         \foreach \x/\y/\l in {x/z/{0} }{
           \draw[-triangle 45](\x)--node[left]{\l}(\y);
         }
-        \foreach \x/\y/\l in {y/w/{2} }{
+        \foreach \x/\y/\l in {y/w/{1} }{
           \draw[-triangle 45](\x)--node[right]{\l}(\y);
         }
       \end{tikzpicture}
@@ -171,5 +342,32 @@ and boundary in vertices.
     Maximum Flow Problem.
     That is, find \emph{simple} algorithm that is solving Maximum Flow Problem
     and using Minimum Cost Flow as a black box subroutine once.
+
+    Let $G$ be a directed graph with capacity $u$ and source vertex $s$ and
+    target vertex $t$ be a max flow problem.
+    In order to transform this into a minimum cost flow problem, I will let the
+    cost of all edges be $0$.
+    I will let the boundaries of all vertices be $0$.
+    Also if there is an edge $t \to s$, note that the flow on this edge will not
+    be a part of the maximal flow from $s$ to $t$ because it would only decrease
+    the flow.
+    This edge could be a part of a cycle, but if it is part of a cycle then
+    removing the flow on this edge will increase the overall flow.
+    Therefore this edge doesn't contribute to a maximal flow, so if it exists it
+    can be removed from $G$.
+    Now that this edge is removed in can be added into the min cost flow problem
+    with cost -1.
+    Therefore in minimizing the cost of the flow, this will maximize the flow
+    over the edge $t \to s$.
+    The value of the flow over this edge in the min flow problem is the value of
+    the maximal flow.
+    The flow on all of the other edges is the maximal flow on $G$ as well.
+
+    In summary in order to use a min cost flow algorithm to maximize the flow on
+    $G$, set the boundaries of all the vertices to $0$, set the costs of all
+    edges to $0$, and add an edge from $t$ to $s$ with cost $-1$.
+    Running the min cost flow algorithm on this graph will give a flow.
+    This flow with the $t \to s$ edge removed is a maximal flow on $G$.
+
 \end{enumerate}
 \end{document}
