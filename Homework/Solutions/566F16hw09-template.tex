@@ -1,0 +1,97 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{fullpage}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric}
+\usetikzlibrary{arrows}
+\usepackage{amsmath}
+\usepackage{hyperref}
+
+\newcounter{excounter}
+\setcounter{excounter}{1}
+\newcommand\question[2]{\vskip 1em  \noindent\textbf{\arabic{excounter}\addtocounter{excounter}{1}:} (\emph{#1}) \newline \noindent#2}
+\newcommand\hint[1]{ \newline \noindent\textit{Hint: #1}}
+\newcommand\solution[1]{\vskip 0.5em \noindent\textbf{Solution:}\par\noindent#1}
+
+%\renewcommand\solution[1]{ }
+
+
+
+\begin{document}
+\large
+
+{\bf MATH-566 \hspace{1cm} HW 09}
+\vskip 1em
+Due \textbf{Nov 16} before class (regularly). Just bring it before the class and it will be collected there.
+
+
+
+\question{Directed Minimum Mean Cycle}{
+Implement Directed Minimum Mean Cycle in Sage. 
+Before implementing the algorithm, show that it is possible to slightly modify the algorithm.
+Instead of adding an extra vertex $s$ and edges from $s$ to all other vertices, it is possible
+to simply assign $F_0(v) = 0$ for all $v \in V$ at the beginning. This avoids the hassle with adding an extra
+vertex. But it requires an argument that the algorithm is still correct.\\
+Feel free to use any part of the Sage template. If you don't like the outline I made, don't use it.
+}
+
+
+
+\question{Strength of integer programming}{
+Show that in integer program, it is possible to express the following constraint:
+\[
+x \in [100,200]  \cup [300,400]\]
+in other words
+\[
+100 \leq x \leq 200   \text{ or } 300 \leq x \leq 400
+\]
+How to express the constraint \emph{without} using \emph{or}?\\ \emph{Hint: use additional integer variable $z \in \{0,1\}$, consider $z$ and $(1-z)$.}
+}
+
+
+
+
+
+\question{What is unimodular?}{
+Determine which of the matrices below are (i) unimodular, (ii) totally unimodular, or (iii) neither.
+Be sure to explain your answer.
+
+\begin{center}
+\begin{tabular}[h]{c@{\qquad}c@{\qquad}c}
+$\left(\begin{array}{rrrr}
+1 & -1 & -1 & 0\\
+-1 & 0 & 0 & 1\\
+0 & 1 & 0 & -1\\
+0 & 0 & 1 & 0\end{array}\right)$ & 
+$\left(\begin{array}{cccc}
+1 & 0 & 1 & 0\\
+0 & 1 & 0 & 0\\
+0 & 0 & 1 & 1\\
+1 & 1 & 0 & 1\end{array}\right)$ &
+$\left(\begin{array}{ccccc}
+0 & 1 & 0 & 0 & 0  \\
+1 & 0 & 1 & 0  & 0 \\
+0 & 1 & 0 & 1 & 1\\
+0 & 0 & 1 & 0 & 1\\
+0 & 0 & 1 & 1 & 0\end{array}\right) $
+\\
+\textbf{a.} &
+\textbf{b.}  &
+\textbf{c.} 
+\end{tabular}
+\end{center}
+}
+
+
+
+\question{Unimodular and totally unimodular}{
+Show that $A \in \mathbb{Z}^{m \times n}$ is totally unimodular iff $[A\ I]$ is unimodular (where $I$ is $m \times m$ unit matrix).
+}
+
+
+\question{Not all unimodular is totally unimodular}{
+Find a unimodular matrix $A$, that is not totally unimodular.
+}
+
+
+\end{document}

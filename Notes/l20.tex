@@ -1,0 +1,227 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[czech, english]{babel}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric}
+\usetikzlibrary{shapes.multipart}
+\usetikzlibrary{arrows}
+\usepackage{hyperref}
+
+
+% Itemize environment with small skips
+\newenvironment{packeditemize}{
+\begin{itemize}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{itemize}}
+
+
+% Fancy footnote....
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\usepackage{lastpage}
+\rfoot{MATH 566 - 20, page \thepage/\pageref{LastPage}}
+\cfoot{}
+\rhead{}
+\lhead{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+
+\newtheorem{theorem*}{Theorem} 
+
+% Itemize environment with small skips
+\newenvironment{packedenumerate}{
+\begin{enumerate}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{enumerate}}
+
+
+\newcommand{\vc}[1]{\ensuremath{\vcenter{\hbox{#1}}}}
+
+\newcounter{excounter}
+\setcounter{excounter}{1}
+\newcommand\question[2]{\vskip 1em  \noindent\textbf{\arabic{excounter}\addtocounter{excounter}{1}:} \emph{#1} \noindent#2}
+\newcommand\solution[1]{\vskip 0.5em \noindent\textbf{Solution:} #1}
+%\newcommand\like{\par \noindent\emph{(This question is: good - bad - ugly? Difficulty: 0-10:\hskip 3em )}} 
+
+\newcommand\lecturer[1]{\textbf{#1}}
+\newcommand\hideforstudent[1]{#1}
+
+
+%\renewcommand\lecturer[1]{{\color{white} \textbf{#1} }}
+%\renewcommand\hideforstudent[1]{{\color{white} #1 }}
+%\renewcommand\solution[1]{{\color{white} \vskip 0.5em \noindent\textbf{Solution:} #1 }}
+
+
+
+\setlength{\parindent}{0cm}
+\setlength{\parskip}{0.1cm}
+
+\begin{document}
+
+Fall  2016, MATH-566
+
+\centerline{{\Large \textbf{Minimum Mean Cycle}}}
+
+Problem: Directed graph $G=(V,E)$, cost $c: E \rightarrow \mathbb{R}$. Find Minimum Mean Cycle $C$.
+That is,  $\frac{\sum_{e\in C} c(e)}{|C|}$ is minimized for $C$. Denote the minimum by $\mu(G,c)$.
+
+
+\question{}{
+Find minimum mean cycle in
+\begin{center}
+\tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
+\begin{tikzpicture}[scale=1.5]
+\foreach \x in {1,2,3,4}{
+\foreach \y in {1,2}{
+\draw (\x,\y) node[insep](x\x\y){};
+}
+}
+\foreach \x/\y/\t in {x21/x11/1, x31/x21/1, x41/x31/1 }{ 
+\draw[-triangle 45](\x) --node[below]{\t} (\y);}
+\foreach \x/\y/\t in {x12/x22/1, x22/x32/1.5, x32/x42/1 }{ 
+\draw[-triangle 45](\x) --node[above]{\t} (\y);}
+\foreach \x/\y/\t in {x11/x12/1, x22/x21/1, x32/x31/1, x42/x41/-1 }{ 
+\draw[-triangle 45](\x) --node[left]{\t} (\y);}
+\end{tikzpicture}
+\end{center}
+}
+
+
+\emph{Walk} is a sequence of alternating vertices and edges $v_1,e_1,v_2,e_2,\ldots,v_k$ where
+edge $e_i$ is edge  $\overrightarrow{v_iv_{i+1}}$.\\
+\emph{Length} of a walk is the number of edges in the walk.
+
+
+Assume there is a vertex $s$ such that every vertex of $G$ is reachable from $s$.
+
+Let $F_k(x)$ be the minimum cost of a walk from $s$ to $x$ of length $k$. If no such walk exists, $F_k(x) = \infty$.
+
+\question{}{
+What happens if there is $k$ such that  $F_{k}(x) = \infty$ for all $x \in V$? 
+If it happens for some $k$, what is the smallest $k$ when it necessarily also happens?
+}
+\solution{
+There is no cycle. If there was a cycle, walk can cycle around a cycle and the walk can be infinitely long.\\
+The smallest $k$ is $n$. It may take $n-1$ steps to reach all vertices, consider a path.
+}
+
+Let $C$ be the minimum mean cost cycle. 
+
+\question{}{
+Let $x \in C$ and $F_k(x) < \infty$. Compute upper bound on $F_{k+|C|}(x)$. Find sufficient conditions for $\mu(G,c)$ and $F_k(x)$  to make it tight.
+}
+\solution{
+\[ F_{k+|C|}(v) \leq F_k(v) +  \sum_{e\in C} c(e)\]
+Tight when $F_k(x)$ is the least cost walk over all walks AND $\mu(G,c)=0$.
+}
+
+
+
+Goal is to show
+\[
+\mu(G,c) = \min_{x\in V} \max_{\substack{0 \leq k \leq n-1\\F_k(x) < \infty}} \frac{F_{n}(x)-F_{k}(x)}{n-k}
+\]
+
+\question{}{
+Assume $\mu(G,c)  = 0$. Show that
+\[
+0 = \min_{x\in V} \max_{\substack{0 \leq k \leq n-1\\F_k(x) < \infty}} \frac{F_{n}(x)-F_{k}(x)}{n-k}
+\]
+by arguing that $\leq$ is always true and that the exists a vertex that has equality.
+}
+\solution{
+$\mu(G,c)  = 0$ implies no negative circuit. Hence $F_{k}(x)$ is $\geq$ distance of $x$ from $s$.
+Hence $\max_k F_{n}(x)-F_{k}(x) \geq 0$.  \\
+Let $C$ be the minimum mean cost cycle. Let $w \in C$. Consider a shortest (least cost) path
+from $s$ to $w$ followed by $n$ repetitions of $C$. This has the same cost as the path, so any initial 
+part must be also least cost. Take first $n$ steps of the path and this gives the desired $x$.
+}
+
+\question{}{
+Assume $\mu(G,c)  = 0$.
+Let $\delta \in \mathbb{R}$ and 
+let $c':E \rightarrow \mathbb{R}$ be defined as $c'(e) = c(e)+\delta$. ($c'$ is adding $\delta$ to cost of all edges)
+What is $\mu(G,c')$ and if $F'$ corresponds to $c'$, what is
+\[
+\frac{F'_{n}(x)-F'_{k}(x)}{n-k}?
+\]
+}
+\solution{
+Let $C$ be the minimum mean cycle. Then
+\[
+\mu(G,c') = \mu(G,c) + \frac{\delta |C|}{|C|} = \mu(G,c) + \delta.
+\]
+and
+\[
+\frac{F'_{n}(x)-F'_{k}(x)}{n-k} = \frac{F_{n}(x)+n\delta -F'_{k}(x)-k\delta}{n-k} =
+ \frac{F_{n}(x) -F'_{k}(x)}{n-k} + \delta
+\]
+Since the change is the same for all cycles, we can add $\delta$ and the solution would be the same. This leads to the following algorithm.
+}
+
+\textbf{Algorithm Minimum Mean Cycle}:
+\begin{enumerate}
+\item add vertex $s$ and edges $sv$ for all $v \in V$ with $c(sv)=0$
+\item $F_0(s) := 0$;  $n := |V \cup \{s\}|$; and $\forall v \in V, F_0(v) =\infty$.
+\item for $k \in \{1,\ldots n\}$
+\item \hskip 4em  for all $v \in V$
+\item \hskip 8em      $F_{k}(v) := \infty$ 
+\item \hskip 8em       for all $\overrightarrow{uv} \in E$
+\item \hskip 12em           if $F_{k}(v) > F_{k-1}(u)+c(uv)$ then 
+\item \hskip 16em                  $F_{k}(v) :=  F_{k-1}(u)+c(uv)$ and   $p_k(v) := u$ 
+\item if $F_{n}(x) = \infty$ for all $x \in V$, then $G$ is acyclic
+\item Find $x$ minimizing $\max_{k,F_k(x) < \infty} \frac{F_{n}(x)-F_{k}(x)}{n-k}$.
+\item Minimum mean cycle is in $  \ldots, p_{n-2}(p_{n-1}(p_{n}(x))), p_{n-1}(p_{n}(x)), p_n(x), x$
+\end{enumerate}
+
+\question{}{
+Run the algorithm on 
+\begin{center}
+\tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
+\begin{tikzpicture}[scale=1.5]
+\foreach \x in {1,2,3,4}{
+\foreach \y in {1,2}{
+\draw (\x,\y) node[insep](x\x\y){};
+}
+}
+\foreach \x/\y/\t in {x21/x11/1, x31/x21/1, x41/x31/1 }{ 
+\draw[-triangle 45](\x) --node[below]{\t} (\y);}
+\foreach \x/\y/\t in {x12/x22/1, x22/x32/1.5, x32/x42/1 }{ 
+\draw[-triangle 45](\x) --node[above]{\t} (\y);}
+\foreach \x/\y/\t in {x11/x12/1, x22/x21/1, x32/x31/-1, x42/x41/1 }{ 
+\draw[-triangle 45](\x) --node[left]{\t} (\y);}
+\end{tikzpicture}
+\end{center}
+}
+
+\question{}{
+What is the time complexity?
+}
+\solution{
+$O(mn)$ We need $n$ iterations and in each of them, each of $m$ edges is used once.
+}
+
+
+\vfill
+
+\emph{Next time: Integer Programming}
+
+
+\end{document}
+
+\end{document}
+
+
+
+
+
+

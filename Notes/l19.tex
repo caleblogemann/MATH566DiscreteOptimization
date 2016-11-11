@@ -1,0 +1,276 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[czech, english]{babel}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric}
+\usetikzlibrary{shapes.multipart}
+\usetikzlibrary{arrows}
+\usepackage{hyperref}
+
+
+% Itemize environment with small skips
+\newenvironment{packeditemize}{
+\begin{itemize}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{itemize}}
+
+
+% Fancy footnote....
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\usepackage{lastpage}
+\rfoot{MATH 566 - 19, page \thepage/\pageref{LastPage}}
+\cfoot{}
+\rhead{}
+\lhead{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+
+\newtheorem{theorem*}{Theorem} 
+
+% Itemize environment with small skips
+\newenvironment{packedenumerate}{
+\begin{enumerate}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{enumerate}}
+
+
+\newcommand{\vc}[1]{\ensuremath{\vcenter{\hbox{#1}}}}
+
+\newcounter{excounter}
+\setcounter{excounter}{1}
+\newcommand\question[2]{\vskip 1em  \noindent\textbf{\arabic{excounter}\addtocounter{excounter}{1}:} \emph{#1} \noindent#2}
+\newcommand\solution[1]{\vskip 0.5em \noindent\textbf{Solution:} #1}
+%\newcommand\like{\par \noindent\emph{(This question is: good - bad - ugly? Difficulty: 0-10:\hskip 3em )}} 
+
+\newcommand\lecturer[1]{\textbf{#1}}
+\newcommand\hideforstudent[1]{#1}
+
+
+%\renewcommand\lecturer[1]{{\color{white} \textbf{#1} }}
+%\renewcommand\hideforstudent[1]{{\color{white} #1 }}
+%\renewcommand\solution[1]{{\color{white} \vskip 0.5em \noindent\textbf{Solution:} #1 }}
+
+
+
+\setlength{\parindent}{0cm}
+\setlength{\parskip}{0.1cm}
+
+\begin{document}
+
+Fall  2016, MATH-566
+
+\centerline{{\Large \textbf{Minimum Cost Flow}}}
+
+Problem: There are $n$ coal mines and $m$ power plants.
+Power plants have demands, coal mines supply coal. How to
+transport coal in order to satisfy the demands and minimize 
+cost of transportation.
+
+
+
+Let $G=(V,E)$ be a directed graph,
+$u: E \rightarrow \mathbb{R}^+$ be capacities on edges
+and $c: E \rightarrow \mathbb{R}$ be costs for every edge.
+
+Let $b: V \rightarrow \mathbb{R}$ with $\sum_vb(v)=0$ be a \emph{supply demand} function. Called \emph{boundary}.
+
+\textbf{b-flow} is $f: E \rightarrow \mathbb{R}^+$ such that $f(e) \leq u(e)$
+and  $\sum_{e\in\delta^+(v)}f(e)  - \sum_{e\in\delta^-(v)}f(e) = b(v)$.
+
+\question{}{
+Find a $b$-flow (that minimizes $\sum_{e}c(e)f(e)$) in the following network:
+($b$ is in every vertex, edges have $c,u$).
+\begin{center}
+\begin{tikzpicture}[xscale=2]
+\draw 
+(0,0) node[draw,circle](x){$-4$}
+(4,0) node[draw,circle](y){$2$}
+(0,4) node[draw,circle](z){$1$}
+(4,4) node[draw,circle](w){$-4$}
+(2,1) node[draw,circle](a){$5$}
+(1,2) node[draw,circle](b){$-4$}
+(2,3) node[draw,circle](c){$4$}
+(3,2) node[draw,circle](d){$0$}
+;
+\foreach \x/\y/\l in {y/x/{5,4} , z/b/{-2,2}, d/w/{2,3},b/c/{2,4},c/d/{4,6},a/b/{-3,2},a/d/{3,2},
+c/z/{6,3}, w/c/{5,2}  }{
+\draw[-triangle 45](\x)--node[below]{\l}(\y);
+}
+\foreach \x/\y/\l in {z/w/{-2,4}, a/x/{0,3}, a/y/{2,3}  }{
+\draw[-triangle 45](\x)--node[above]{\l}(\y);
+}
+\foreach \x/\y/\l in {x/z/{6,2} }{
+\draw[-triangle 45](\x)--node[left]{\l}(\y);
+}
+\foreach \x/\y/\l in {y/w/{0,4} }{
+\draw[-triangle 45](\x)--node[right]{\l}(\y);
+}
+\end{tikzpicture}
+\end{center}
+}
+
+If $b(v) > 0$, then $b$ is \emph{supply}, if $b(v) < 0$, then $b$ is \emph{demand}.
+Like flows but multiple sources and sinks.
+
+\textbf{Minimum Cost Flow Problem:}
+find a $b$-flow $f$ that  minimizes $c(f) = \sum_{e}c(e)f(e)$.
+
+
+\question{}{
+Show that $b$-flow $f$ exists iff 
+\[
+\sum_{e \in \delta^+(X)} u(e) \geq \sum_{v\in X} b(v) \text{ for all } X \subseteq V(G).
+\]
+(That is, there is always enough capacity to take excessive flow out of $X$.)
+}
+\solution{
+$\Rightarrow$ If there is a flow, the condition is easily satisfied, since $f(e) \leq u(e)$.
+
+$\Leftarrow$ Suppose there is no $b$-flow $f$. Add new vertices $s$ and $t$, where
+$sv$ is edge for every $v\in V$ with $b(v) > 0$. Assign $u(sv) = b(v)$. Do analogous operation with $t$. No  $b$-flow implies no flow in the new graph. Hence there is a cut.
+The cut gives $X$ that violates the big condition.
+}
+
+Consequence: It is possible to detect no solution case.
+
+\emph{Circulation} is a flow in a network where $b(v)=0$ for every vertex.
+
+
+\question{}{
+Let $f$ and $f'$ be two $b$-flows. Consider their \emph{difference} $f-f'$
+and show that it is a circulation.\\
+Try on example first: Edge labels are $c,\frac{f}{f'}$. Compute $c(f)$, $c(f')$, find what is the difference.
+\begin{center}
+\begin{tikzpicture}[xscale=1]
+\draw 
+(0,0) node[draw,circle](s){$4$}
+(2,0) node[draw,circle](y){$0$}
+(4,1) node[draw,circle](a){$1$}
+(4,-1) node[draw,circle](b){$-1$}
+(6,0) node[draw,circle](t){$-4$}
+;
+\foreach \x/\y/\l in {y/b/{5,$\frac{1}{3}$},  b/t/{4,$\frac{0}{2}$}   }{
+\draw[-triangle 45](\x)--node[below]{\l}(\y);
+}
+\foreach \x/\y/\l in {s/y/{$-2,\frac{4}{4}$}, y/a/{0,$\frac{3}{1}$}, a/t/{$2,\frac{4}{2}$}  }{
+\draw[-triangle 45](\x)--node[above]{\l}(\y);
+}
+\end{tikzpicture}
+\end{center}
+}
+\solution{
+$c(f) = 5$, $c(f')= 19$. Cost difference $c(f) - c(f') = -14$.
+In picture, we assign the difference of the flows, if the difference
+was negative, flip the edge and count negative cost.
+The picture gives a circulation with cost $-14$.
+\begin{center}
+\begin{tikzpicture}[xscale=1]
+\draw 
+(0,0) node[draw,circle](s){$0$}
+(2,0) node[draw,circle](y){$0$}
+(4,1) node[draw,circle](a){$0$}
+(4,-1) node[draw,circle](b){$0$}
+(6,0) node[draw,circle](t){$0$}
+;
+\foreach \x/\y/\l in {b/y/{-5,$2$},  t/b/{-4,$2$}   }{
+\draw[-triangle 45](\x)--node[below]{\l}(\y);
+}
+\foreach \x/\y/\l in {s/y/{$-2,0$}, y/a/{0,$2$}, a/t/{$2,2$}  }{
+\draw[-triangle 45](\x)--node[above]{\l}(\y);
+}
+\end{tikzpicture}
+\end{center}
+General: Difference between two flows is a circulation,
+its cost is the difference in the costs of $f$ and $f'$.
+Since $f$ and $f'$ are $b$-flows, we get
+$\sum_{e\in\delta^+(v)}(f(e)-f'(e))  - \sum_{e\in\delta^-(v)}(f(e)-f'(e)) = b(v) - b(v) = 0,$
+Hence the difference is a circulation.
+Summing the difference gives the difference in costs.
+}
+
+
+
+
+\textbf{Algorithm Minimum Cost Flow}:
+\begin{enumerate}
+\item $f$ be any $b$-flow
+\item while exists negative cost cycle $C$ in residual graph
+\item \hskip 4em pick $C$ of minimum mean cost $= \frac{\sum_{e\in C} c(e)}{|C|}$.
+\item \hskip 4em augment on $C$
+\end{enumerate}
+Minimum mean cost cycle gives polynomial time $O(m^2n^2\log n)$ (picking any cycle - same problem as Ford-Fulkerson).
+
+
+
+\question{}{ Run the algorithm on
+\begin{center}
+\begin{tikzpicture}[xscale=2]
+\draw 
+(0,0) node[draw,circle](x){$-4$}
+(4,0) node[draw,circle](y){$2$}
+(0,4) node[draw,circle](z){$1$}
+(4,4) node[draw,circle](w){$-4$}
+(2,1) node[draw,circle](a){$5$}
+(1,2) node[draw,circle](b){$-4$}
+(2,3) node[draw,circle](c){$4$}
+(3,2) node[draw,circle](d){$0$}
+;
+\foreach \x/\y/\l in {y/x/{5,4} , z/b/{-2,2}, d/w/{2,3},b/c/{2,4},c/d/{4,6},a/b/{-3,2},a/d/{3,2},
+c/z/{6,3}, w/c/{5,2}  }{
+\draw[-triangle 45](\x)--node[below]{\l}(\y);
+}
+\foreach \x/\y/\l in {z/w/{-2,4}, a/x/{0,3}, a/y/{2,3}  }{
+\draw[-triangle 45](\x)--node[above]{\l}(\y);
+}
+\foreach \x/\y/\l in {x/z/{6,2} }{
+\draw[-triangle 45](\x)--node[left]{\l}(\y);
+}
+\foreach \x/\y/\l in {y/w/{0,4} }{
+\draw[-triangle 45](\x)--node[right]{\l}(\y);
+}
+\end{tikzpicture}
+\end{center}
+}
+
+
+
+\question{}{
+Show that the algorithm is correct when it finishes.
+That is, $f$ is an optimal $b$-flow iff it has no negative cycle.
+}
+\solution{
+$\Rightarrow$
+If there is a negative cycle, augmenting on it, it will
+decrease the cost of $f$, contradiction with optimality of $f$.
+
+$\Leftarrow$ If there is a better flow $f'$, the difference between
+flows is a circulation. Since the sum of the circulation is negative,
+it must contain a negative circuit.
+}
+
+\question{}{
+How to find minimum mean cycle?
+}
+
+
+%\vfill
+
+%\emph{Next time: Minimum Mean Cycle and  Integer Programming}
+
+\end{document}
+
+
+
+
+
+

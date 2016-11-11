@@ -1,0 +1,3 @@
+def minimumMeanCostCycle(graph)
+
+    return ()

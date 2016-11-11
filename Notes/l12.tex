@@ -1,0 +1,329 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[czech, english]{babel}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric}
+\usepackage{hyperref}
+
+
+% Itemize environment with small skips
+\newenvironment{packeditemize}{
+\begin{itemize}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{itemize}}
+
+
+% Fancy footnote....
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\usepackage{lastpage}
+\rfoot{MATH 566 - 12, page \thepage/\pageref{LastPage}}
+\cfoot{}
+\rhead{}
+\lhead{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+
+\newtheorem{theorem*}{Theorem} 
+
+% Itemize environment with small skips
+\newenvironment{packedenumerate}{
+\begin{enumerate}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{enumerate}}
+
+
+\newcounter{excounter}
+\setcounter{excounter}{1}
+\newcommand\question[2]{\vskip 1em  \noindent\textbf{\arabic{excounter}\addtocounter{excounter}{1}:} \emph{#1} \noindent#2}
+\newcommand\solution[1]{\vskip 0.5em \noindent\textbf{Solution:} #1}
+\newcommand\like{\par \noindent\emph{(This question is: good - bad - ugly? Difficulty: 0-10:\hskip 3em )}} 
+
+\newcommand\lecturer[1]{\textbf{#1}}
+\newcommand\hideforstudent[1]{#1}
+
+
+%\renewcommand\lecturer[1]{{\color{white} \textbf{#1} }}
+%\renewcommand\hideforstudent[1]{{\color{white} #1 }}
+%\renewcommand\solution[1]{{\color{white} \vskip 0.5em \noindent\textbf{Solution:} #1 }}
+
+
+
+\setlength{\parindent}{0cm}
+\setlength{\parskip}{0.1cm}
+
+\begin{document}
+
+Fall  2016, MATH-566
+
+\centerline{{\Large \textbf{Shortest path}}}
+
+
+Source: Chapter 2.2 (Bills), Chapter 7 of Combinatorial Optimization (Korte)
+
+
+\textbf{Shortest path}\\
+\emph{Input:}     Graph $G=(V,E)$, costs $c: E \rightarrow \mathbb{R}$, and $s,t \in V$.\\
+\emph{Output:}  $s$-$t$-path $P$, where $\sum_{e \in P}c(e)$ is minimized.
+
+
+\question{}{
+Find shortest (lowest cost) $s$-$t$-paths in the following graphs
+\begin{center}
+\begin{tikzpicture}[scale=2]
+\draw (0,0) grid (2,2);
+\fill
+\foreach \x in {0,1,2}{
+\foreach \y in {0,1,2}{ 
+(\x,\y) circle (1.5pt)
+}
+}
+;
+\draw 
+(0,0) node[left]{$s$}
+(2,2) node[right]{$t$}
+(0.5,0) node[below]{1}
+(1.5,0) node[below]{2}
+(0.5,1) node[below]{6}
+(1.5,1) node[below]{3}
+(0.5,2) node[below]{9}
+(1.5,2) node[below]{7}
+(0,0.5) node[left]{13}
+(0,1.5) node[left]{8}
+(1,0.5) node[left]{22}
+(1,1.5) node[left]{10}
+(2,0.5) node[left]{14}
+(2,1.5) node[left]{18}
+;
+\end{tikzpicture}
+\hskip 3em
+\begin{tikzpicture}[scale=2]
+\draw (0,0) grid (2,2);
+\fill
+\foreach \x in {0,1,2}{
+\foreach \y in {0,1,2}{ 
+(\x,\y) circle (1.5pt)
+}
+}
+;
+\draw 
+(0,0) node[left]{$s$}
+(2,2) node[right]{$t$}
+(0.5,0) node[below]{1}
+(1.5,0) node[below]{2}
+(0.5,1) node[below]{6}
+(1.5,1) node[below]{3}
+(0.5,2) node[below]{-9}
+(1.5,2) node[below]{7}
+(0,0.5) node[left]{13}
+(0,1.5) node[left]{-8}
+(1,0.5) node[left]{22}
+(1,1.5) node[left]{10}
+(2,0.5) node[left]{14}
+(2,1.5) node[left]{18}
+;
+\end{tikzpicture}
+\end{center}
+}
+
+
+Cost $c$ is called \emph{conservative} if there is no circuit of negative total weight.
+
+\textbf{Bellman's principle:}
+Let $s,\ldots,v,w$ be the least cost $s$-$w$-path of length $k$.
+The $s,\ldots,v$ is the least cost $s$-$v$-path of length $k-1$.
+
+\question{Prove Bellman's principle.}
+\solution{
+By contradiction. If there is a lesser cost path to $v$, we could find a lesser cost path to $w$.
+}
+
+Notice: This gives a recursion for computing the shortest path.
+
+\textbf{Dijkstra's algorithm}\\
+$c:E \rightarrow \mathbb{R}_+$, computes shortest $s$-$t$-path from $s$ to ALL other vertices $t \in V$.
+
+\begin{enumerate}
+\item $l(s) := 0$; $\forall v\neq s$ $l(v) = +\infty$
+\item $R = \emptyset$
+\item while $R \neq V$
+\item  \hskip 3em  find $v\in V -R$ with minimum $l(v)$
+\item  \hskip 3em  $R := R \cup \{v\}$
+\item  \hskip 3em  $\forall vw \in E$, $l(w) = \min\{l(w), l(v)+c(v,w)\}$ 
+\end{enumerate}
+
+$R$ \ldots vertices with final number;
+$l$ \ldots upper bound on the cost;\\
+Running time $O(n^2)$ easily, $O(m+n\log n)$ with Fibonacci heaps.
+
+\newpage
+\question{}{ Run Dijkstra's algorithm on the following graph
+\begin{center}
+\begin{tikzpicture}[scale=2]
+\draw (0,0) grid (2,1);
+\fill
+\foreach \x in {0,1,2}{
+\foreach \y in {0,1}{ 
+(\x,\y) circle (1.5pt)
+}
+}
+;
+\draw 
+(0,0) node[left]{$s$}
+(1,1) node[above]{$t$}
+(0.5,0) node[below]{1}
+(1.5,0) node[below]{2}
+(0.5,1) node[below]{7}
+(1.5,1) node[below]{3}
+(0,0.5) node[left]{13}
+(1,0.5) node[left]{22}
+(2,0.5) node[left]{13}
+;
+\end{tikzpicture}
+\end{center}
+}
+
+\question{}{
+How to get shortest $s$-$v$-path? 
+}
+\solution{}{
+Remember previous vertex. In step 6. of the algorithm, remember why the value was changed. So called \emph{predecessor}.
+}
+
+
+\question{}{
+Why is the algorithm correct?
+(show that if $v \in R$, then $l(v) = $ cost for $s$-$v$-path.)
+}
+\solution{
+Could be done for example by contradiction. Suppose that there
+is a closer one. Then take the one with lowest $s$-$v$-costs that is not
+the same as the shortest path. And look at the predecessor on the shortest
+$s$-$v$-path. It gives contradiction with the run of the algorithm.
+}
+
+\question{}{
+Why Dijkstra's algorithm does not work for negative costs?
+}
+\solution{
+For simplicity consider directed graph problem. The assumption that
+we can fix a cost of the lowest visited so far is not true.
+\begin{center}
+\begin{tikzpicture}
+\draw(0,0) node[inner sep=1.5pt,fill,circle,label=left:$s$](a){} --node[pos=0.5,below]{4} (1,0) node[inner sep=1.5pt,fill,circle](b){}
+--node[pos=0.5,below]{-3} (2,0) node[inner sep=1.5pt,fill,circle,label=right:$t$](c){}
+(a) to[bend left] node[pos=0.5,above]{2}  (c)
+;
+\end{tikzpicture}
+\end{center}
+}
+
+
+
+\textbf{Moore-Bellman-Ford Algorithm}\\
+$c:E \rightarrow \mathbb{R}$, computes shortest $s$-$t$-path from $s$ to ALL other vertices $t \in V$ \textbf{OR} finds a cycle of negative cost. Assume $|V(G)| = n$.
+
+\begin{enumerate}
+\item $l(s) := 0$; $\forall v\neq s$ $l(v) = +\infty$
+\item repeat $n-1$ times:    // computes the costs
+\item  \hskip 2em  $\forall vw \in E$, 
+\item  \hskip 4em           if $l(w) > l(v)+c(v,w)$ 
+\item  \hskip 6em                $l(w) := l(v)+c(v,w)$;  $p(w) = v$
+\item    $\forall vw \in E$,   // check for a negative cycle
+\item  \hskip 2em           if $l(w) > l(v)+c(v,w)$ then found negative cycle
+\end{enumerate}
+
+Note: $l$ gives the least cost, while $p$ gives the $\textbf{previous}$ vertex / \textbf{predecesor} on the shortest path from $s$.
+
+\question{}{
+What is the time complexity of the algorithm if $G$ has $m$ edges and $n$ vertices?
+}
+\solution{
+$O(nm)$.
+}
+
+\question{}{
+Why the algorithm detects a negative cycle and why the algorithm works?
+}
+
+\end{document}
+\solution{
+\vskip 5em
+}
+
+
+\end{document}
+
+
+\newpage
+\textbf{Linear programming formulation:}\\
+Suppose every edge has an orientation (direction). This gives a directed graph.
+Normal graph can be converted to directed by adding two opposite edges.
+Note: Previous algorithms work on directed graphs.
+
+\question{}{
+Create a linear program solving the shortest path problem. 
+Hints: Minimize, overall cost, for every edge decide if it is in the path or not, make sure that
+the path starts at $s$ (and ends at $t$). Make sure that the path does not stop at any other vertex (use that edges are oriented and you know incomming and leaving edges).
+}
+\solution{
+\[
+\begin{cases}
+\text{minimize}   &  \sum_{e \in E} c(e)\cdot x_e \\
+\text{subject to}  & \sum_{(s,v) \in E} x_{s,v} = 1 \\
+                           & \sum_{(v,t) \in E} x_{v,t} = 1 \\
+                           & \sum_{(u,v) \in E} x_{u,v} =  \sum_{((v,w) \in E) x_{v,w}} \text{ for all } v \neq s,t\\
+                           & \cdot x_e  \geq 0 \text{ for all } e \in E
+\end{cases}
+\]
+}
+
+\question{}{
+Write the linear program for graph with directed edges $E=\{su,sv,uv,ut,vt\}$, where
+the costs are $c(su) = 2, c(sv) = 5, c(uv) = 1, c(ut) = 6, c(vt) = 3$.
+}
+\solution{
+
+}
+
+
+\question{}{
+Write the dual linear program for shortest path.
+}
+\solution{
+\[
+\begin{cases}
+\text{minimize}   & y_t - y_s \\
+\text{subject to}  & y_u - y_v \leq c(v,u) \text{ for all  } (u,v) \in E \\
+                           & y_s = 0  \text{ add this boy... } 
+\end{cases}
+\]
+}
+
+\question{}{
+Interpret the dual program.
+}
+
+%\question{}{
+%Does the LP work for negative costs?
+%}
+%\solution{
+%No.
+%}
+
+\end{document}
+
+
+
+
+
+

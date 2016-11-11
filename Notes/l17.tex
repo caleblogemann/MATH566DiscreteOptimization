@@ -1,0 +1,219 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[czech, english]{babel}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric}
+\usepackage{hyperref}
+
+
+% Itemize environment with small skips
+\newenvironment{packeditemize}{
+\begin{itemize}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{itemize}}
+
+
+% Fancy footnote....
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\usepackage{lastpage}
+\rfoot{MATH 566 - 17, page \thepage/\pageref{LastPage}}
+\cfoot{}
+\rhead{}
+\lhead{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+
+\newtheorem{theorem*}{Theorem} 
+
+% Itemize environment with small skips
+\newenvironment{packedenumerate}{
+\begin{enumerate}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{enumerate}}
+
+
+\newcounter{excounter}
+\setcounter{excounter}{1}
+\newcommand\question[2]{\vskip 1em  \noindent\textbf{\arabic{excounter}\addtocounter{excounter}{1}:} \emph{#1} \noindent#2}
+\newcommand\solution[1]{\vskip 0.5em \noindent\textbf{Solution:} #1}
+%\newcommand\like{\par \noindent\emph{(This question is: good - bad - ugly? Difficulty: 0-10:\hskip 3em )}} 
+
+\newcommand\lecturer[1]{\textbf{#1}}
+\newcommand\hideforstudent[1]{#1}
+
+
+%\renewcommand\lecturer[1]{{\color{white} \textbf{#1} }}
+%\renewcommand\hideforstudent[1]{{\color{white} #1 }}
+%\renewcommand\solution[1]{{\color{white} \vskip 0.5em \noindent\textbf{Solution:} #1 }}
+
+
+
+\setlength{\parindent}{0cm}
+\setlength{\parskip}{0.1cm}
+
+\begin{document}
+
+Fall  2016, MATH-566
+
+\centerline{{\Large \textbf{Minimum Cuts in Unidrected Graphs}}}
+
+Recall: $\delta(S)$ is the set of edges with exactly one endpoint in $S$.
+
+\textbf{Problem:}\\
+\emph{Input:} Graph $G=(V,E)$ and cost function $u: E \rightarrow \mathbb{R}^+$.\\
+\emph{Output:} Global Minimum Cut, that is $S \subset V$ such minimizing $u(\delta(S))$
+
+\question{}{
+Find a minimum cut in the following graph:
+\begin{center}
+\tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
+\begin{tikzpicture}[scale=1.3]
+\draw
+(0,0) node[insep,label=below:$g$](g){}
+(2,0) node[insep,label=below:$f$](f){}
+(2,1) node[insep,label=right:$e$](e){}
+(2,2) node[insep,label=right:$a$](a){}
+(1,3) node[insep,label=above:$b$](b){}
+(0,1) node[insep,label=below left:$d$](d){}
+(0,2) node[insep,label=above:$c$](c){}
+(-1,1) node[insep,label=left:$h$](h){}
+;
+\draw
+\foreach \x/\y/\t in {g/f/6, d/e/3, c/a/2, c/b/3, b/a/5,h/c/2, h/d/1}{
+(\x)--node[pos=0.5,label=above:$\t$]{} (\y)
+}
+(h)--node[pos=0.5,label=below:$5$]{} (g)
+\foreach \x/\y/\t in {g/d/2, d/c/4, f/e/2, e/a/3}{
+(\x)--node[pos=0.5,label=right:$\t$]{} (\y)
+}
+;
+\end{tikzpicture}
+\end{center}
+}
+
+
+Notation: 
+
+$\lambda(G)$ is the capacity of minimum cut of  $G$.
+
+$\lambda(G; v, w)$ is the capacity of minimum $(v,w)$-cut of $G$.
+
+
+\question{}{Find an algorithm using network flows.}
+\solution{
+Pick a vertex and try to find a network flow to every other vertex.
+}
+
+
+\textbf{Node Identification Algorithm:}
+
+Let $G_{uv}$ be a graph obtained from $G$ by identification of $u$ and $v$ (delete loops, keep parallel edges).
+
+Main idea: 
+\[
+\lambda(G) \leq \min( \lambda(G_{vw}), \lambda(G;v,w))
+\]
+
+How to pick $v,w$?
+
+\textbf{A legal ordering} starting at $v_1$ is $v_1,v_2,\ldots,v_n$
+if for all $i$, $v_i$ has the largest capacity of edges joining it to $v_1,\ldots,v_{i-1}$.
+
+\question{}{
+Find a legal ordering starting with vertex $a$.
+}
+\solution{
+$a,b,c,d,e,h,g,f$
+}
+
+Main theorem: If $v_1,\ldots,v_n$ is a legal ordering of $G$, then $\delta(v_n)$ is a minimum $v_n,v_{n-1}$ cut of $G$.
+
+\begin{enumerate}
+\item $M := \infty$ and $A$ undefined
+\item while $G$ has more than 1 vertex
+\item \hskip 4em Find a legal ordering $v_1,v_2,\ldots,v_n$ of $G$
+\item \hskip 4em If $u(\delta(v_n)) < M$
+\item \hskip 8em      $M := u(\delta(v_n))$ and $A := \delta(v_n)$
+\item \hskip 4em $G := G_{v_nv_{n-1}}$
+\item return $A$
+\end{enumerate}
+
+\question{}{
+Run node identification algorithm.
+}
+\vskip 7em
+
+
+\textbf{Random Contraction Algorithm:}
+
+\begin{enumerate}
+\item while $G$ has more than 2 vertices
+\item \hskip 4em Choose and edge $e$ of $G$ with probability $u(e)/u(E)$
+\item \hskip 4em $G := G_{vw}$, where $e = vw$
+\item return the unique cut in $G$.
+\end{enumerate}
+
+\question{}{
+Let $A$ be a minimum cut of $G$. 
+Show that the random contraction algorithm returns $A$ with probability at least $2/(n(n-1))$.
+}
+\solution{
+Let $u(A) = \sum_{e \in A}u(A)$.  Then
+\[
+P(\text{edge of } A \text{ is picked for contraction}) = \frac{u(A)}{u(E)}
+\]
+Notice that $A$ is the minimum cut in $G$. 
+Hence $u(A) \leq u(C)$ for any other cut. 
+In particular, we consider cuts around each vertex.
+A cut around vertex $v$ has capacity $\sum_{e \in \delta(v)}u(e)$.
+The average cost of a cut around one vertex is
+\[
+\frac{\sum_{e \in  \delta(v)}u(e)}{n} = 
+\frac{2\sum_{e \in E}u(e)}{n} = \frac{2u(E)}{n}.
+\]
+Then picking an edge from $A$ has lower probability than picking an edge from an average cut around a vertex
+\[
+\frac{u(A)}{u(E)} \leq \frac{2u(E)}{n \cdot u(E)} = \frac{2}{n}.
+\]
+After $i$ rounds of the algorithm, $G$ has $n-i$ edges and we get
+\[
+\frac{u(A)}{u(E)} \leq  \frac{2}{n-i}.
+\]
+Now the probability that no edge of $A$ was choses is at least 
+\[
+1-\frac{2}{n-i} = \frac{n-i-2}{n-i}
+\]
+The algorithm is running for rounds with $i = 0,\ldots,n-2$ and we get
+that the probability no edge of $A$ is ever chosen is at least
+\[
+\frac{n-2}{n} \cdot \frac{n-3}{n-1} \cdot \frac{n-4}{n-2} \cdots \frac{3}{5} \cdot \frac{2}{4} \cdot \frac{1}{3} = \frac{2}{n(n-1)}.
+\]
+}
+
+\question{}{Let $k \in \mathbb{N}$. Show that the probability that the random contraction algorithm does not return $A$ is one
+of $kn^2$ runs is at most $e^{-2k}$.}
+
+\solution{
+We use the estimate from previous round $kn^2$ times.
+\[
+\left(1 - \frac{2}{n(n-1)}\right)^{kn^2} \leq \left( 1 - \frac{2}{n^2}\right)^{kn^2} \leq  \left(e^{-\frac{2}{n^2}} \right)^{kn^2} = e^{-2k}.
+\]
+}
+
+\end{document}
+
+
+
+
+
+

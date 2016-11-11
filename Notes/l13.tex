@@ -1,0 +1,163 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[czech, english]{babel}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric}
+\usepackage{hyperref}
+
+
+% Itemize environment with small skips
+\newenvironment{packeditemize}{
+\begin{itemize}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{itemize}}
+
+
+% Fancy footnote....
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\usepackage{lastpage}
+\rfoot{MATH 566 - 13, page \thepage/\pageref{LastPage}}
+\cfoot{}
+\rhead{}
+\lhead{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+
+\newtheorem{theorem*}{Theorem} 
+
+% Itemize environment with small skips
+\newenvironment{packedenumerate}{
+\begin{enumerate}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{enumerate}}
+
+
+\newcounter{excounter}
+\setcounter{excounter}{1}
+\newcommand\question[2]{\vskip 1em  \noindent\textbf{\arabic{excounter}\addtocounter{excounter}{1}:} \emph{#1} \noindent#2}
+\newcommand\solution[1]{\vskip 0.5em \noindent\textbf{Solution:} #1}
+%\newcommand\like{\par \noindent\emph{(This question is: good - bad - ugly? Difficulty: 0-10:\hskip 3em )}} 
+
+\newcommand\lecturer[1]{\textbf{#1}}
+\newcommand\hideforstudent[1]{#1}
+
+
+%\renewcommand\lecturer[1]{{\color{white} \textbf{#1} }}
+%\renewcommand\hideforstudent[1]{{\color{white} #1 }}
+%\renewcommand\solution[1]{{\color{white} \vskip 0.5em \noindent\textbf{Solution:} #1 }}
+
+
+
+\setlength{\parindent}{0cm}
+\setlength{\parskip}{0.1cm}
+
+\begin{document}
+
+Fall  2016, MATH-566
+
+\centerline{{\Large \textbf{Shortest path - and linear programming}}}
+
+
+
+%\textbf{Linear programming formulation:}\\
+
+Suppose every edge has an orientation (direction). This gives a directed graph.
+Normal graph can be converted to directed by adding two opposite edges.
+Note: Previous algorithms work on directed graphs.
+
+\question{}{
+Create a linear program solving the shortest path problem. 
+Hints: Minimize, overall cost, for every edge decide if it is in the path or not, make sure that
+the path starts at $s$ (and ends at $t$). Make sure that the path does not stop at any other vertex (use that edges are oriented and you know incoming and leaving edges).
+}
+\solution{
+\[
+\begin{cases}
+\text{minimize}   &  \sum_{e \in E} c(e)\cdot x_e \\
+\text{subject to}  & \sum_{(s,v) \in E} x_{s,v} = 1 \\
+                           & -\sum_{(v,t) \in E} x_{v,t} = -1 \\
+                           & \sum_{(v,w) \in E} x_{v,w}  - \sum_{(u,v) \in E} x_{u,v} =  0 \text{ for all } v \neq s,t\\
+                           & x_e  \geq 0 \text{ for all } e \in E
+\end{cases}
+\]
+Note: This uses assumption that there is no edge going to $s$ and no edge going from $t$.
+If they are there, it may happen that instead of path we get two cycles. One around $s$ and one around $t$.\\
+More correct formulation (without exceptions):
+\[
+\begin{cases}
+\text{minimize}   &  \sum_{e \in E} c(e)\cdot x_e \\
+\text{subject to}  & \sum_{(s,v) \in E} x_{s,v} - \sum_{(v,s) \in E} x_{v,s} = 1 \\
+                           & -\sum_{(t,v) \in E} x_{t,v}  - \sum_{(v,t) \in E} x_{v,t} = -1 \\
+                           & \sum_{(v,w) \in E} x_{v,w}  - \sum_{(u,v) \in E} x_{u,v} =  0 \text{ for all } v \neq s,t\\
+                           & x_e  \geq 0 \text{ for all } e \in E
+\end{cases}
+\]
+}
+
+\question{}{
+Write the linear program for graph with directed edges $E=\{su,sv,uv,ut,vt\}$, where
+the costs are $c(su) = 2, c(sv) = 5, c(uv) = 1, c(ut) = 6, c(vt) = 3$.
+}
+\solution{
+\[
+\begin{cases}
+\text{minimize}   & 2 x_{su} + 5 x_{sv} + x_{uv} + 6x_{ut} + 3x_{vt} \\
+\text{subject to}  & x_{su} + x_{sv} = 1 \\
+                           & -x_{ut}  -x_{vt} = -1 \\
+                           & -x_{su} + x_{uv} + x_{ut} = 0 \\
+                           & -x_{sv} - x_{uv}  + x_{vt} = 0 \\ 
+                           & x_e  \geq 0 \text{ for all } e \in E
+\end{cases}
+\]
+}
+
+
+\question{}{
+Write the dual linear program for shortest path.
+}
+\solution{
+\[
+\begin{cases}
+\text{maximize}   & y_s - y_t \\
+\text{subject to}  & y_u - y_v \leq c(uv) \text{ for all  } (u,v) \in E \\
+                           %& y_s = 0  \text{ add this boy... } 
+\end{cases}
+\]
+We can also add $y_s = 0$ to make it easier. The solutions are called feasible potential.
+We are trying to make $y_t$ as negative as possible.
+}
+
+\question{}{
+Interpret the dual program.
+}
+\solution{
+Number for every vertex, where we want to push $y_t$ away from $s$ as much as we can.
+}
+
+\newpage
+
+
+%\question{}{
+%Does the LP work for negative costs?
+%}
+%\solution{
+%No.
+%}
+
+\end{document}
+
+
+
+
+
+

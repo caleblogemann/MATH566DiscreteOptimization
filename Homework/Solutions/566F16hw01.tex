@@ -1,0 +1,49 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{fullpage}
+\usepackage{tikz}
+\usepackage{amsmath}
+\usepackage{hyperref}
+
+
+\begin{document}
+
+{ \bf Math-566 Homework \#1 (\emph{Practical} application of linear programming)}\\
+\vskip 1em
+\textit{
+I will finish the homework before 9am Aug 31. I will type the solution (means not hand written).
+}
+
+\textbf{Story:}
+Your lecturer wishes to save some money because he wants to buy a nice new digital camera.
+He thinks that he may save on food. Suppose that he is your customer and he will pay you in credits
+needed to pass MATH-566, if he will be happy with your result. Like any
+other customer, he does not really know what he wants. He wants to save
+money, eat enough of the basic nutrients. His weight is 165lb after dinner
+and he is around 30 years old. 
+
+\vskip 1em
+
+\textbf{How to do it:} 
+\begin{itemize}
+\item Considered four nutrients out of (un)saturated fat, calories, fibers, iron, salt, proteins, and carbs.
+\item Find out what is recommended daily intake of the nutrients for his body weight and age.
+\item Go to your favorite shop(s) in Ames (Walmart, Target, Aldi, Fareway, \ldots, McDonalds, other fast food - these are the shops where the lecturer is willing to go shopping) and pick at least 15 different kinds of food. \emph{(Not $15\times$ cookies! Give some variety, at most 4 items from fast food chains.)}
+\item Summarize what is the amount of the nutrients in each of the food.
+\item Formulate a linear program $(LP)$ for finding a diet for time of one year such that:
+\begin{itemize}
+  \item the cost of food is minimized
+  \item he gets at least recommended daily intake (salt times 1.4 recommended daily  intake)
+\end{itemize}
+\item Solve $(LP)$ using some solver - for example \url{http://apmonitor.com}, Mathematica, Sage or Excel.
+\item Summarize the results. Write, what is the cost for the whole year as well as for just one day.
+\item Solve the diet problem for yourself too! (change recommended daily intakes to your body and age, solve resulting (LP), summarize results)
+\end{itemize}
+More notes - provide references (http links) to anything you are using. 
+Include also the formulation of $(LP)$ which you were using as an input for your solver.
+It is assumed that the homework will be typed. If the output of the solver is that the program
+has no solution, then you did not formulate the program correctly or you require some constraint
+like say salt is at least 5mg but no food has salt. \\
+Bon App\'etit!
+
+\end{document}

@@ -1,0 +1,282 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[czech, english]{babel}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric}
+\usetikzlibrary{shapes.multipart}
+\usetikzlibrary{arrows}
+\usepackage{hyperref}
+
+
+% Itemize environment with small skips
+\newenvironment{packeditemize}{
+\begin{itemize}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{itemize}}
+
+
+% Fancy footnote....
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\usepackage{lastpage}
+\rfoot{MATH 566 - 21, page \thepage/\pageref{LastPage}}
+\cfoot{}
+\rhead{}
+\lhead{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+
+\newtheorem{theorem*}{Theorem} 
+
+% Itemize environment with small skips
+\newenvironment{packedenumerate}{
+\begin{enumerate}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{enumerate}}
+
+
+\newcommand{\vc}[1]{\ensuremath{\vcenter{\hbox{#1}}}}
+
+\newcounter{excounter}
+\setcounter{excounter}{1}
+\newcommand\question[2]{\vskip 1em  \noindent\textbf{\arabic{excounter}\addtocounter{excounter}{1}:} \emph{#1} \noindent#2}
+\newcommand\solution[1]{\vskip 0.5em \noindent\textbf{Solution:} #1}
+%\newcommand\like{\par \noindent\emph{(This question is: good - bad - ugly? Difficulty: 0-10:\hskip 3em )}} 
+
+\newcommand\lecturer[1]{\textbf{#1}}
+\newcommand\hideforstudent[1]{#1}
+
+
+%\renewcommand\lecturer[1]{{\color{white} \textbf{#1} }}
+%\renewcommand\hideforstudent[1]{{\color{white} #1 }}
+%\renewcommand\solution[1]{{\color{white} \vskip 0.5em \noindent\textbf{Solution:} #1 }}
+
+
+
+\setlength{\parindent}{0cm}
+\setlength{\parskip}{0.1cm}
+
+\begin{document}
+
+Fall  2016, MATH-566
+
+\centerline{{\Large \textbf{Integer Programming - Unimodularity}}}
+
+Source: Bill,Bill,Bill,Alex book, chapter 6.5
+
+Problem:
+\[
+(IP)
+\begin{cases}
+\text{maximize} & \mathbf{c}^T\mathbf{x} \\
+\text{subject to} & A\mathbf{x} \leq \mathbf{b},
+\end{cases}
+\]
+where $\mathbf{c} \in \mathbb{Z}^n, \mathbf{b} \in \mathbb{Z}^m, A \in \mathbb{Z}^{m \times n}$, and $\mathbf{x} \in \mathbb{Z}^n$.
+
+Let $P = \{\mathbf{x} \in \mathbb{R}^n: A\mathbf{x} \leq \mathbf{b} \}$ be a polyhedron.
+Let $P_I = conv(\{\mathbf{x} \in \mathbb{Z}^n: A\mathbf{x} \leq \mathbf{b} \})$ be the convex hull of integer points in $P$. 
+If $A$ and $\mathbf{b}$ are rational, $P$ is called \emph{rational polyhedra}.
+%(if $P$ is rational, then $P_I$ is also a polyhedron, if $P$ not rational, $P_I$ does not have to be polyhedron)
+\begin{center}
+\tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
+\begin{tikzpicture}[scale=1]
+\draw[fill=gray!20]
+(0,1) -- (2,1) -- (2,2) -- (1,2) -- cycle
+;
+\foreach \x in {0,1,2,3}{
+\foreach \y in {0,1,2,3}{
+\draw (\x,\y) node[insep](x\x\y){};
+}
+\draw
+(0,1) -- (2.7,0.5) -- (2.6,2.8) -- (0.3,2.2) -- cycle
+;
+\draw
+(1.5,1.5) node{$P_I$}
+(2.4,0.8) node{$P$}
+;
+}
+
+\end{tikzpicture}
+\end{center}
+Clearly, $P_I \subseteq P$. Polyhedron $P$ is \textbf{integral} if $P = P_I$.
+(or if every face of  $P$ contains an integral vector)
+\\
+If $P$ is integral, then $(IP)$ can be solved as linear programming.
+
+\question{}{
+Why $(IP)$ cannot be always solved by linear program and then rounding?
+}
+\solution{
+Rounding may not be possible.
+\tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
+\vc{
+\begin{tikzpicture}[scale=1]
+\foreach \x in {0,1,2,3}{
+\foreach \y in {0,1}{
+\draw (\x,\y) node[insep](x\x\y){};
+}
+\draw
+(0,0.2) -- (2.5,0.5) -- (0,0.8)
+;
+\draw
+(0,0.5) node{$P$}
+;
+}
+\end{tikzpicture}
+}
+}
+
+\textbf{Theorem 6.22}
+Rational polytope $P$ is integral iff for all  $\mathbf{w} \in \mathbb{Z}^n$, the value of $\max\{ \mathbf{w}^T\mathbf{x}: \mathbf{x} \in P \}$ is $\in \mathbb{Z}$.
+
+\question{}{
+Prove Theorem 6.22. One direction is easy.
+Other direction: Let $\mathbf{v} \in P$ be the unique optimal solution corresponding to 
+$\mathbf{w}$.\ldots} show $\mathbf{v}$ has integer coordinates.
+\solution{ By multiplying $\mathbf{w}$ by a constant assume that for all other vertices $\mathbf{u} \neq\mathbf{v}$:
+\[
+\mathbf{w}^T\mathbf{v} > \mathbf{w}^T\mathbf{u} + \mathbf{u}_1-\mathbf{v}_1
+\]
+Hence $\mathbf{v}$ is optimal also for $\mathbf{z} = (\mathbf{w}_1+1,\mathbf{w}_2,\ldots)$.
+Then $\mathbf{z}^T\mathbf{v} = \mathbf{w}^T\mathbf{v} + \mathbf{v}_1$
+Since we assumed $\mathbf{z}^T\mathbf{v}$ and $\mathbf{w}^T\mathbf{v}$ are integral, 
+also $\mathbf{v}_1$ is integral. Repeat for other components of $\mathbf{v}$.
+}
+
+\textbf{What guarantees and integral polyhedra?}
+
+Recall $A^{-1} = \frac{1}{\det(A)} A^\star$, where $A_{i,j}^\star = \det(A_{-i,-j})$.
+
+For square matrices:
+
+\textbf{Theorem 6.23}
+Let $A \in \mathbb{Z}^{m \times m}$. Then $A^{-1}\mathbf{b}$ is integral for every $\mathbf{b} \in \mathbb{Z}^n$ iff $\det(A) \in \{1,-1\}$. 
+
+\question{}{Prove Theorem 6.23}
+\solution{
+$\Leftarrow$ Let $\det(A) = \pm1$. By Cramer's rule, also $A^{-1}$ is integral. Hence $A^{-1}\mathbf{b}$ is integral.\\
+$\Rightarrow$ If $\mathbf{b}$ is $i$th unit vector, then $A^{-1}\mathbf{b}$ is $i$th column of $A^{-1}$. Hence $A^{-1}$ is integral and $\det(A^{-1})$ is an integer. 
+Since $1=\det(AA^{-1}) = \det(A)\cdot\det(A^{-1})$ and $\det(A) \in \mathbb{Z}$  we conclude that   $\det(A) = \det(A^{-1}) = \pm1$.
+}
+
+\vskip 1em 
+
+For rectangular matrix:\\
+Matrix $A \in \mathbb{Z}^{m\times n}$ of full row rank is \textbf{unimodular} if every 
+$m\times m$ basis of $A$ (full rank square submatrix) has determinant $\pm 1$. 
+
+\vskip 1em 
+
+\textbf{Theorem 6.24}
+Let $A \in \mathbb{Z}^{m \times n}$ be of full row rank.
+Polyhedron  $P = \{\mathbf{x}: A\mathbf{x} = \mathbf{b}, \mathbf{x} \geq \mathbf{0}\}$
+is integral for every $\mathbf{b} \in \mathbb{Z}^m$ iff $A$ is unimodular.  
+
+\question{}{Prove Theorem 6.24}
+\solution{
+Recall in LP: A solution $\mathbf{x}$ is called basic feasible solution if $\mathbf{x}$ has at most $m$ non-zero entires and the columns of $A$ corresponding to these entries are linearly independent.
+
+$\Leftarrow$ Let $\overline{\mathbf{x}} \in P$ be a vertex (using $\mathbf{x} \geq 0$).  Pick basis $B$ corresponding to $\overline{\mathbf{x}}$ - pick columns where $\overline{\mathbf{x}}$ is nonzero (and extend). 
+Use Theorem 6.23 on
+$B\overline{\mathbf{x}} = \mathbf{b}$. 
+
+$\Rightarrow$ Let $B$ be a base of $A$ and pick any $\mathbf{v} \in \mathbb{Z}^n$. 
+Goal is to show that $B^{-1}\mathbf{v} \in \mathbb{Z}^m$ and use Theorem 6.23
+to show $\det(B) = \pm 1$.
+Choose $\mathbf{y} \in \mathbb{Z}^m$ such that $B^{-1}\mathbf{v}  + \mathbf{y} \geq  \mathbf{0}$.
+Let $\mathbf{b} = B(B^{-1}\mathbf{v}  + \mathbf{y}) = \mathbf{v}  + B\mathbf{y} \in \mathbb{Z}^m$. Add zero components to $(B^{-1}\mathbf{v}  + \mathbf{y})$, which gives $\mathbf{z}\in \mathbf{R}^n$ such that $A\mathbf{z} = \mathbf{b}$. Now $\mathbf{z} \in P$ and it corresponds to a basic feasible solution, hence $\mathbf{z} \in \mathbb{Z}^n$. Therefore $B^{-1}\mathbf{v} \in \mathbb{Z}^m$.
+}
+
+
+\vskip 1em 
+
+Matrix $A \in \mathbb{Z}^{m\times n}$ is \textbf{totally unimodular} if every square submatrix has determinant in $\{0,1,-1\}$. (all entries of $A$ are in $\{0,1,-1\}$. )
+
+\vskip 1em 
+
+HW question: $A$ is totally unimodular iff $[A\ I]$ is unimodular (where $I$ is $m \times m$ unit matrix).
+
+\vskip 1em 
+
+\textbf{Theorem 6.25}
+Let $A \in \mathbb{Z}^{m \times n}$.
+Polyhedron $P=\{A\mathbf{x} \leq \mathbf{b}, \mathbf{x} \geq \mathbf{0}\}$
+is integral for every $\mathbf{b} \in \mathbb{Z}^m$ iff $A$ is totally unimodular.  
+
+\vskip 1em
+
+\textbf{Theorem 6.26}
+Let $A \in \mathbb{Z}^{m \times n}$.
+Polyhedron $P=\{A\mathbf{x} \leq \mathbf{b}\}$ is integral for every $\mathbf{b} \in \mathbb{Z}^m$ iff $A$ is totally unimodular.  
+
+\vskip 1em
+
+Note: Matrix $A$ being totally unimodular is decidable in polynomial time (algorithm by Seymour).
+
+\question{}{
+Let $A$ have values $\{0,1,-1\}$ and every column has at most one 1 and at most one -1. Show that $A$ is totally unimodular. \emph{Hint: induction.}
+}
+\solution{
+Let $N$ be a $k\times k$ submatrix. If $k=1$ clear.  If column with at most one non-zero, expand the determinant. If all columns have 1 and -1, matrix is signular.
+}
+
+\vskip 1em
+
+Example: Incidence matrix $M\in \mathbb{R}^{|V|\times |E|}$ of directed graph $G=(V,E)$ is totally unimodular.
+Matrix $M$ is indexed by $V$ and $E$. Edge $e=\overrightarrow{uv}\in E$
+gives entries 
+$M_{ue} = -1$ and $M_{ve} = 1$.
+
+\begin{center}
+\tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
+\begin{tikzpicture}
+\draw[-triangle 45]
+(0,0) node[insep,label=below:$v_1$]{}  -- node[above]{$e_1$} (1,0) node[insep,label=below:$v_2$]{} 
+;
+\draw[-triangle 45]
+(1,0) --  node[above]{$e_2$} (2,0) node[insep,label=below:$v_3$]{} 
+;
+\end{tikzpicture}
+\hskip 3em
+\begin{tabular}{c|cc}
+          &   $e_1$   &  $e_2$ \\ \hline
+$v_1$   & -1     &     \\
+$v_2$   &  1      &  -1    \\ 
+$v_3$   &         &   1    
+\end{tabular}
+\end{center}
+
+\textbf{Theorem}
+Matrix $A \in \mathbb{Z}^{m \times n}$ is totally unimodular iff for every $R \subseteq \{1,\ldots,m\}$ there is a partition $R = R_1 \cup R_2$ such that for all $j \in 1\ldots n$.
+\[
+\sum_{i\in R_1}a_{ij} - \sum_{i \in R_2}a_{ij} \in \{-1,0,1\}
+\]
+
+Example: Incidence matrix $M \in \mathbb{R}^{|V|\times |E|}$ of (undirected) bipartite graph $G=(V,E)$ is totally unimodular.
+$M_{eu} = M_{ev} = 1$ for every $e = uv \in E$.
+
+
+\vfill
+
+\emph{Next time: Integer Programming - Branch\&Bound}
+
+
+\end{document}
+
+\end{document}
+
+
+
+
+
+

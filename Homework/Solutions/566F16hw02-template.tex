@@ -1,0 +1,76 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{fullpage}
+\usepackage{tikz}
+\usepackage{amsmath}
+\usepackage{hyperref}
+
+\newcounter{excounter}
+\setcounter{excounter}{1}
+\newcommand\question[2]{\vskip 1em  \noindent\textbf{\arabic{excounter}\addtocounter{excounter}{1}:} (\emph{#1}) \newline \noindent#2}
+\newcommand\hint[1]{ \newline \noindent\textit{Hint: #1}}
+\newcommand\solution[1]{\vskip 0.5em \noindent\textbf{Solution:}\par\noindent#1}
+\renewcommand\solution[1]{ }
+
+
+
+\begin{document}
+\pagestyle{empty}
+\large
+
+{\bf MATH-566 \hspace{1cm} HW 2}
+\vskip 1em
+Due \textbf{Sep 14} before class. Just bring it before the class and it will be collected there.
+%The solution has to be typed (using \LaTeX or print of the sage program).
+
+\question{Separation of sets}{
+(a) Give an example of bounded convex sets $C$ and $D$ in $\mathbb{R}^d$, where $C \cap D = \emptyset$
+but there are no hyperplane strictly separating $C$ and $D$. That is
+$\mathbf{a} \in \mathbb{R}^d$ and $b \in \mathbb{R}$ such that
+\begin{align*}
+\mathbf{a}^T\mathbf{x} &> b, \forall \mathbf{x}\in C
+&
+&\text{and}
+&
+\mathbf{a}^T\mathbf{x} &< b, \forall \mathbf{x}\in D.
+\end{align*}
+
+(b) Give an example of closed convex sets $C$ and $D$ that cannot be strictly separated.
+}
+
+
+
+\question{Dualization}{
+Dualize your diet problem. Take data of your diet problem from HW1 and create dual of the program and solve it.
+Answer should contain solution of the dual and interpretation of the result of the dual (what do the numbers mean).
+}
+
+
+\question{Integer program}{
+Paper mill manufactures rolls of paper of a standard width 3 meters. But customers want to buy paper rolls of shorter width, and the mill has to cut such rolls from the 3 m rolls. One 3 m roll can be cut, for instance, into two rolls 93 cm wide, one roll of width 108 cm, and a rest of 6 cm (which goes to waste).
+Let us consider an order of
+ \begin{itemize}
+\item 97 rolls of width 135 cm,
+\item 610 rolls of width 108 cm,
+\item 395 rolls of width 93 cm, and
+ \item 211 rolls of width 42 cm.
+ \end{itemize}
+What is the smallest number of 3 m rolls that have to be cut in order to satisfy this order, and how should they be cut?\\
+ \emph{(Hints: 1m = 100cm, you may need to consider that variables are integers instead of just real numbers. APMonitor can
+ do it by prefix int in variable and Sage by using \emph{new\_variable(integer=True))}.}
+}
+
+
+
+
+\end{document}
+
+
+
+
+
+
+
+
+
+

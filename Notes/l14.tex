@@ -1,0 +1,234 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[czech, english]{babel}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric}
+\usepackage{hyperref}
+
+
+% Itemize environment with small skips
+\newenvironment{packeditemize}{
+\begin{itemize}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{itemize}}
+
+
+% Fancy footnote....
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\usepackage{lastpage}
+\rfoot{MATH 566 - 14, page \thepage/\pageref{LastPage}}
+\cfoot{}
+\rhead{}
+\lhead{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+
+\newtheorem{theorem*}{Theorem} 
+
+% Itemize environment with small skips
+\newenvironment{packedenumerate}{
+\begin{enumerate}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{enumerate}}
+
+
+\newcounter{excounter}
+\setcounter{excounter}{1}
+\newcommand\question[2]{\vskip 1em  \noindent\textbf{\arabic{excounter}\addtocounter{excounter}{1}:} \emph{#1} \noindent#2}
+\newcommand\solution[1]{\vskip 0.5em \noindent\textbf{Solution:} #1}
+%\newcommand\like{\par \noindent\emph{(This question is: good - bad - ugly? Difficulty: 0-10:\hskip 3em )}} 
+
+\newcommand\lecturer[1]{\textbf{#1}}
+\newcommand\hideforstudent[1]{#1}
+
+
+%\renewcommand\lecturer[1]{{\color{white} \textbf{#1} }}
+%\renewcommand\hideforstudent[1]{{\color{white} #1 }}
+%\renewcommand\solution[1]{{\color{white} \vskip 0.5em \noindent\textbf{Solution:} #1 }}
+
+
+
+\setlength{\parindent}{0cm}
+\setlength{\parskip}{0.1cm}
+
+\begin{document}
+
+Fall  2016, MATH-566
+
+\centerline{{\Large \textbf{Network flows - first introduction}}}
+
+
+\emph{Original application (product of cold war)}
+
+Suppose country $X$ enters into a war. How quickly can $X$ move tank from storage $s$ 
+to the target $t$ (battle ground)? The tanks are moved on a railroad. Every link gives the capacity
+how many tank a day can be transported. 
+
+\begin{center}
+\tikzset{
+insep/.style={inner sep=2pt, outer sep=0pt, circle, fill}, 
+}
+\begin{tikzpicture}[scale=1.3]
+\draw [-latex] (0,0) node[insep,label=left:$s$](s){} -- ++(30:2) node[insep,label=above:$u$](u){} node[pos=0.5,above]{$30$} ;
+\draw [-latex] (s) -- ++(-45:1) node[insep,label=below:$v$](v){} node[pos=0.5,above]{$20$} ;
+\draw [-latex] (v) -- ++(0:2) node[insep,label=below:$w$](w){} node[pos=0.5,above]{$30$} ;
+\draw [-latex] (u) -- ++(-30:2) node[insep,label=right:$t$](t){} node[pos=0.5,above]{$20$} ;
+\draw [-latex] (u) -- (w) node[pos=0.5,right]{$20$} ;
+\draw [-latex] (w) -- (t) node[pos=0.5,above]{$40$} ;
+\end{tikzpicture}
+\end{center}
+
+\question{}{
+How many tanks per day can be delivered to the battleground? Is the solution unique?
+}
+
+\solution{
+50 tanks. Not unique.
+}
+
+\textbf{Problem:}
+(Directed) graph $G$, source $s$, sink $t$, capacities $u: E(G) \rightarrow \mathbb{R}_+$.\\
+\textbf{Network} is $(G,u,s,t)$.
+
+Input:  Network $(G,u,s,t)$\\
+Output: $s$-$t$-flow of maximum value
+ 
+ \textbf{$s$-$t$-flow} $f$ is a function $f: E(G) \rightarrow \mathbb{R}_+$.\\
+ \textbf{Value} of $f$ is $\sum_{su \in E} f(su) - \sum_{us \in E} f(us)$ i.e. leaving $-$ entering to $s$.
+ 
+ \question{}{
+How $f$ looks around one vertex of the network? (what must $f$ satisfy?)
+ }
+\solution{
+\textbf{Flow conservation rule:} For all $v \in V\setminus\{s,t\}$:
+\[
+\sum_{uv \in E} f(uv) = \sum_{vu \in E} f(uv).
+\]
+and for $s,t$ it satisfies:
+\[
+\sum_{su \in E} f(su) - \sum_{us \in E} f(us) = \sum_{ut \in E} f(ut) - \sum_{tu \in E} f(tu).
+\]
+} 
+
+\question{}{
+How to improve these flows to be maximum? Description on edges are  values of $f,u$.
+\begin{center}
+\begin{tikzpicture}[scale=1.2]
+\tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
+\draw [-latex] (0,0) node[insep,label=left:$s$](s){} -- ++(45:1.5) node[insep,label=above:$u$](u){} node[pos=0.5,above]{$2,2$} ;
+\draw [-latex] (s) -- ++(-45:1) node[insep,label=below:$v$](v){} node[pos=0.5,above]{$0,3$} ;
+\draw [-latex] (v) -- ++(0:2) node[insep,label=below:$w$](w){} node[pos=0.5,above]{$0,2$} ;
+\draw [-latex] (u) -- ++(-20:3) node[insep,label=right:$t$](t){} node[pos=0.5,above]{$2,2$} ;
+\draw [-latex] (u) -- (w) node[pos=0.5,right]{$0,2$} ;
+\draw [-latex] (w) -- (t) node[pos=0.5,above]{$0,3$} ;
+\end{tikzpicture}
+\begin{tikzpicture}[scale=1.2]
+\tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
+\draw [-latex] (0,0) node[insep,label=left:$s$](s){} -- ++(45:1.5) node[insep,label=above:$u$](u){} node[pos=0.5,above]{$2,2$} ;
+\draw [-latex] (s) -- ++(-45:1) node[insep,label=below:$v$](v){} node[pos=0.5,above]{$0,3$} ;
+\draw [-latex] (v) -- ++(0:2) node[insep,label=below:$w$](w){} node[pos=0.5,above]{$0,2$} ;
+\draw [-latex] (u) -- ++(-20:3) node[insep,label=right:$t$](t){} node[pos=0.5,above]{$0,3$} ;
+\draw [-latex] (u) -- (w) node[pos=0.5,right]{$2,2$} ;
+\draw [-latex] (w) -- (t) node[pos=0.5,above]{$2,2$} ;
+\end{tikzpicture}
+\end{center}
+}
+\solution{
+Path $s,v,w$ can be increased by 2. Path $s,v,w,u,t$ can be increased by two.
+}
+
+\question{}{
+After the improvement, how do you argue that nobody can further improve?
+}
+\solution{
+Consider set $A=\{s,v\}$. The capacity of edges going from $A$ is 4. Hence no flow
+can route more than 4 through the network.
+}
+%\newpage
+
+Let $A \subset V(G)$ such that $s \in A$ and $t \not\in A$. 
+Use $\delta^+(A)$ to denote set of edges $uv$, where $u \in A$ and $v \not\in A$ (edges leaving $A$). 
+Use $\delta^-(A)$ to denote set of edges $uv$, where $u \not\in A$ and $v \in A$ (edges entering $A$). \\
+\textbf{Capacity} of $s$-$t$-cut $A$ is $\sum_{e \in \delta^+(A)} u(e)$.
+
+\question{}{
+Prove that for $A$ and any flow $f$ holds\\
+(a) $\text{value}(f) =  \sum_{e \in \delta^+(A)} f(e) - \sum_{e \in \delta^-(A)} f(e) $\\
+(b) $\text{value}(f) \leq  \sum_{e \in \delta^+(A)} u(e)$
+}
+\solution{
+(a) Use conservation of flow at vertices in $A$.
+\begin{align*}
+\text{value}(f) &=  \sum_{e \in \delta^+(s)} f(e) - \sum_{e \in \delta^-(s)} f(e)  \\
+                      &= \sum_{v \in A}\left(  \sum_{e \in \delta^+(v)} f(e) - \sum_{e \in \delta^-(v)} f(e)  \right) \\
+                      &= \sum_{e \in \delta^+(A)} f(e) - \sum_{e \in \delta^-(A)} f(e)
+\end{align*}
+(b) clearly $\sum_{e \in \delta^+(A)} f(e) - \sum_{e \in \delta^-(A)} f(e) \leq\sum_{e \in \delta^+(A)} u(e)$
+since $f(e) \leq u(e)$.
+}
+
+This proves the \emph{obvious} observation that maximum flow cannot exceed capacity of minimum cut.
+
+\vskip 1em
+
+
+
+Notice in 3. we were improving flow be reducing the flow on $uw$. We ``sent flow in the opposite direction''.
+
+For a digraph $G$, define $\overleftrightarrow{G}$ by adding for every edge $e$ also its \textbf{reverse} $\overleftarrow{e}$.
+
+For $f$ and $u$ define \textbf{residual capacities} $u_f: E(\overleftrightarrow{G}) \rightarrow \mathbb{R}_+ $
+\begin{align*}
+u_f(e) &=  u(e) - f(e)    &       u_f(\overleftarrow{e}) &= f(e)
+\end{align*}
+Residual capacities \ldots how much extra we can send in each direction.
+
+\textbf{Residual graph} $G_f$ is  obtained from $\overleftrightarrow{G}$ by removing edges $e \in E(\overleftrightarrow{G})$ with $u_f(e) = 0$.
+
+\textbf{Augmenting path} is an $s$-$t$ path in $G_f$.
+
+\question{}{
+Construct the residual graph for
+\begin{center}
+\begin{tikzpicture}[scale=1.2]
+\tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
+\draw [-latex] (0,0) node[insep,label=left:$s$](s){} -- ++(45:1.5) node[insep,label=above:$u$](u){} node[pos=0.5,above]{$2,2$} ;
+\draw [-latex] (s) -- ++(-45:1) node[insep,label=below:$v$](v){} node[pos=0.5,above]{$1,3$} ;
+\draw [-latex] (v) -- ++(0:2) node[insep,label=below:$w$](w){} node[pos=0.5,above]{$1,4$} ;
+\draw [-latex] (u) -- ++(0:3) node[insep,label=right:$x$](x){} node[pos=0.5,above]{$1,2$} ;
+\draw [-latex] (w) -- ++(45:1) node[insep,label=right:$t$](t){} node[pos=0.5,right]{$1,1$} ;
+\draw [-latex] (u) -- (w) node[pos=0.5,right]{$1,2$} ;
+\draw [-latex] (x) -- (t) node[pos=0.5,left]{$2,4$} ;
+\draw [-latex] (w) to[bend right=40,looseness=2] node[pos=0.5,right]{$1,2$}  (x);
+\end{tikzpicture}
+\end{center}
+and find an augmenting path and increase the flow using the augmenting path.
+}
+
+\vskip 3em
+
+\question{}{
+How to update (to \textbf{augment} the flow $f$ using augmenting path in $\overleftrightarrow{G}$?
+}
+
+\solution{
+If flow is increasing on edge $e$ by $\gamma$, then decrease $u_f(e)$ by $\gamma$ and increase $u_f(\overleftarrow{e})$
+by $\gamma$. }
+
+\end{document}
+
+
+
+
+
+

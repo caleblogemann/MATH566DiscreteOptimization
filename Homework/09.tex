@@ -1,0 +1,235 @@
+\documentclass[11pt, oneside]{article}
+\usepackage[letterpaper, margin=2cm]{geometry}
+\usepackage{MATH566}
+%\usepackage{sagetex}
+
+\begin{document}
+\noindent \textbf{\Large{Caleb Logemann \\
+MATH 566 Discrete Optimization\\
+Homework 9
+}}
+
+%\lstinputlisting[language=Sage]{03_2.sage}
+\begin{enumerate}
+  \item % #1
+    Implement Directed Minimum Mean Cycle in Sage. 
+    Before implementing the algorithm, show that it is possible to slightly
+    modify the algorithm.
+    Instead of adding an extra vertex $s$ and edges from $s$ to all other
+    vertices, it is possible to simply assign $F_0(v) = 0$ for all $v \in V$ at
+    the beginning.
+    This avoids the hassle with adding an extra vertex.
+    But it requires an argument that the algorithm is still correct.
+
+  \item % #2
+    Show that in integer program, it is possible to express the following constraint:
+    \[
+      x \in [100,200]  \cup [300,400]
+    \]
+    in other words
+    \[
+      100 \leq x \leq 200   \text{ or } 300 \leq x \leq 400
+    \]
+    How to express the constraint \emph{without} using \emph{or}?\\
+    % Hint: use additional integer variable z \in \{0,1\}, consider z and (1-z).
+
+  \item % #3 Done
+    Determine which of the matrices below are (i) unimodular, (ii) totally
+    unimodular, or (iii) neither.
+    Be sure to explain your answer.
+
+    \begin{center}
+      \begin{tabular}[h]{c@{\qquad}c@{\qquad}c}
+        $\left(\begin{array}{rrrr}
+        1 & -1 & -1 & 0\\
+        -1 & 0 & 0 & 1\\
+        0 & 1 & 0 & -1\\
+        0 & 0 & 1 & 0\end{array}\right)$ & 
+        $\left(\begin{array}{cccc}
+        1 & 0 & 1 & 0\\
+        0 & 1 & 0 & 0\\
+        0 & 0 & 1 & 1\\
+        1 & 1 & 0 & 1\end{array}\right)$ &
+        $\left(\begin{array}{ccccc}
+        0 & 1 & 0 & 0 & 0  \\
+        1 & 0 & 1 & 0  & 0 \\
+        0 & 1 & 0 & 1 & 1\\
+        0 & 0 & 1 & 0 & 1\\
+        0 & 0 & 1 & 1 & 0\end{array}\right) $
+        \\
+        \textbf{a.} &
+        \textbf{b.}  &
+        \textbf{c.} 
+      \end{tabular}
+    \end{center}
+
+    \begin{enumerate}
+      \item[(i)]
+        Since these are all square matrices, they will be unimodular if their
+        determinant is $\pm 1$.
+        So I compute the determinants of these 3 matrices.
+        First I will compute the determinant of $(a)$.
+        \begin{align*}
+          \det(a) &= \begin{vmatrix}
+             1 & -1 & -1 &  0 \\
+            -1 &  0 &  0 &  1 \\
+             0 &  1 &  0 & -1 \\
+             0 &  0 &  1 &  0
+          \end{vmatrix}
+          \intertext{Expand along first column}
+          \det(a) &= 1 \times
+          \begin{vmatrix}
+            0 &  0 &  1 \\
+            1 &  0 & -1 \\
+            0 &  1 &  0
+          \end{vmatrix}
+          - (-1) \times
+          \begin{vmatrix}
+            -1 & -1 &  0 \\
+             1 &  0 & -1 \\
+             0 &  1 &  0
+          \end{vmatrix}
+          \intertext{Expand along the first column for the first determinant
+            and along the last column for the second determinant}
+          &=
+          1 \times \p{-1 \times 
+          \begin{vmatrix}
+            0 &  1 \\
+            1 &  0
+          \end{vmatrix}}
+          - (-1) \times \p{1 \times
+          \begin{vmatrix}
+            -1 & -1 \\
+             0 &  1
+          \end{vmatrix}} \\
+          &= 
+          1 \times \p{-1 \times -1} - (-1) \times \p{1 \times -1} \\
+          &= 1 - 1 \\
+          &= 0
+        \end{align*}
+        Since the determinant of $(a)$ is 0 this matrix is not unimodular.
+
+        Second I will compute the determinant of $(b)$.
+        \begin{align*}
+          \det(b) &=
+          \begin{vmatrix}
+            1 & 0 & 1 & 0 \\
+            0 & 1 & 0 & 0 \\
+            0 & 0 & 1 & 1 \\
+            1 & 1 & 0 & 1
+          \end{vmatrix}
+          \intertext{I will first expand along the first row.}
+          \det(b) &= 1 \times
+          \begin{vmatrix}
+            1 & 0 & 0 \\
+            0 & 1 & 1 \\
+            1 & 0 & 1
+          \end{vmatrix}
+          + 1 \times
+          \begin{vmatrix}
+            0 & 1 & 0 \\
+            0 & 0 & 1 \\
+            1 & 1 & 1
+          \end{vmatrix}
+          \intertext{I will expand the first determinant along the first row
+            and the second determinant along the first column}
+          \det(b) &= 1 \times \p{1 \times
+          \begin{vmatrix}
+            1 & 1 \\
+            0 & 1
+          \end{vmatrix}}
+          + 1 \times \p{1 \times
+          \begin{vmatrix}
+            1 & 0 \\
+            0 & 1 \\
+          \end{vmatrix}} \\
+          &= 1 \times \p{1 \times 1} + 1 \times \p{1 \times 1} \\
+          &= 1 + 1 \\
+          &= 2
+        \end{align*}
+        Since the determinant of $(b)$ is 2 this matrix is not unimodular.
+
+        Lastly I will compute the determinant of $(c)$.
+        \begin{align*}
+          \det(c) &=
+          \begin{vmatrix}
+            0 & 1 & 0 & 0 & 0 \\
+            1 & 0 & 1 & 0 & 0 \\
+            0 & 1 & 0 & 1 & 1 \\
+            0 & 0 & 1 & 0 & 1 \\
+            0 & 0 & 1 & 1 & 0
+          \end{vmatrix}
+          \intertext{First I will expand along the first column}
+          \det(c) &= -1 \times
+          \begin{vmatrix}
+            1 & 0 & 0 & 0 \\
+            1 & 0 & 1 & 1 \\
+            0 & 1 & 0 & 1 \\
+            0 & 1 & 1 & 0
+          \end{vmatrix}
+          \intertext{Next I will expand along the first row}
+          \det(c) &= -1 \times \p{1 \times
+          \begin{vmatrix}
+            0 & 1 & 1 \\
+            1 & 0 & 1 \\
+            1 & 1 & 0
+          \end{vmatrix}}
+          \intertext{Expanding along the first column gives}
+          \det(c) &= -1 \times \p{1 \times \p{-1 \times
+          \begin{vmatrix}
+            1 & 1 \\
+            1 & 0
+          \end{vmatrix}
+          + 1 \times
+          \begin{vmatrix}
+            1 & 1 \\
+            0 & 1 \\
+          \end{vmatrix}}} \\
+          &= -1 \times \p{1 \times \p{-1 \times -1 + 1 \times 1}} \\
+          &= -1 \times \p{1 \times \p{1 + 1}} \\
+          &= -1 \times \p{1 \times 2} \\
+          &= -1 \times 2 \\
+          &= -2
+        \end{align*}
+        Since the determinant of $(c)$ is -2 this matrix is not unimodular.
+
+        In summary none of the matrices are unimodular.
+
+      \item[(ii)]
+        In order for a matrix to be totally unimodular every square submatrix
+        must have determinant $-1$, $0$, or $1$.
+        Note that since matrices $(b)$ and $(c)$ don't have a determinant
+        $-1$, $0$, or $1$ when considered as a whole matrix they cannot be
+        totally unimodular.
+        Matrix $(a)$ which has determinant 0 can potentially be totally
+        unimodular.
+        In fact we see that each column has exactly one $1$ and one $-1$, so
+        by a theorem in the notes $(a)$ is totally unimodular.
+
+      \item[(iii)]
+        We have shown that $(a)$ is totally unimodular but not unimodular.
+        However $(b)$ and $(c)$ are neither unimodular nor totally unimodular.
+    \end{enumerate}
+
+  \item % #4
+    Show that $A \in \mathbb{Z}^{m \times n}$ is totally unimodular iff $[A\ I]$
+    is unimodular (where $I$ is $m \times m$ unit matrix).
+
+  \item % #5 Done
+    Find a unimodular matrix $A$, that is not totally unimodular.
+
+    Consider the matrix
+    \[
+      A =
+      \begin{matrix}
+        9 & 7 \\
+        5 & 4
+      \end{matrix}
+    \]
+    The matrix $A$ is unimodular because
+    $A \in \ZZ^{2 \times 2}$ and
+    $\det(A) = 9 \times 4 - 5 \times 7 = 36 - 35 = 1$.
+    However $A$ is not totally unimodular because not all of the
+    entries of $A$ are $-1$, $0$, $1$.
+\end{enumerate}
+\end{document}
