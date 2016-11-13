@@ -21,10 +21,34 @@ Homework 9
     This avoids the hassle with adding an extra vertex.
     But it requires an argument that the algorithm is still correct.
 
+
+    The following function performs the minimum mean cost cycle algorithm
+    as described in the notes with the modification described above.
     \lstinputlisting[language=Sage]{Sage/minimumMeanCostCycle.sage}
+    This script runs this algorithm on 3 test graphs.
     \lstinputlisting[language=Sage]{Sage/09_1.sage}
 
-  \item % #2
+    The output of this script is shown below.
+    \begin{verbatim}
+      Launched png viewer for Graphics object consisting of 15 graphics primitives
+      Mu= 3/4
+      Launched png viewer for Graphics object consisting of 13 graphics primitives
+      Launched png viewer for Graphics object consisting of 29 graphics primitives
+      Mu= 1
+      Launched png viewer for Graphics object consisting of 19 graphics primitives
+      Launched png viewer for Graphics object consisting of 16 graphics primitives
+      This graph is acyclic
+    \end{verbatim}
+    The scipt also produces the following images.
+    \begin{center}
+      \includegraphics[scale=.5]{Figures/09_1.png}
+      \includegraphics[scale=.5]{Figures/09_2.png} \\
+      \includegraphics[scale=.5]{Figures/09_3.png}
+      \includegraphics[scale=.5]{Figures/09_4.png} \\
+      \includegraphics[scale=.5]{Figures/09_5.png}
+    \end{center}
+
+  \item % #2 Done
     Show that in integer program, it is possible to express the following constraint:
     \[
       x \in [100,200]  \cup [300,400]
@@ -35,6 +59,46 @@ Homework 9
     \]
     How to express the constraint \emph{without} using \emph{or}?\\
     % Hint: use additional integer variable z \in \{0,1\}, consider z and (1-z).
+
+    First of all it can be see that $x \ge 100$ and $x \le 400$ unconditionally
+    as both intervals satisfy these conditions.
+    Assuming these inequalities the system can be simplified to
+    either $x \le 200$ or $x \ge 300$.
+    In order to express this or statement as linear constraints consider
+    $z \in \ZZ$ such that $0 \le z \le 1$.
+    Now the variable $z$ is a binary variable that will turn on only one
+    of the previous constraints.
+    Consider the system
+    \begin{align*}
+      x &\le 200 + Mz \\
+      x &\ge 300 - M(1 - z)
+    \end{align*}
+    where $M$ is sufficiently large.
+    In this case $M = 200$ is sufficient.
+    Consider when $z = 0$, in this case these constraints become
+    \begin{align*}
+      x &\le 200 \\
+      x &\ge 100
+    \end{align*}
+    This corresponds to $x \in \br{100, 200}$
+    Consider the case when $z = 1$, then the constraints become
+    \begin{align*}
+      x &\le 400 \\
+      x &\ge 300
+    \end{align*}
+    This corresponds to $x \in \br{300, 400}$.
+    In fact when $M = 200$, these constraints don't even require the upper and
+    lower bounds stated earlier.
+    This constraint can be fully expressed as
+    \begin{align*}
+      x &\le 200 + 200z \\
+      x &\ge 300 - 200(1 - z) \\
+      z &\ge 0 \\
+      z &\le 1 \\
+      x, z &\in \ZZ
+    \end{align*}
+    This system is identical to the statement
+    $x \in \br{100, 200} \cup \br{300, 400}$ and $x \in \ZZ$.
 
   \item % #3 Done
     Determine which of the matrices below are (i) unimodular, (ii) totally
@@ -217,6 +281,14 @@ Homework 9
   \item % #4
     Show that $A \in \mathbb{Z}^{m \times n}$ is totally unimodular iff $[A\ I]$
     is unimodular (where $I$ is $m \times m$ unit matrix).
+
+    \begin{proof}
+      Let $A \in \ZZ^{m \times n}$ and let $I$ be the $m \times m$ identity
+      matrix.
+      Let $A$ be totally unimodular.
+
+      Now assume $\br{A\ I}$ is unimdular.
+    \end{proof}
 
   \item % #5 Done
     Find a unimodular matrix $A$, that is not totally unimodular.
