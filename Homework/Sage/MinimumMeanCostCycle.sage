@@ -19,22 +19,17 @@ def minimumMeanCostCycle(graph):
     m = {v:oo for v in graph.vertices()}
     for v in graph.vertices():
         if F[v][n] != oo:
-            m[v] = max([(F[v][n] - F[v][k])/(n-k) for k in range(n-1)])
+            m[v] = max([(F[v][n] - F[v][k])/(n-k) for k in range(n)])
 
     x = min(m, key=m.get)
     mu = m[x]
 
     # create cycle
-    cycle = DiGraph()
-    cycle.add_vertex(x)
-    k = n
+    cycle = DiGraph([graph.vertices(), []])
     v = x
-    while p[v][k] != x: 
+    for k in range(n):
         u = v
-        v = p[v][k]
-        cycle.add_vertex(v)
+        v = p[v][n - k]
         cycle.add_edge(v, u, graph.edge_label(v, u))
-        k-= 1
-    cycle.add_edge(x, v, graph.edge_label(x, v))
 
     return (cycle, mu)

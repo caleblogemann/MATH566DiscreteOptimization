@@ -11,7 +11,7 @@ Homework 9
 
 %\lstinputlisting[language=Sage]{03_2.sage}
 \begin{enumerate}
-  \item % #1
+  \item % #1 Done
     Implement Directed Minimum Mean Cycle in Sage. 
     Before implementing the algorithm, show that it is possible to slightly
     modify the algorithm.
@@ -21,6 +21,19 @@ Homework 9
     This avoids the hassle with adding an extra vertex.
     But it requires an argument that the algorithm is still correct.
 
+    In the initial algorithm in the notes we consider a vertex $s$ from which
+    all other vertices can be can be reached.
+    If instead we consider potentially starting at any vertex, we are not
+    required to introduce a new vertex.
+    This also implies that $F_0(v) = 0$ for all vertices because there always
+    exists a walk of length zero from a vertex to itself, the empty walk.
+    In this new setup $F_k(v)$ now represents the minimum cost walk of length
+    $k$ from any vertex to $v$.
+    The rest of the algorithm works as intended, the vertex that realizes
+    \[
+      \min*[v \in V]{\max*[k, F_k(v) \neq \infty]{\frac{F_n(v) - F_k(v)}{n - k}}}
+    \]
+    will be on the minimum mean cost cycle.
 
     The following function performs the minimum mean cost cycle algorithm
     as described in the notes with the modification described above.
@@ -278,7 +291,7 @@ Homework 9
         However $(b)$ and $(c)$ are neither unimodular nor totally unimodular.
     \end{enumerate}
 
-  \item % #4
+  \item % #4 Done
     Show that $A \in \mathbb{Z}^{m \times n}$ is totally unimodular iff $[A\ I]$
     is unimodular (where $I$ is $m \times m$ unit matrix).
 
@@ -286,8 +299,61 @@ Homework 9
       Let $A \in \ZZ^{m \times n}$ and let $I$ be the $m \times m$ identity
       matrix.
       Let $A$ be totally unimodular.
+      This implies that any square submatrix has determinant $0$, $1$, or $-1$.
+      Consider a $m \times m$ basis of $\br{A\ I}$.
+      Clearly any basis that contains only columns of $A$ has determinant either
+      $1$ or $-1$, as $A$ is totally unimodular.
+      Now let this basis contain some columns of $I$.
+      Let $A_b$ be the columns of $A$ in the basis and let $I_b$ be the
+      columns of $I$ in the basis.
+      Now this basis can be thought of as the square matrix $\br{A_b\ I_b}$.
+      Let $K = \set{k : e_k \in I_b}$, which is the set of indices of vector
+      in $I$ that are contained in $I_b$.
+      Thus if $1 \in K$, then $e_1 = \br{1, 0, 0, \cdots}^T \in I_b$.
+      Also let $K^c$ be the set of indices that are not in $K$.
+      Note that $\abs{K^c}$ is equal to the number of columns of $A_b$.
+      When taking the determinant of $\br{A_b\ I_b}$, it is possible to
+      expand along the columns of $I_b$, so that
+      \[
+        \det\p{\br{A_b\ I_b}} = \pm 1 \det\p{A_b[K^c]}
+      \]
+      where $A_b[K^c]$ is the submatrix created by taking the rows of $A_b$
+      indexed by $K^c$.
+      Note that this is a square submatrix of $A$. 
+      As $A$ is totally unimodular, this implies that $\det\p{A_b[K^c]} = \pm1, 0$.
+      Since this is a basis, the determinant can't be zero or
+      $\det\p{\br{A_b\ I_b}} \neq 0$.
+      Therefore $\det\p{A_b[K^c]} \neq 0$, and this implies that
+      \[
+        \det\p{\br{A_b\ I_b}} = \pm 1 \times \pm 1 = \pm 1
+      \]
+      Also note that if the basis of $\br{A\ I}$ is $I$, then $\det(I) = 1$.
+      Thus any basis of $\br{A\ I}$ has a determinant $\pm 1$, so $\br{A\ I}$ is
+      unimodular.
 
-      Now assume $\br{A\ I}$ is unimdular.
+      Now assume $\br{A\ I}$ is unimodular.
+      Consider any square submatrix of $A$ determined by rows $M = \set{i_k}$
+      and columns $N = \set{j_k}$.
+      Consider a subset of the columns of $I$ determined by $M^c$, that is
+      let $I_b = \br{e_i: i \in M^c}$.
+      Also let $A_b = \br{a_j: j in N}$, be the columns of $A$ determined by
+      $N$.
+      Then the square matric $\br{A_b\ I_b}$ is either a basis of $\br{A\ I}$
+      in which case the determinant is $\pm 1$ or $\br{A_b\ I_b}$ is not a basis
+      of $\br{A\ I}$ in which case the determinant is $0$.
+      It was shown in the last argument that the
+      \[
+        \det\p{\br{A_b\ I_n}} = \pm 1\det\p{A[M, N]}
+      \]
+      where $A[M, N]$ is the square submatrix.
+      Equivalently 
+      \[
+        \det\p{A[M, N]} = \pm 1 \det\p{\br{A_b\ I_n}}
+      \]
+      Given the three possibilities of the deteminant of $\br{A_b\ I_b}$, it can
+      be seen that $\det\p{A[M, N]} = 0, \pm 1$.
+      Thus $A$ is totally unimodular as any square submatrix has determinant
+      $0$ or $\pm 1$.
     \end{proof}
 
   \item % #5 Done
