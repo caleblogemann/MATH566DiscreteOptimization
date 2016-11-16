@@ -1,0 +1,91 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{fullpage}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric}
+\usetikzlibrary{arrows}
+\usepackage{amsmath}
+\usepackage{hyperref}
+
+\newcounter{excounter}
+\setcounter{excounter}{1}
+\newcommand\question[2]{\vskip 1em  \noindent\textbf{\arabic{excounter}\addtocounter{excounter}{1}:} (\emph{#1}) \newline \noindent#2}
+\newcommand\hint[1]{ \newline \noindent\textit{Hint: #1}}
+\newcommand\solution[1]{\vskip 0.5em \noindent\textbf{Solution:}\par\noindent#1}
+
+\renewcommand\solution[1]{ }
+
+
+
+\begin{document}
+\pagestyle{empty}
+\large
+
+{\bf MATH-566 \hspace{1cm} Midterm 2}
+\vskip 1em
+Due \textbf{Oct 18} before class. Just bring it before the class and it will be collected there.
+If you need more time (some unexpected even may happen), let me know BEFORE the deadline.
+
+
+
+\question{Can you use IP?}{
+\emph{Girth} of a graph $G=(V,E)$ is the length of the shortest cycle. 
+Notice cycle in undirected graph has at least 3 vertices.
+Formulate an  integer program that is solving the problem of shortest cycle
+in a graph.\\
+Hint: Put variables on vertices rather than edges.
+}
+
+\question{Do you understand augmentations in minimum cost flow?}{
+Recall that in Minimum Cost Flow, we were augmenting on minimum mean cycle.
+Show that if we allow augmentation on any augmenting cycle, the algorithm
+will not work right (bad convergence). \\
+\emph{Hint: Show a construction and sequence
+of bad choices for augmenting cycle. Recall Ford-Fulkerson algorithm problem.
+}
+}
+
+
+\question{Graph Algorithms}{
+Suppose you have a graph $G=(V,E)$. Every edge is assigned a cost $c: E \rightarrow \mathbb{R}$.
+How to pick edges, such that the sum of costs of the picked edges is maximized
+and the picked edges do not contain a cycle (i.e., the set of picked edges forms a forest)?
+More formally, 
+\[
+\text{maximize} \left\{  \sum_{e \in X} c(e):  X \subseteq E, X \text{ has no cycle}  \right\}.
+\]
+Describe how to use one/some of the algorithms we had in class to solve this problem.\\
+(I mean, how to modify the input to this problem such that it can be solved by some other algorithm?
+Alternatively, you can also describe an algorithm.)
+
+\emph{Example: Notice that the edges can have negative weight. The thick edges in the following graph show one of the optimal solutions.
+(There are two optimal solutions. Your algorithm should find one.)
+\begin{center}
+\tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
+\begin{tikzpicture}
+\draw (0,0)node[insep](a){}  -- node[left]{$2$}  (0,1) node[insep](b){}
+-- node[above]{$-1$}  (1,1) node[insep](c){} 
+-- node[left]{$1$}  (1,0) node[insep](d){} 
+-- node[below]{$-1$}  (a)
+(c) -- node[above]{$1$}  (3,0.5) node[insep](e){} 
+-- node[below]{$2$}  (d)
+;
+\draw[line width=2pt]
+(a)--(b) (c)--(d)--(e);
+;
+\end{tikzpicture}
+\end{center}
+}
+}
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
