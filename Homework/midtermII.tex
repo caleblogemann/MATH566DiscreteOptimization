@@ -90,7 +90,269 @@ Midterm II
     % Hint: Show a construction and sequence of bad choices for augmenting cycle.
     % Recall Ford-Fulkerson algorithm problem.
 
-  \item % #3
+    Consider the following directed graph where $r = \frac{\sqrt{5} - 1}{2}$
+    with capacities shown
+    \begin{center}
+      \begin{tikzpicture}
+        \draw 
+        (0,4) node[draw,circle](s){$s$}
+        (6,0) node[draw,circle](t){$t$}
+        (0,0) node[draw,circle](u){$u$}
+        (2,2) node[draw,circle](v){$v$}
+        (4,2) node[draw,circle](w){$w$}
+        (6,4) node[draw,circle](x){$x$}
+        ;
+        \foreach \x/\y/\l in {s/x/100, v/w/1, x/w/r, v/u/1, w/t/100, s/v/100}{
+          \draw[-triangle 45](\x)--node[above]{\l}(\y);
+        }
+        \foreach \x/\y/\l in {u/t/100}{
+          \draw[-triangle 45](\x)--node[below]{\l}(\y);
+        }
+        \foreach \x/\y/\l in {s/u/100}{
+          \draw[-triangle 45](\x)--node[left]{\l}(\y);
+        }
+        \foreach \x/\y/\l in {x/t/100}{
+          \draw[-triangle 45](\x)--node[right]{\l}(\y);
+        }
+      \end{tikzpicture}
+    \end{center}
+
+    The costs are shown in the following graph, along with the sources and sinks
+    of each vertex
+    \begin{center}
+      \begin{tikzpicture}
+        \draw 
+        (0,4) node[draw,circle](s){$100$}
+        (6,0) node[draw,circle](t){$-100$}
+        (0,0) node[draw,circle](u){$0$}
+        (2,2) node[draw,circle](v){$0$}
+        (4,2) node[draw,circle](w){$0$}
+        (6,4) node[draw,circle](x){$0$}
+        ;
+        \foreach \x/\y/\l in {s/x/-1, v/w/0, x/w/0, v/u/0, w/t/0, s/v/0}{
+          \draw[-triangle 45](\x)--node[above]{\l}(\y);
+        }
+        \foreach \x/\y/\l in {u/t/1}{
+          \draw[-triangle 45](\x)--node[below]{\l}(\y);
+        }
+        \foreach \x/\y/\l in {s/u/1}{
+          \draw[-triangle 45](\x)--node[left]{\l}(\y);
+        }
+        \foreach \x/\y/\l in {x/t/-1}{
+          \draw[-triangle 45](\x)--node[right]{\l}(\y);
+        }
+      \end{tikzpicture}
+    \end{center}
+
+    I will start with the following initial flow which has cost 200.
+    \begin{center}
+      \begin{tikzpicture}
+        \draw 
+        (0,4) node[draw,circle](s){$100$}
+        (6,0) node[draw,circle](t){$-100$}
+        (0,0) node[draw,circle](u){$0$}
+        (2,2) node[draw,circle](v){$0$}
+        (4,2) node[draw,circle](w){$0$}
+        (6,4) node[draw,circle](x){$0$}
+        ;
+        \foreach \x/\y/\l in {s/x/0, v/w/0, x/w/0, v/u/0, w/t/0, s/v/0}{
+          \draw[-triangle 45](\x)--node[above]{\l}(\y);
+        }
+        \foreach \x/\y/\l in {u/t/100}{
+          \draw[-triangle 45](\x)--node[below]{\l}(\y);
+        }
+        \foreach \x/\y/\l in {s/u/100}{
+          \draw[-triangle 45](\x)--node[left]{\l}(\y);
+        }
+        \foreach \x/\y/\l in {x/t/0}{
+          \draw[-triangle 45](\x)--node[right]{\l}(\y);
+        }
+      \end{tikzpicture}
+    \end{center}
+
+    The initial residual graph with (costs, residual capacity) shown is given below.
+    \begin{center}
+      \begin{tikzpicture}
+        \draw 
+        (0,4) node[draw,circle](s){$s$}
+        (6,0) node[draw,circle](t){$t$}
+        (0,0) node[draw,circle](u){$u$}
+        (2,2) node[draw,circle](v){$v$}
+        (4,2) node[draw,circle](w){$w$}
+        (6,4) node[draw,circle](x){$x$}
+        ;
+        \foreach \x/\y/\l in {s/x/-1, v/w/{0,1}, x/w/{0,r}, v/u/{0,1}, w/t/0, s/v/0}{
+          \draw[-triangle 45](\x)--node[above]{\l}(\y);
+        }
+        \foreach \x/\y/\l in {t/u/-1}{
+          \draw[-triangle 45](\x)--node[below]{\l}(\y);
+        }
+        \foreach \x/\y/\l in {s/u/-1}{
+          \draw[-triangle 45](\x)--node[left]{\l}(\y);
+        }
+        \foreach \x/\y/\l in {x/t/-1}{
+          \draw[-triangle 45](\x)--node[right]{\l}(\y);
+        }
+      \end{tikzpicture}
+    \end{center}
+
+    Clearly the minimum mean cost cycle is $s \to x \to t \to u \to s$ which
+    if augmented on would find the minimum cost flow with value $-200$.
+    However if the minimum mean cost cycle is selected, there exists a sequence
+    of augmenting cycles that can be selected to never approach the minimum
+    cost flow.
+
+    Consider the negative cycle, $c_1 = s \to v \to w \to t \to u \to s$.
+    This cycle has mean cost $-2/5$ and minimum capacity $1$.
+    Augmenting on this path gives a new residual graph shown below.
+    \begin{center}
+      \begin{tikzpicture}
+        \draw 
+        (0,4) node[draw,circle](s){$s$}
+        (6,0) node[draw,circle](t){$t$}
+        (0,0) node[draw,circle](u){$u$}
+        (2,2) node[draw,circle](v){$v$}
+        (4,2) node[draw,circle](w){$w$}
+        (6,4) node[draw,circle](x){$x$}
+        ;
+        \foreach \x/\y/\l in {s/x/-1, w/v/{0,1}, x/w/{0,r}, v/u/{0,1}, w/t/0, s/v/0, u/t/1}{
+          \draw[-triangle 45](\x) to[bend left=5] node[above]{\l}(\y);
+        }
+        \foreach \x/\y/\l in {t/u/-1, v/s/0, t/w/0}{
+          \draw[-triangle 45](\x) to[bend left=5] node[below]{\l}(\y);
+        }
+        \foreach \x/\y/\l in {u/s/-1}{
+          \draw[-triangle 45](\x) to[bend left=5] node[left]{\l}(\y);
+        }
+        \foreach \x/\y/\l in {x/t/-1, s/u/1}{
+          \draw[-triangle 45](\x) to[bend left=5] node[right]{\l}(\y);
+        }
+      \end{tikzpicture}
+    \end{center}
+
+    Next augment on $c_2 = s \to x \to w \to v \to u \to s$, with mean cost
+    $-2/5$ and min capacity $r$.
+    The new residual graph is
+    \begin{center}
+      \begin{tikzpicture}
+        \draw 
+        (0,4) node[draw,circle](s){$s$}
+        (6,0) node[draw,circle](t){$t$}
+        (0,0) node[draw,circle](u){$u$}
+        (2,2) node[draw,circle](v){$v$}
+        (4,2) node[draw,circle](w){$w$}
+        (6,4) node[draw,circle](x){$x$}
+        ;
+        \foreach \x/\y/\l in {s/x/-1, v/w/{0,r}, w/x/{0,r}, u/v/{0,r}, w/t/0, s/v/0, u/t/1}{
+          \draw[-triangle 45](\x) to[bend left=5] node[above]{\l}(\y);
+        }
+        \foreach \x/\y/\l in {t/u/-1, v/s/0, t/w/0, x/s/1, w/v/{0,1-r}}{
+          \draw[-triangle 45](\x) to[bend left=5] node[below]{\l}(\y);
+        }
+        \foreach \x/\y/\l in {u/s/-1}{
+          \draw[-triangle 45](\x) to[bend left=5] node[left]{\l}(\y);
+        }
+        \foreach \x/\y/\l in {x/t/-1, s/u/1, v/u/{0,1-r}}{
+          \draw[-triangle 45](\x) to[bend left=5] node[right]{\l}(\y);
+        }
+      \end{tikzpicture}
+    \end{center}
+
+    Now augment on $c_3 = s \to v \to w \to x \to t \to u \to s$,
+    with mean cost $-1/2$ and min capacity $r$.
+    The new residual graph is now shown below.
+    \begin{center}
+      \begin{tikzpicture}
+        \draw 
+        (0,4) node[draw,circle](s){$s$}
+        (6,0) node[draw,circle](t){$t$}
+        (0,0) node[draw,circle](u){$u$}
+        (2,2) node[draw,circle](v){$v$}
+        (4,2) node[draw,circle](w){$w$}
+        (6,4) node[draw,circle](x){$x$}
+        ;
+        \foreach \x/\y/\l in {s/x/-1, w/v/{0,1}, x/w/{0,r}, u/v/{0,r}, w/t/0, s/v/0, u/t/1}{
+          \draw[-triangle 45](\x) to[bend left=5] node[above]{\l}(\y);
+        }
+        \foreach \x/\y/\l in {t/u/-1, v/s/0, t/w/0, x/s/1}{
+          \draw[-triangle 45](\x) to[bend left=5] node[below]{\l}(\y);
+        }
+        \foreach \x/\y/\l in {u/s/-1, t/x/1}{
+          \draw[-triangle 45](\x) to[bend left=5] node[left]{\l}(\y);
+        }
+        \foreach \x/\y/\l in {x/t/-1, s/u/1, v/u/{0,$r^2$}}{
+          \draw[-triangle 45](\x) to[bend left=5] node[right]{\l}(\y);
+        }
+      \end{tikzpicture}
+    \end{center}
+
+    Next augment on $c_2$ again with mean cost $-2/5$ and min capacity $r^2$.
+    The residual graph is now
+    \begin{center}
+      \begin{tikzpicture}
+        \draw 
+        (0,4) node[draw,circle](s){$s$}
+        (6,0) node[draw,circle](t){$t$}
+        (0,0) node[draw,circle](u){$u$}
+        (2,2) node[draw,circle](v){$v$}
+        (4,2) node[draw,circle](w){$w$}
+        (6,4) node[draw,circle](x){$x$}
+        ;
+        \foreach \x/\y/\l in {s/x/-1, v/w/{0,$r^2$}, w/x/{0,$r^2$}, u/v/{0,1}, w/t/0, s/v/0, u/t/1}{
+          \draw[-triangle 45](\x) to[bend left=5] node[above]{\l}(\y);
+        }
+        \foreach \x/\y/\l in {t/u/-1, v/s/0, t/w/0, x/s/1, x/w/{0,$r-r^2$},w/v/{0,1-$r^2$}}{
+          \draw[-triangle 45](\x) to[bend left=5] node[below]{\l}(\y);
+        }
+        \foreach \x/\y/\l in {u/s/-1, t/x/1}{
+          \draw[-triangle 45](\x) to[bend left=5] node[left]{\l}(\y);
+        }
+        \foreach \x/\y/\l in {x/t/-1, s/u/1}{
+          \draw[-triangle 45](\x) to[bend left=5] node[right]{\l}(\y);
+        }
+      \end{tikzpicture}
+    \end{center}
+
+    Finally augment on $c_4 = u \to v \to w \to t \to u$ with mean cost $-1/4$
+    and min capacity $r^2$.
+    If this list of cycles, $c_2, c_3, c_2, c_4$, is repeated the flow can be
+    augmented indefinitely.
+    This is shown in more detail with the table below.
+    \begin{center}
+      \begin{tabular}{ccccccc}
+        \toprule
+        cycle & mean cost & min cap & $(v, u)$ & $(v, w)$ & $(x, w)$ & $(s, x)$ \\
+        \midrule
+                        &        &       &           1 &     1 &           r & 100 \\
+        $c_1 = svwtus$  & $-2/5$ &     1 &           1 &     0 &           r & 100 \\
+        $c_2 = sxwvus$  & $-2/5$ &     r &       1 - r &     r &           0 & 100 - r \\
+        $c_3 = svwxtus$ & $-1/2$ &     r &       $r^2$ &     0 &           r & 100 - r \\
+        $c_2 = sxwvus$  & $-2/5$ & $r^2$ &           0 & $r^2$ &   $r - r^2$ & $100 - r - r^2$ \\
+        $c_4 = uvwtu$   & $-1/4$ & $r^2$ &       $r^2$ &     0 &       $r^3$ & $100 - r - r^2$ \\
+        $c_2$           & $-2/5$ & $r^3$ & $r^2 - r^3$ & $r^3$ &           0 & $100 - r - r^2 - r^3$ \\
+        $c_3$           & $-1/2$ & $r^3$ &       $r^4$ &     0 &       $r^3$ & $100 - r - r^2 - r^3$ \\
+        $c_2$           & $-2/5$ & $r^4$ &           0 & $r^4$ & $r^3 - r^4$ & $100 - r - r^2 - r^3 - r^4$ \\
+        $c_4$           & $-1/4$ & $r^4$ &       $r^4$ &     0 &       $r^5$ & $100 - r - r^2 - r^3 - r^4$ \\
+        \bottomrule
+      \end{tabular}
+    \end{center}
+
+    As this table shows this repitition of augmentation cycles will continue
+    indefinitely.
+    Also this set of augmentation cycles does not approach the optimal flow.
+    The table shows that the residual on $(s, x)$ approaches $100 - \sum{n = 1}{\infty}{r^n}$.
+    This value can be computed using geometric series, but it suffices to
+    notice that this value is greater than zero.
+    It was shown earlier that the optimal flow on this network uses all of the
+    capacity of this edge.
+    Since this residual is not zero, the limit of this process is not the
+    optimal flow.
+
+    Therefore we can conclude that if the minimum mean cost cycle is not
+    selected the min cost flow algorithm may not terminate and may not
+    approach the optimal solution.
+
+  \item % #3 Done
     Suppose you have a graph $G=(V,E)$.
     Every edge is assigned a cost $c: E \rightarrow \RR$.
     How to pick edges, such that the sum of costs of the picked edges is maximized
@@ -125,5 +387,38 @@ Midterm II
         \end{tikzpicture}
       \end{center}
     }
+
+    In order to solve this problem, consider the minimum spanning tree on the
+    graph $G$ with cost function $-c$, that is the cost of all the edges have
+    their sign flipped.
+    If this problem is solved using any of the known minimum spanning tree
+    algorithms, then it has already been shown that this tree has the smallest
+    cost.
+    This is equivalent to the maximum cost spanning tree in the original
+    problem.
+    However the original problem didn't specify that a single tree was needed,
+    only that there were no cycles.
+    It is known that adding any edge to a spanning tree will introduce a cycle,
+    so no edge can be added to this spanning tree to increase this cost.
+    However removing edges will not introduce a cycle, therefore any edges that
+    decrease the overall value of the spanning tree should be removed.
+    In other words all edges with negative cost in the original problem should
+    be removed from the set $X$.
+    As we have already seen no edge can be added to this set and this remains
+    true after removing the negative cost edges.
+    If a positive cost edge could have been used instead of a negative cost
+    edge, then the spanning tree algorithm would have added it to the tree.
+
+    In summary, let $Y$ be the set of edges in the minimum spanning tree of
+    $G = (V, E)$ with cost function $-c:E \to \RR$.
+    Also let $Z$ be the set of edges with negative cost that is
+    \[
+      Z = \set{e: c(e) < 0}
+    \]
+    Thus the solution to the problem is
+    \[
+      X = Y - Z
+    \]
+    that is the edges of $Y$ with any edges in $Z$ removed.
 \end{enumerate}
 \end{document}
