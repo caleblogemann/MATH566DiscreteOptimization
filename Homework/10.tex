@@ -1,0 +1,546 @@
+\documentclass[11pt, oneside]{article}
+\usepackage[letterpaper, margin=2cm]{geometry}
+\usepackage{MATH566}
+%\usepackage{sagetex}
+
+\begin{document}
+\noindent \textbf{\Large{Caleb Logemann \\
+MATH 566 Discrete Optimization\\
+Homework 10
+}}
+
+%\lstinputlisting[language=Sage]{03_2.sage}
+\begin{enumerate}
+  \item % #1
+    Solve the following problem using branch and bound.
+    Draw the branching tree too.
+    \[
+      (P)=
+      \begin{cases}
+        \text{maximize} & -x_1 + 4x_2\\
+        \text{subject to} & -10x_1 + 20x_2 \leq 22 \\
+                          &   5x_1 +10x_2 \leq 49 \\
+                          &  x_1 \leq 5\\
+                          & x_i \geq 0,  x_i \in \mathbb{Z} \text{ for } i \in \{1,2\}
+      \end{cases}
+    \]
+    You can use any linear programming solver for solving the relaxations.
+
+  \item % #2
+    Let $P$ be a convex hull of $(0,0), (0,1), (k,\frac{1}{2})$.
+    Give an upper bound on Chv\'atal's rank of $P$.
+    (Show it is at most $2k$, actually, it is exactly $2k$.)\\
+    % Hints: Write $P$ as an intersection of half-spaces, use \emph{induction}
+    % on $k$. See what we were doing in notes.}\\
+    Drawing of $P$ for $k=3$.
+    \begin{center}
+      \begin{tikzpicture}[scale=1]
+        \draw[fill=gray!20]
+          (0,0) -- (3,0.5) -- (0,1) -- cycle
+        ;
+        \foreach \x in {0,1,2,3}{
+          \foreach \y in {0,1}{
+            \fill (\x,\y) circle(2 pt);
+        }
+        \draw
+          (0,0) node[below left]{(0,0)}
+          (0,1) node[left]{1}
+          (3,0) node[below]{3}
+          (3,0.5) node[right]{$(3,\frac{1}{2})$}
+        ;
+        \draw
+          (0.5,0.5) node{$P$}
+        ;
+        }
+        \draw[-latex](0,0) -- (3.7,0) node[below]{$x_1$};
+        \draw[-latex](0,0) -- (0,1.5) node[left]{$x_2$};
+      \end{tikzpicture}
+    \end{center}
+
+  \item % #3
+    Run Edmond's Blossom algorithm on the following graph. Notice that somebody
+    already found a partial matching. What is the largest possible matching?
+    Try to start growing augmenting tree from $x$, use BFS algorithm for building the tree.
+    \begin{center}
+      \tikzset{insep/.style={inner sep=2.2pt, outer sep=0pt, circle, fill},}
+      \begin{tikzpicture}[scale=1.5]
+        \draw   
+          (0,0) node[insep,label=left: ](a){} 
+          (1,0) node[insep,label=left: ](b){}
+          ++(72:1) node[insep,label=left: ](c){}
+          ++(144:1) node[insep,label=left: ](d){}
+          ++(216:1) node[insep,label=left: ](e){}
+          (b) ++ (-72:1) node[insep,label=left: ](g){}  
+          ++(-144:1) node[insep,label=left: ](i){}
+          ++(-216:1) node[insep,label=left: ](j){}
+          (c) ++(1,0) node[insep,label=left: ](f){} 
+          (g) ++(1,0) node[insep,label=left: ](h){} 
+          (d) ++ (3,0) node[insep,label=left: ](k){}
+          (i) ++ (3,0) node[insep,label=left: ](l){}
+          (b) ++ (3.5,0) node[insep,label=left: ](m){}
+          (d) ++ (-3,0) node[insep,label=left: ](n){}
+          (i) ++ (-3,0) node[insep,label=left: ](o){}
+          (a) ++ (-3.5,0) node[insep,label=left:$x$](p){}
+        ;
+        \draw
+          (a)--(b) (a)--(e) (a)--(j) (b)--(g)--(h) (g)--(i)
+          (n)--(d)--(k)--(m)--(l)--(i)--(o)--(p)--(n) (n)--(o)
+          (d)--(c)--(f) (k)--(l)
+        ;
+        \draw[line width=2.5pt]
+          (n)--(o) (e)--(d) (i)--(j) (b)--(c) (f)--(h) 
+        ;
+        \draw[dashed]
+        ;
+      \end{tikzpicture}
+    \end{center}
+
+    First I will label all of the vertices of the graph as follows.
+    \begin{center}
+      \tikzset{insep/.style={inner sep=2.2pt, outer sep=0pt, circle, fill},}
+      \begin{tikzpicture}[scale=1.4]
+        \draw   
+          (0,0) node[insep,label=left:a](a){} 
+          (1,0) node[insep,label=right:b](b){}
+          ++(72:1) node[insep,label=left:c](c){}
+          ++(144:1) node[insep,label=above:d](d){}
+          ++(216:1) node[insep,label=left:e](e){}
+          (b) ++ (-72:1) node[insep,label=left:g](g){}  
+          ++(-144:1) node[insep,label=below:i](i){}
+          ++(-216:1) node[insep,label=left:j](j){}
+          (c) ++(1,0) node[insep,label=above:f](f){} 
+          (g) ++(1,0) node[insep,label=below:h](h){} 
+          (d) ++ (3,0) node[insep,label=above:k](k){}
+          (i) ++ (3,0) node[insep,label=below:l](l){}
+          (b) ++ (3.5,0) node[insep,label=right:m](m){}
+          (d) ++ (-3,0) node[insep,label=above:n](n){}
+          (i) ++ (-3,0) node[insep,label=below:o](o){}
+          (a) ++ (-3.5,0) node[insep,label=left:$x$](p){}
+        ;
+        \draw
+          (a)--(b) (a)--(e) (a)--(j) (b)--(g)--(h) (g)--(i)
+          (n)--(d)--(k)--(m)--(l)--(i)--(o)--(p)--(n) (n)--(o)
+          (d)--(c)--(f) (k)--(l)
+        ;
+        \draw[line width=2.5pt]
+          (n)--(o) (e)--(d) (i)--(j) (b)--(c) (f)--(h) 
+        ;
+        \draw[dashed]
+        ;
+      \end{tikzpicture}
+    \end{center}
+
+    The first step in the algorithm is to grow forest from the exposed vertices.
+    The following is one possible forest that could be grown into an augmenting path.
+
+    \begin{center}
+      \tikzset{insep/.style={inner sep=2.2pt, outer sep=0pt, circle, fill},}
+      \begin{tikzpicture}[scale=1.4]
+        \draw   
+          (0,0) node[insep,label=left:a](a){} 
+          (1,0) node[insep,label=right:b](b){}
+          ++(72:1) node[insep,label=left:c](c){}
+          ++(144:1) node[insep,label=above:d](d){}
+          ++(216:1) node[insep,label=left:e](e){}
+          (b) ++ (-72:1) node[insep,label=left:g](g){}  
+          ++(-144:1) node[insep,label=below:i](i){}
+          ++(-216:1) node[insep,label=left:j](j){}
+          (c) ++(1,0) node[insep,label=above:f](f){} 
+          (g) ++(1,0) node[insep,label=below:h](h){} 
+          (d) ++ (3,0) node[insep,label=above:k](k){}
+          (i) ++ (3,0) node[insep,label=below:l](l){}
+          (b) ++ (3.5,0) node[insep,label=right:m](m){}
+          (d) ++ (-3,0) node[insep,label=above:n](n){}
+          (i) ++ (-3,0) node[insep,label=below:o](o){}
+          (a) ++ (-3.5,0) node[insep,label=left:$x$](p){}
+        ;
+        \draw
+          (a)--(b) (a)--(e) (a)--(j) (b)--(g)--(h) (g)--(i)
+          (n)--(d)--(k)--(m)--(l)--(i)--(o) (n)--(o)
+          (d)--(c)--(f) (k)--(l)
+          (n)--(o)
+          (i)--(j)
+          (p)--(o)
+        ;
+        \draw[line width=2.5pt]
+        (e)--(d) (b)--(c) (f)--(h) (p)--(n) (o)--(i) (j)--(a)
+        ;
+        \draw[dashed]
+        ;
+      \end{tikzpicture}
+    \end{center}
+
+  \item % #4
+    Find minimum-weight perfect matching in the following graph:
+    \begin{center}
+      \tikzset{insep/.style={inner sep=1.5pt, outer sep=0pt, circle, fill},}
+      \begin{tikzpicture}[scale=1.5]
+        \draw   (0,0) node[insep,label=left:$x$](r){} 
+          ++(45:1)  node[insep,label=above: ](a){}
+          ++(0:1)  node[insep,label=above: ](b){}
+          (r) ++(-45:1)  node[insep,label=below: ](d){}
+          ++(0:1)  node[insep,label=below: ](f){}
+          ++(45:1) node[insep,label=above: ](g){}
+          ++(0:1) node[insep,label=above: ](h){}
+          (f) ++(0:1.5) node[insep,label=below: ](i){}
+        ;
+        \draw
+          (r) -- node[above]{1} (a)
+          (r) -- node[below]{4} (d)
+          (a) -- node[above]{4} (b)
+          (d) -- node[above]{2} (f)
+          (g) -- node[above]{4} (h)
+          (b) -- node[above]{5} (g)
+          (f) -- node[above]{4} (g)
+          (f) -- node[above]{6} (i)
+          (h) -- node[right]{3} (i)
+        ;
+      \end{tikzpicture}
+    \end{center}
+    \begin{enumerate}
+      \item[(a)] % Done
+        By using algorithm from class that grows augmenting tree (and keep primal/dual solutions). Start growing $x$.\\
+
+        First I will relabel the vertices of $G = (V, E)$ as follows.
+        \begin{center}
+          \tikzset{insep/.style={inner sep=1.5pt, outer sep=0pt, circle, fill},}
+          \begin{tikzpicture}[scale=1.5]
+            \draw   (0,0) node[insep,label=left:$x$](x){} 
+              ++(45:1)  node[insep,label=above:a](a){}
+              ++(0:1)  node[insep,label=above:b](b){}
+              (r) ++(-45:1)  node[insep,label=below:d](d){}
+              ++(0:1)  node[insep,label=below:f](f){}
+              ++(45:1) node[insep,label=above:g](g){}
+              ++(0:1) node[insep,label=above:h](h){}
+              (f) ++(0:1.5) node[insep,label=below:i](i){}
+            ;
+            \draw
+              (x) -- node[above]{1} (a)
+              (x) -- node[below]{4} (d)
+              (a) -- node[above]{4} (b)
+              (d) -- node[above]{2} (f)
+              (g) -- node[above]{4} (h)
+              (b) -- node[above]{5} (g)
+              (f) -- node[above]{4} (g)
+              (f) -- node[above]{6} (i)
+              (h) -- node[right]{3} (i)
+            ;
+          \end{tikzpicture}
+        \end{center}
+        Initially we will start with initial solutions $y_v = 0$ for all
+        $v \in V$ and $x_e = 0$ for all $e \in E$.
+        The initial solution $\v{y}$ is a feasible solution to the dual problem as
+        $y_u + y_v <= c(e_{uv})$ for all edges.
+        In this case $E_{=} = \set{}$ because there are no edges $e = (u, v)$
+        such that $y_u + y_v = c(e)$.
+        Now we will construct the initial alternating forest using $E_{=}$.
+        Since $E_{=}$ is empty the alternating forest will contain all vertices
+        as single node trees.
+        \begin{center}
+          \tikzset{insep/.style={inner sep=1.5pt, outer sep=0pt, circle, fill},}
+          \begin{tikzpicture}[scale=1.5]
+            \draw   (0,0) node[insep,label=above:$x$](x){} 
+              (1,0)  node[insep,label=above:a](a){}
+              (2,0)  node[insep,label=above:b](b){}
+              (3,0)  node[insep,label=above:d](d){}
+              (4,0)  node[insep,label=above:f](f){}
+              (5,0) node[insep,label=above:g](g){}
+              (6,0) node[insep,label=above:h](h){}
+              (7,0) node[insep,label=above:i](i){}
+            ;
+          \end{tikzpicture}
+        \end{center}
+
+        Since a perfect matching is not possible, we must modify $\v{y}$ for one
+        of the connected components of $F$, the alternating forest.
+        Therefore we will change $y_x$.
+        The smallest possible increase in $y_x$ that maintains feasibility
+        of the dual is one, so let $y_x = 1$.
+        Now $E_{=} = \set{(x, a)}$.
+        We can now start growing the alternating forest again with edges
+        from $E_{=}$.
+        \begin{center}
+          \tikzset{insep/.style={inner sep=1.5pt, outer sep=0pt, circle, fill},}
+          \begin{tikzpicture}[scale=1.5]
+            \draw   (0,0) node[insep,label=above:$x$](x){} 
+              (1,0)  node[insep,label=above:a](a){}
+              (2,0)  node[insep,label=above:b](b){}
+              (3,0)  node[insep,label=above:d](d){}
+              (4,0)  node[insep,label=above:f](f){}
+              (5,0) node[insep,label=above:g](g){}
+              (6,0) node[insep,label=above:h](h){}
+              (7,0) node[insep,label=above:i](i){}
+            ;
+            \draw[line width=2.5pt]
+              (x) -- (a)
+            ;
+          \end{tikzpicture}
+        \end{center}
+        The only augmenting path is from $x$ to $a$.
+        The matching that is created is shown below with bold edges.
+        \begin{center}
+          \tikzset{insep/.style={inner sep=1.5pt, outer sep=0pt, circle, fill},}
+          \begin{tikzpicture}[scale=1.5]
+            \draw   (0,0) node[insep,label=left:$x$](x){} 
+              ++(45:1)  node[insep,label=above:a](a){}
+              ++(0:1)  node[insep,label=above:b](b){}
+              (r) ++(-45:1)  node[insep,label=below:d](d){}
+              ++(0:1)  node[insep,label=below:f](f){}
+              ++(45:1) node[insep,label=above:g](g){}
+              ++(0:1) node[insep,label=above:h](h){}
+              (f) ++(0:1.5) node[insep,label=below:i](i){}
+            ;
+            \draw
+              (x) -- node[below]{4} (d)
+              (a) -- node[above]{4} (b)
+              (d) -- node[above]{2} (f)
+              (g) -- node[above]{4} (h)
+              (b) -- node[above]{5} (g)
+              (f) -- node[above]{4} (g)
+              (f) -- node[above]{6} (i)
+              (h) -- node[right]{3} (i)
+            ;
+            \draw[line width=2.5pt]
+              (x) -- node[above]{1} (a)
+            ;
+          \end{tikzpicture}
+        \end{center}
+        This does not creat a perfect matching so we must change a value of
+        $\v{y}$ to allow one of the connected components of $F$ to be expanded.
+        Consider the vertex $b$, $y_b$ can be increased by $4$ so that $y_b=4$
+        and $E_{=} = \set{(x, a), (a, b)}$.
+        Now the alternating forest can be grown again into a matching.
+        If we first match $x$ and $a$ as before, then the final forest would
+        look like
+        \begin{center}
+          \tikzset{insep/.style={inner sep=1.5pt, outer sep=0pt, circle, fill},}
+          \begin{tikzpicture}[scale=1.5]
+            \draw
+              (0,0)  node[insep,label=above:b](b){}
+              (0,-1)  node[insep,label=left:a](a){}
+              (0,-2)  node[insep,label=left:x](x){}
+              (1,0)  node[insep,label=above:d](d){}
+              (2,0)  node[insep,label=above:f](f){}
+              (3,0) node[insep,label=above:g](g){}
+              (4,0) node[insep,label=above:h](h){}
+              (5,0) node[insep,label=above:i](i){}
+            ;
+            \draw
+              (b) -- (a)
+            ;
+            \draw[line width=2.5pt]
+              (x) -- (a)
+            ;
+          \end{tikzpicture}
+        \end{center}
+        This does not find a perfect matching. 
+        In fact this is the same matching as before.
+        Therefore $\v{y}$ must be modified for one of the connected components of $F$.
+        Consider modifying $y_d$.
+        Let $y_d = 2$ so that $(d, f)$ can be added to $E_{=}$.
+        Now $E_{=} = \set{(x, a), (a, b), (d, f)}$.
+        Building on the previous alternating forest we can find an alternating
+        path from $d$ to $f$
+        \begin{center}
+          \tikzset{insep/.style={inner sep=1.5pt, outer sep=0pt, circle, fill},}
+          \begin{tikzpicture}[scale=1.5]
+            \draw
+              (0,0)  node[insep,label=above:b](b){}
+              (0,-1)  node[insep,label=left:a](a){}
+              (0,-2)  node[insep,label=left:x](x){}
+              (1,0)  node[insep,label=above:d](d){}
+              (2,0)  node[insep,label=above:f](f){}
+              (3,0) node[insep,label=above:g](g){}
+              (4,0) node[insep,label=above:h](h){}
+              (5,0) node[insep,label=above:i](i){}
+            ;
+            \draw
+              (b) -- (a)
+            ;
+            \draw[line width=2.5pt]
+              (x) -- (a)
+              (d) -- (f)
+            ;
+          \end{tikzpicture}
+        \end{center}
+        This forest creates the matching shown below.
+        \begin{center}
+          \tikzset{insep/.style={inner sep=1.5pt, outer sep=0pt, circle, fill},}
+          \begin{tikzpicture}[scale=1.5]
+            \draw   (0,0) node[insep,label=left:$x$](x){} 
+              ++(45:1)  node[insep,label=above:a](a){}
+              ++(0:1)  node[insep,label=above:b](b){}
+              (r) ++(-45:1)  node[insep,label=below:d](d){}
+              ++(0:1)  node[insep,label=below:f](f){}
+              ++(45:1) node[insep,label=above:g](g){}
+              ++(0:1) node[insep,label=above:h](h){}
+              (f) ++(0:1.5) node[insep,label=below:i](i){}
+            ;
+            \draw
+              (x) -- node[below]{4} (d)
+              (a) -- node[above]{4} (b)
+              (g) -- node[above]{4} (h)
+              (b) -- node[above]{5} (g)
+              (f) -- node[above]{4} (g)
+              (f) -- node[above]{6} (i)
+              (h) -- node[right]{3} (i)
+            ;
+            \draw[line width=2.5pt]
+              (x) -- node[above]{1} (a)
+              (d) -- node[above]{2} (f)
+            ;
+          \end{tikzpicture}
+        \end{center}
+        This matching isn't perfect, therefore $\v{y}$ needs to be updated to
+        allow for the expansion of $F$.
+        The value of $y_g$ can be set to $1$, to allow $(b, g)$ to be added
+        to $E_{=}$.
+        This allows for the alternating forest to be expanded as follows.
+        \begin{center}
+          \tikzset{insep/.style={inner sep=1.5pt, outer sep=0pt, circle, fill},}
+          \begin{tikzpicture}[scale=1.5]
+            \draw
+              (0,0)  node[insep,label=above:b](b){}
+              (0,-1)  node[insep,label=left:a](a){}
+              (0,-2)  node[insep,label=left:x](x){}
+              (1,0)  node[insep,label=above:g](g){}
+              (2,0)  node[insep,label=above:d](d){}
+              (3,0) node[insep,label=above:f](f){}
+              (4,0) node[insep,label=above:h](h){}
+              (5,0) node[insep,label=above:i](i){}
+            ;
+            \draw
+              (b) -- (a)
+            ;
+            \draw[line width=2.5pt]
+              (x) -- (a)
+              (d) -- (f)
+              (b) -- (g)
+            ;
+          \end{tikzpicture}
+        \end{center}
+        The matching from this alternating forest is shown below.
+        \begin{center}
+          \tikzset{insep/.style={inner sep=1.5pt, outer sep=0pt, circle, fill},}
+          \begin{tikzpicture}[scale=1.5]
+            \draw   (0,0) node[insep,label=left:$x$](x){} 
+              ++(45:1)  node[insep,label=above:a](a){}
+              ++(0:1)  node[insep,label=above:b](b){}
+              (r) ++(-45:1)  node[insep,label=below:d](d){}
+              ++(0:1)  node[insep,label=below:f](f){}
+              ++(45:1) node[insep,label=above:g](g){}
+              ++(0:1) node[insep,label=above:h](h){}
+              (f) ++(0:1.5) node[insep,label=below:i](i){}
+            ;
+            \draw
+              (x) -- node[below]{4} (d)
+              (a) -- node[above]{4} (b)
+              (g) -- node[above]{4} (h)
+              (f) -- node[above]{4} (g)
+              (f) -- node[above]{6} (i)
+              (h) -- node[right]{3} (i)
+            ;
+            \draw[line width=2.5pt]
+              (x) -- node[above]{1} (a)
+              (d) -- node[above]{2} (f)
+              (b) -- node[above]{5} (g)
+            ;
+          \end{tikzpicture}
+        \end{center}
+        Again this is not a perfect matching, therefore $y_h$ must be set to $3$.
+        This adds the edges $(g, h)$ and $(h, i)$ to $E_{=}$.
+        The set $E_{=}$ is now $\set{(x, a), (a, b), (d, f), (b, g), (g, h), (h, i)}$.
+        Growing an alternating forest from this set of edges allows us to find
+        an alternating path from $h$ to $i$.
+        The final alternating forest is shown below, with no exposed vertices.
+        \begin{center}
+          \tikzset{insep/.style={inner sep=1.5pt, outer sep=0pt, circle, fill},}
+          \begin{tikzpicture}[scale=1.5]
+            \draw
+              (0,0)  node[insep,label=above:b](b){}
+              (0,-1)  node[insep,label=left:a](a){}
+              (0,-2)  node[insep,label=left:x](x){}
+              (1,0)  node[insep,label=above:g](g){}
+              (2,0)  node[insep,label=above:d](d){}
+              (3,0) node[insep,label=above:f](f){}
+              (4,0) node[insep,label=above:h](h){}
+              (5,0) node[insep,label=above:i](i){}
+            ;
+            \draw
+              (b) -- (a)
+            ;
+            \draw[line width=2.5pt]
+              (x) -- (a)
+              (d) -- (f)
+              (b) -- (g)
+              (h) -- (i)
+            ;
+          \end{tikzpicture}
+        \end{center}
+        Since all edges are covered this is a perfect matching.
+        Now since we have a feasible solution to both the primal and the dual
+        problem, this is the optimal solution to the minimal matching problem.
+        This matching is shown below.
+        \begin{center}
+          \tikzset{insep/.style={inner sep=1.5pt, outer sep=0pt, circle, fill},}
+          \begin{tikzpicture}[scale=1.5]
+            \draw   (0,0) node[insep,label=left:$x$](x){} 
+              ++(45:1)  node[insep,label=above:a](a){}
+              ++(0:1)  node[insep,label=above:b](b){}
+              (r) ++(-45:1)  node[insep,label=below:d](d){}
+              ++(0:1)  node[insep,label=below:f](f){}
+              ++(45:1) node[insep,label=above:g](g){}
+              ++(0:1) node[insep,label=above:h](h){}
+              (f) ++(0:1.5) node[insep,label=below:i](i){}
+            ;
+            \draw
+              (x) -- node[below]{4} (d)
+              (a) -- node[above]{4} (b)
+              (g) -- node[above]{4} (h)
+              (f) -- node[above]{4} (g)
+              (f) -- node[above]{6} (i)
+            ;
+            \draw[line width=2.5pt]
+              (x) -- node[above]{1} (a)
+              (d) -- node[above]{2} (f)
+              (b) -- node[above]{5} (g)
+              (h) -- node[right]{3} (i)
+            ;
+          \end{tikzpicture}
+        \end{center}
+        Also to recap here are the values of $\v{y}$.
+        \begin{align*}
+          y_x &= 1 \\
+          y_a &= 0 \\
+          y_b &= 4\\
+          y_d &= 2\\
+          y_f &= 0\\
+          y_g &= 1\\
+          y_h &= 3\\
+          y_i &= 0
+        \end{align*}
+
+      \item[(b)]
+        Formulate the problem using Integer/Linear programming and solve it with your favorite solver.
+
+        The 
+    \end{enumerate}
+
+  \item % #5
+    Slither is a two-person game played on a graph $G=(V,E)$. 
+    The players, called First and Second, play alternatively, with First playing first.
+    At each step the player whose turn it is chooses a previously unchosen edge.
+    The only rule is that at every step the set of chosen edges forms a path.
+    The loser is the first player unable to make a legal move at his or her turn.
+    Prove that if $G$ has a perfect matching, then First can force a win.
+
+  \item % #6
+    Implement algorithm for finding maximum matching in bipartite graphs.
+    Test it on the 3D-cube.
+
+  \item % #7
+    Implement algorithm for finding maximum matching in any graph.\\
+    Test it on the 3D-cube and the graph from question 3.\\
+    (Doing this will also solve the previous question - 2 for 1.)
+\end{enumerate}
+\end{document}
