@@ -57,7 +57,7 @@ Homework 10
       \end{tikzpicture}
     \end{center}
 
-  \item % #3
+  \item % #3 Done
     Run Edmond's Blossom algorithm on the following graph. Notice that somebody
     already found a partial matching. What is the largest possible matching?
     Try to start growing augmenting tree from $x$, use BFS algorithm for building the tree.
@@ -131,12 +131,121 @@ Homework 10
     \end{center}
 
     The first step in the algorithm is to grow forest from the exposed vertices.
-    The following is one possible forest that could be grown into an augmenting path.
-
+    The following is the forest created by adding edges $(x, n)$ and $(x, o)$,
+    which results in a blossom.
+    \begin{center}
+      \tikzset{insep/.style={inner sep=2.2pt, outer sep=0pt, circle, fill},}
+      \begin{tikzpicture}[scale=1.4]
+        \draw
+          (0,0) node[insep,label=above:x](x){}
+          (-.5,-1) node[insep,label=left:n](n){}
+          (.5,-1) node[insep,label=right:o](o){}
+          (1,0) node[insep,label=above:a](a){}
+          (2,0) node[insep,label=above:g](g){}
+          (3,0) node[insep,label=above:k](k){}
+          (4,0) node[insep,label=above:l](l){}
+          (5,0) node[insep,label=above:m](m){}
+        ;
+        \draw
+          (x) -- (n)
+          (x) -- (o)
+        ;
+        \draw[line width=2.5pt]
+          (n) -- (o)
+        ;
+      \end{tikzpicture}
+    \end{center}
+    The blossom needs to be contracted in the forest and the graph.
+    The contracted graph and forest are shown below.
     \begin{center}
       \tikzset{insep/.style={inner sep=2.2pt, outer sep=0pt, circle, fill},}
       \begin{tikzpicture}[scale=1.4]
         \draw   
+          (0,0) node[insep,label=left:a](a){} 
+          (1,0) node[insep,label=right:b](b){}
+          ++(72:1) node[insep,label=left:c](c){}
+          ++(144:1) node[insep,label=above:d](d){}
+          ++(216:1) node[insep,label=left:e](e){}
+          (b) ++ (-72:1) node[insep,label=left:g](g){}  
+          ++(-144:1) node[insep,label=below:i](i){}
+          ++(-216:1) node[insep,label=left:j](j){}
+          (c) ++(1,0) node[insep,label=above:f](f){} 
+          (g) ++(1,0) node[insep,label=below:h](h){} 
+          (d) ++ (3,0) node[insep,label=above:k](k){}
+          (i) ++ (3,0) node[insep,label=below:l](l){}
+          (b) ++ (3.5,0) node[insep,label=right:m](m){}
+          %(d) ++ (-3,0) node[insep,label=above:n](n){}
+          %(i) ++ (-3,0) node[insep,label=below:o](o){}
+          (a) ++ (-3.5,0) node[insep,label=left:$x$](p){}
+        ;
+        \draw
+          (a)--(b) (a)--(e) (a)--(j) (b)--(g)--(h) (g)--(i)
+          (p)--(d)--(k)--(m)--(l)--(i)--(p)
+          (d)--(c)--(f) (k)--(l)
+        ;
+        \draw[line width=2.5pt]
+          (e)--(d) (i)--(j) (b)--(c) (f)--(h) 
+        ;
+        \draw[dashed]
+        ;
+      \end{tikzpicture}
+    \end{center}
+    \begin{center}
+      \tikzset{insep/.style={inner sep=2.2pt, outer sep=0pt, circle, fill},}
+      \begin{tikzpicture}[scale=1.4]
+        \draw
+          (0,0) node[insep,label=above:x](x){}
+          (1,0) node[insep,label=above:a](a){}
+          (2,0) node[insep,label=above:g](g){}
+          (3,0) node[insep,label=above:k](k){}
+          (4,0) node[insep,label=above:l](l){}
+          (5,0) node[insep,label=above:m](m){}
+        ;
+        \draw
+        ;
+        \draw[line width=2.5pt]
+        ;
+      \end{tikzpicture}
+    \end{center}
+    This tree can now be continued to be expanded by adding $(x, i)$ and
+    $(x, d)$ which causes $(i, j)$ and $(d, e)$ to be added respectively.
+    Now adding the edge $(j, a)$ creates an augmenting path.
+    The alternating forest is now
+    \begin{center}
+      \tikzset{insep/.style={inner sep=2.2pt, outer sep=0pt, circle, fill},}
+      \begin{tikzpicture}[scale=1.4]
+        \draw
+          (0,0) node[insep,label=above:x](x){}
+          (.5,-1) node[insep,label=left:i](i){}
+          (.5,-2) node[insep,label=right:j](j){}
+          (-.5,-1) node[insep,label=left:d](d){}
+          (-.5,-2) node[insep,label=left:e](e){}
+          (1,0) node[insep,label=above:a](a){}
+          (2,0) node[insep,label=above:g](g){}
+          (3,0) node[insep,label=above:k](k){}
+          (4,0) node[insep,label=above:l](l){}
+          (5,0) node[insep,label=above:m](m){}
+        ;
+        \draw
+          (x) -- (i)
+          (x) -- (d)
+          (j) -- (a)
+        ;
+        \draw[line width=2.5pt]
+          (i) -- (j)
+          (d) -- (e)
+        ;
+      \end{tikzpicture}
+    \end{center}
+
+    This augmenting path going around the blossom is $x\to n\to o\to i\to j\to a$.
+    Doing the augmentation addes $(x,n)$,$(o,i)$, and $(j,a)$ to the matching,
+    while removing $(n,o)$ and $(i, j)$.
+    The new matching is shown in the following graph.
+    \begin{center}
+      \tikzset{insep/.style={inner sep=2.2pt, outer sep=0pt, circle, fill},}
+      \begin{tikzpicture}[scale=1.4]
+        \draw
           (0,0) node[insep,label=left:a](a){} 
           (1,0) node[insep,label=right:b](b){}
           ++(72:1) node[insep,label=left:c](c){}
@@ -170,7 +279,402 @@ Homework 10
       \end{tikzpicture}
     \end{center}
 
-  \item % #4
+    Again in order to find an augmeting path we start growing the alternating
+    forest from the exposed vertices.
+    Note that an augmenting path can be found directly by adding $(l, m)$.
+    \begin{center}
+      \tikzset{insep/.style={inner sep=2.2pt, outer sep=0pt, circle, fill},}
+      \begin{tikzpicture}[scale=1.4]
+        \draw
+          (2,0) node[insep,label=above:g](g){}
+          (3,0) node[insep,label=above:k](k){}
+          (4,0) node[insep,label=above:l](l){}
+          (5,0) node[insep,label=above:m](m){}
+        ;
+        \draw
+          (l) -- (m)
+        ;
+        \draw[line width=2.5pt]
+        ;
+      \end{tikzpicture}
+    \end{center}
+    Augmenting on this path adds $(l, m)$ to the matching, so the new matching is
+    \begin{center}
+      \tikzset{insep/.style={inner sep=2.2pt, outer sep=0pt, circle, fill},}
+      \begin{tikzpicture}[scale=1.4]
+        \draw
+          (0,0) node[insep,label=left:a](a){} 
+          (1,0) node[insep,label=right:b](b){}
+          ++(72:1) node[insep,label=left:c](c){}
+          ++(144:1) node[insep,label=above:d](d){}
+          ++(216:1) node[insep,label=left:e](e){}
+          (b) ++ (-72:1) node[insep,label=left:g](g){}  
+          ++(-144:1) node[insep,label=below:i](i){}
+          ++(-216:1) node[insep,label=left:j](j){}
+          (c) ++(1,0) node[insep,label=above:f](f){} 
+          (g) ++(1,0) node[insep,label=below:h](h){} 
+          (d) ++ (3,0) node[insep,label=above:k](k){}
+          (i) ++ (3,0) node[insep,label=below:l](l){}
+          (b) ++ (3.5,0) node[insep,label=right:m](m){}
+          (d) ++ (-3,0) node[insep,label=above:n](n){}
+          (i) ++ (-3,0) node[insep,label=below:o](o){}
+          (a) ++ (-3.5,0) node[insep,label=left:$x$](p){}
+        ;
+        \draw
+          (a)--(b)
+          (a)--(e)
+          (a)--(j)
+          (b)--(g)--(h)
+          (g)--(i)
+          (n)--(d)--(k)--(m)--(l)--(i)--(o)
+          (n)--(o)
+          (d)--(c)--(f)
+          (k)--(l)
+          (n)--(o)
+          (i)--(j)
+          (p)--(o)
+        ;
+        \draw[line width=2.5pt]
+          (e)--(d)
+          (b)--(c)
+          (f)--(h)
+          (p)--(n)
+          (o)--(i)
+          (j)--(a)
+          (l)--(m)
+        ;
+        \draw[dashed]
+        ;
+      \end{tikzpicture}
+    \end{center}
+
+    We now have only two exposed vertices, so the alternating forest needs to be
+    grown to check if there is an augmenting path from $g$ to $k$.
+    Adding the edges incident to $g$ and $k$ results in the following.
+    \begin{center}
+      \tikzset{insep/.style={inner sep=2.2pt, outer sep=0pt, circle, fill},}
+      \begin{tikzpicture}[scale=1.4]
+        \draw
+          (1,0) node[insep,label=above:g](g){}
+          (0,-1) node[insep,label=left:b](b){}
+          (0,-2) node[insep,label=left:c](c){}
+          (1,-1) node[insep,label=left:h](h){}
+          (1,-2) node[insep,label=left:f](f){}
+          (2,-1) node[insep,label=right:i](i){}
+          (2,-2) node[insep,label=right:o](o){}
+          (4,0) node[insep,label=above:k](k){}
+          (3,-1) node[insep,label=left:l](l){}
+          (4,-1) node[insep,label=right:m](m){}
+          (5,-1) node[insep,label=right:d](d){}
+          (5,-2) node[insep,label=right:e](e){}
+        ;
+        \draw
+          (g)--(b)
+          (g)--(h)
+          (g)--(i)
+          (k)--(l)
+          (k)--(m)
+          (k)--(d)
+        ;
+        \draw[line width=2.5pt]
+          (l)--(m)
+          (b)--(c)
+          (h)--(f)
+          (i)--(o)
+          (d)--(e)
+        ;
+      \end{tikzpicture}
+    \end{center}
+    There is a blossom containing $k$, $l$, and $m$.
+    Contracting this blossom in the forest and the graph results in
+    \begin{center}
+      \tikzset{insep/.style={inner sep=2.2pt, outer sep=0pt, circle, fill},}
+      \begin{tikzpicture}[scale=1.4]
+        \draw
+          (0,0) node[insep,label=left:a](a){} 
+          (1,0) node[insep,label=right:b](b){}
+          ++(72:1) node[insep,label=left:c](c){}
+          ++(144:1) node[insep,label=above:d](d){}
+          ++(216:1) node[insep,label=left:e](e){}
+          (b) ++ (-72:1) node[insep,label=left:g](g){}  
+          ++(-144:1) node[insep,label=below:i](i){}
+          ++(-216:1) node[insep,label=left:j](j){}
+          (c) ++(1,0) node[insep,label=above:f](f){} 
+          (g) ++(1,0) node[insep,label=below:h](h){} 
+          (d) ++ (3,0) node[insep,label=above:k](k){}
+          (d) ++ (-3,0) node[insep,label=above:n](n){}
+          (i) ++ (-3,0) node[insep,label=below:o](o){}
+          (a) ++ (-3.5,0) node[insep,label=left:$x$](p){}
+        ;
+        \draw
+          (a)--(b)
+          (a)--(e)
+          (a)--(j)
+          (b)--(g)--(h)
+          (g)--(i)
+          (n)--(d)
+          (d)--(k)
+          (k) to[out=-90, in=0, distance=100] (i)
+          (i)--(o)
+          (n)--(o)
+          (d)--(c)--(f)
+          (n)--(o)
+          (i)--(j)
+          (p)--(o)
+        ;
+        \draw[line width=2.5pt]
+          (e)--(d)
+          (b)--(c)
+          (f)--(h)
+          (p)--(n)
+          (o)--(i)
+          (j)--(a)
+        ;
+        \draw[dashed]
+        ;
+      \end{tikzpicture}
+    \end{center}
+    \begin{center}
+      \tikzset{insep/.style={inner sep=2.2pt, outer sep=0pt, circle, fill},}
+      \begin{tikzpicture}[scale=1.4]
+        \draw
+          (1,0) node[insep,label=above:g](g){}
+          (0,-1) node[insep,label=left:b](b){}
+          (0,-2) node[insep,label=left:c](c){}
+          (1,-1) node[insep,label=left:h](h){}
+          (1,-2) node[insep,label=left:f](f){}
+          (2,-1) node[insep,label=right:i](i){}
+          (2,-2) node[insep,label=right:o](o){}
+          (3,0) node[insep,label=above:{(k,l,m)}](k){}
+          (3,-1) node[insep,label=right:d](d){}
+          (3,-2) node[insep,label=right:e](e){}
+        ;
+        \draw
+          (g)--(b)
+          (g)--(h)
+          (g)--(i)
+          (k)--(d)
+        ;
+        \draw[line width=2.5pt]
+          (b)--(c)
+          (h)--(f)
+          (i)--(o)
+          (d)--(e)
+        ;
+      \end{tikzpicture}
+    \end{center}
+    Now let us add $(c, f)$, this creates a blossom of length 5.
+    \begin{center}
+      \tikzset{insep/.style={inner sep=2.2pt, outer sep=0pt, circle, fill},}
+      \begin{tikzpicture}[scale=1.4]
+        \draw
+          (1,0) node[insep,label=above:g](g){}
+          (0,-1) node[insep,label=left:b](b){}
+          (0,-2) node[insep,label=left:c](c){}
+          (1,-1) node[insep,label=left:h](h){}
+          (1,-2) node[insep,label=right:f](f){}
+          (2,-1) node[insep,label=right:i](i){}
+          (2,-2) node[insep,label=right:o](o){}
+          (3,0) node[insep,label=above:{(k,l,m)}](k){}
+          (3,-1) node[insep,label=right:d](d){}
+          (3,-2) node[insep,label=right:e](e){}
+        ;
+        \draw
+          (g)--(b)
+          (g)--(h)
+          (g)--(i)
+          (k)--(d)
+          (c)--(f)
+        ;
+        \draw[line width=2.5pt]
+          (b)--(c)
+          (h)--(f)
+          (i)--(o)
+          (d)--(e)
+        ;
+      \end{tikzpicture}
+    \end{center}
+    Contracting this blossom in the forest and graph results in
+    \begin{center}
+      \tikzset{insep/.style={inner sep=2.2pt, outer sep=0pt, circle, fill},}
+      \begin{tikzpicture}[scale=1.4]
+        \draw
+          (0,0) node[insep,label=left:a](a){} 
+          ++(108:1) node[insep,label=left:e](e){}
+          ++(36:1) node[insep,label=above:d](d){}
+          (a) ++(-108:1) node[insep,label=left:j](j){}
+          ++(-36:1) node[insep,label=below:i](i){}
+          (1,0) node[insep,label=right:g](g){}
+          (d) ++ (3,0) node[insep,label=above:k](k){}
+          (d) ++ (-3,0) node[insep,label=above:n](n){}
+          (i) ++ (-3,0) node[insep,label=below:o](o){}
+          (a) ++ (-3.5,0) node[insep,label=left:$x$](p){}
+        ;
+        \draw
+          (a)--(g)
+          (a)--(e)
+          (a)--(j)
+          (g)--(i)
+          (n)--(d)
+          (d)--(k)
+          (k) to[out=-90, in=0, distance=100] (i)
+          (i)--(o)
+          (n)--(o)
+          (d)--(g)
+          (n)--(o)
+          (i)--(j)
+          (p)--(o)
+        ;
+        \draw[line width=2.5pt]
+          (e)--(d)
+          (p)--(n)
+          (o)--(i)
+          (j)--(a)
+        ;
+        \draw[dashed]
+        ;
+      \end{tikzpicture}
+    \end{center}
+    \begin{center}
+      \tikzset{insep/.style={inner sep=2.2pt, outer sep=0pt, circle, fill},}
+      \begin{tikzpicture}[scale=1.4]
+        \draw
+          (1,0) node[insep,label=above:{(g,b,c,f,h)}](g){}
+          (1,-1) node[insep,label=right:i](i){}
+          (1,-2) node[insep,label=right:o](o){}
+          (3,0) node[insep,label=above:{(k,l,m)}](k){}
+          (3,-1) node[insep,label=right:d](d){}
+          (3,-2) node[insep,label=right:e](e){}
+        ;
+        \draw
+          (g)--(i)
+          (k)--(d)
+        ;
+        \draw[line width=2.5pt]
+          (i)--(o)
+          (d)--(e)
+        ;
+      \end{tikzpicture}
+    \end{center}
+    We can now continue growing the forest, consider adding $(e, a)$ and $(o, x)$.
+    \begin{center}
+      \tikzset{insep/.style={inner sep=2.2pt, outer sep=0pt, circle, fill},}
+      \begin{tikzpicture}[scale=1.4]
+        \draw
+          (1,0) node[insep,label=above:{(g,b,c,f,h)}](g){}
+          (1,-1) node[insep,label=right:i](i){}
+          (1,-2) node[insep,label=right:o](o){}
+          (1, -3) node[insep,label=right:x](x){}
+          (1, -4) node[insep,label=right:n](n){}
+          (3,0) node[insep,label=above:{(k,l,m)}](k){}
+          (3,-1) node[insep,label=right:d](d){}
+          (3,-2) node[insep,label=right:e](e){}
+          (3,-3) node[insep,label=right:a](a){}
+          (3,-4) node[insep,label=right:j](j){}
+        ;
+        \draw
+          (g)--(i)
+          (k)--(d)
+          (o)--(x)
+          (e)--(a)
+        ;
+        \draw[line width=2.5pt]
+          (i)--(o)
+          (d)--(e)
+          (x)--(n)
+          (a)--(j)
+        ;
+      \end{tikzpicture}
+    \end{center}
+    The edges $(g, a)$, $(k, i)$, $(j, i)$ and $(n, d)$ can't be added because
+    they connect to vertices that are an odd distance from their root.
+    The last edge that can be added is $(n,o)$.
+    This creates a blossom, but as it is the last edge that can be added and
+    no augmenting path has been found, we can conclude that we have found the
+    maximal matching.
+    The final forest and maximal matching are
+    \begin{center}
+      \tikzset{insep/.style={inner sep=2.2pt, outer sep=0pt, circle, fill},}
+      \begin{tikzpicture}[scale=1.4]
+        \draw
+          (1,0) node[insep,label=above:{(g,b,c,f,h)}](g){}
+          (1,-1) node[insep,label=right:i](i){}
+          (1,-2) node[insep,label=right:o](o){}
+          (1, -3) node[insep,label=right:x](x){}
+          (1, -4) node[insep,label=right:n](n){}
+          (3,0) node[insep,label=above:{(k,l,m)}](k){}
+          (3,-1) node[insep,label=right:d](d){}
+          (3,-2) node[insep,label=right:e](e){}
+          (3,-3) node[insep,label=right:a](a){}
+          (3,-4) node[insep,label=right:j](j){}
+        ;
+        \draw
+          (g)--(i)
+          (k)--(d)
+          (o)--(x)
+          (e)--(a)
+          (n) to[out=180, in=180] (o)
+        ;
+        \draw[line width=2.5pt]
+          (i)--(o)
+          (d)--(e)
+          (x)--(n)
+          (a)--(j)
+        ;
+      \end{tikzpicture}
+    \end{center}
+    \begin{center}
+      \tikzset{insep/.style={inner sep=2.2pt, outer sep=0pt, circle, fill},}
+      \begin{tikzpicture}[scale=1.4]
+        \draw
+          (0,0) node[insep,label=left:a](a){} 
+          (1,0) node[insep,label=right:b](b){}
+          ++(72:1) node[insep,label=left:c](c){}
+          ++(144:1) node[insep,label=above:d](d){}
+          ++(216:1) node[insep,label=left:e](e){}
+          (b) ++ (-72:1) node[insep,label=left:g](g){}  
+          ++(-144:1) node[insep,label=below:i](i){}
+          ++(-216:1) node[insep,label=left:j](j){}
+          (c) ++(1,0) node[insep,label=above:f](f){} 
+          (g) ++(1,0) node[insep,label=below:h](h){} 
+          (d) ++ (3,0) node[insep,label=above:k](k){}
+          (i) ++ (3,0) node[insep,label=below:l](l){}
+          (b) ++ (3.5,0) node[insep,label=right:m](m){}
+          (d) ++ (-3,0) node[insep,label=above:n](n){}
+          (i) ++ (-3,0) node[insep,label=below:o](o){}
+          (a) ++ (-3.5,0) node[insep,label=left:$x$](p){}
+        ;
+        \draw
+          (a)--(b)
+          (a)--(e)
+          (a)--(j)
+          (b)--(g)--(h)
+          (g)--(i)
+          (n)--(d)--(k)--(m)--(l)--(i)--(o)
+          (n)--(o)
+          (d)--(c)--(f)
+          (k)--(l)
+          (n)--(o)
+          (i)--(j)
+          (p)--(o)
+        ;
+        \draw[line width=2.5pt]
+          (e)--(d)
+          (b)--(c)
+          (f)--(h)
+          (p)--(n)
+          (o)--(i)
+          (j)--(a)
+          (l)--(m)
+        ;
+        \draw[dashed]
+        ;
+      \end{tikzpicture}
+    \end{center}
+
+    Therefore the largest possible matching contains 7 edges.
+
+  \item % #4 Done
     Find minimum-weight perfect matching in the following graph:
     \begin{center}
       \tikzset{insep/.style={inner sep=1.5pt, outer sep=0pt, circle, fill},}
@@ -520,10 +1024,64 @@ Homework 10
           y_i &= 0
         \end{align*}
 
-      \item[(b)]
+      \item[(b)] % Done
         Formulate the problem using Integer/Linear programming and solve it with your favorite solver.
 
-        The 
+        The integer program for solving the maximal perfect matching problem
+        for a graph $G = (V, E)$.
+        Uses a variable $x_e$ for each edge, $e \in E$.
+        \[
+          (P)=
+          \begin{cases}
+            \text{maximize} & \sum{e \in E}{}{c(e)*x_e} \\
+            \text{subject to} & \sum{e \in \delta(v)}{}{x_e} \quad \forall v \in V \\
+                              & x_e \in {0, 1} \quad \forall e \in E
+          \end{cases}
+        \]
+        The following sage script solves this linear program for the given graph.
+        \lstinputlisting[language=Sage]{Sage/10_4.sage}
+        The output of this script is shown below.
+        \begin{verbatim}
+          Objective Value: 11.0
+          x[('f', 'i', 6)] = 0.0
+          x[('d', 'x', 4)] = 0.0
+          x[('a', 'b', 4)] = 0.0
+          x[('b', 'g', 5)] = 1.0
+          x[('h', 'i', 3)] = 1.0
+          x[('f', 'g', 4)] = 0.0
+          x[('a', 'x', 1)] = 1.0
+          x[('g', 'h', 4)] = 0.0
+          x[('d', 'f', 2)] = 1.0
+        \end{verbatim}
+        This matching is the same as the matching found in part (a) and can be
+        shown on the graph as shown below.
+        \begin{center}
+          \tikzset{insep/.style={inner sep=1.5pt, outer sep=0pt, circle, fill},}
+          \begin{tikzpicture}[scale=1.5]
+            \draw   (0,0) node[insep,label=left:$x$](x){} 
+              ++(45:1)  node[insep,label=above:a](a){}
+              ++(0:1)  node[insep,label=above:b](b){}
+              (r) ++(-45:1)  node[insep,label=below:d](d){}
+              ++(0:1)  node[insep,label=below:f](f){}
+              ++(45:1) node[insep,label=above:g](g){}
+              ++(0:1) node[insep,label=above:h](h){}
+              (f) ++(0:1.5) node[insep,label=below:i](i){}
+            ;
+            \draw
+              (x) -- node[below]{4} (d)
+              (a) -- node[above]{4} (b)
+              (g) -- node[above]{4} (h)
+              (f) -- node[above]{4} (g)
+              (f) -- node[above]{6} (i)
+            ;
+            \draw[line width=2.5pt]
+              (x) -- node[above]{1} (a)
+              (d) -- node[above]{2} (f)
+              (b) -- node[above]{5} (g)
+              (h) -- node[right]{3} (i)
+            ;
+          \end{tikzpicture}
+        \end{center}
     \end{enumerate}
 
   \item % #5
