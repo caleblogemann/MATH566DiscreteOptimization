@@ -1084,7 +1084,7 @@ Homework 10
         \end{center}
     \end{enumerate}
 
-  \item % #5
+  \item % #5 Done
     Slither is a two-person game played on a graph $G=(V,E)$. 
     The players, called First and Second, play alternatively, with First playing first.
     At each step the player whose turn it is chooses a previously unchosen edge.
@@ -1092,13 +1092,71 @@ Homework 10
     The loser is the first player unable to make a legal move at his or her turn.
     Prove that if $G$ has a perfect matching, then First can force a win.
 
-  \item % #6
+    \begin{proof}
+      Suppose $G = (V, E)$ has a perfect matching, $M \subset E$.
+      Let First select an edge $e \in M$ for their first move.
+      Now on Second's turn, they must select an edge adjacent to $e$.
+      Since $e \in M$ and edge adjacent to $e$ will not be in $M$, otherwise
+      a vertex would be incident to two edges in the matching.
+      After Second selects an edge there will be three vertices in the path,
+      two vertices incident to First's first selection and one additional vertex
+      incident to Second's selection.
+      First must now select the edge in $M$ that is incident to this third vertex.
+      This edge exists because $M$ is a perfect matching so it covers all
+      vertices.
+      Also this edge could not have been previously selected as it was just made
+      adjacent to the path in the last turn.
+      First should continue to select the unique edge in $M$ that is a possible
+      selection.
+      When First selects the last remaining edge in $M$, Second will be unable
+      to make a legal move.
+      At this point all edges in the perfect matching have been selected, so that
+      all vertices must be a part of the path.
+      Therefore edge that is selected by Second will join two vertices already
+      in the path and create a cycle.
+      This implies that there is no legal move for Second.
+    \end{proof}
+
+  \item % #6 Done
     Implement algorithm for finding maximum matching in bipartite graphs.
     Test it on the 3D-cube.
 
-  \item % #7
+    See problem 7
+
+  \item % #7 Done
     Implement algorithm for finding maximum matching in any graph.\\
     Test it on the 3D-cube and the graph from question 3.\\
     (Doing this will also solve the previous question - 2 for 1.)
+
+    The following sage script implements Edmonds Blossom algorithm which finds
+    maximum matchings for any graph.
+
+    \lstinputlisting[language=Sage]{Sage/edmondsBlossom.sage}
+    The following function is used in these functions to do contraction in
+    graphs.
+    \lstinputlisting[language=Sage]{Sage/contractVertices.sage}
+
+    The following script now tests this function on the 3D cube and the graph
+    from problem 3.
+    \lstinputlisting[language=Sage]{Sage/10_7.sage}
+    The output of this script is shown below.
+    \begin{verbatim}
+      Edges in matching for 3D cube
+      ('010', '110', None)
+      ('100', '000', None)
+      ('011', '001', None)
+      ('111', '101', None)
+      Edges in matching for graph in problem 3
+      ('a', 'b', None)
+      ('i', 'l', None)
+      ('d', 'e', None)
+      ('f', 'c', None)
+      ('x', 'o', None)
+      ('k', 'm', None)
+      ('g', 'h', None)
+    \end{verbatim}
+    As can be seen the function finds a perfect matching for the 3D cube with is
+    bipartite, and finds a matching with 7 edges for problem 3 which we have
+    previously shown to be the maximum size of a matching.
 \end{enumerate}
 \end{document}
