@@ -1,0 +1,436 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[czech, english]{babel}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric}
+\usetikzlibrary{shapes.multipart}
+\usetikzlibrary{arrows}
+\usetikzlibrary{graphs}
+\usepackage{hyperref}
+
+
+% Itemize environment with small skips
+\newenvironment{packeditemize}{
+\begin{itemize}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{itemize}}
+
+
+% Fancy footnote....
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\usepackage{lastpage}
+\rfoot{MATH 566 - 22, page \thepage/\pageref{LastPage}}
+\cfoot{}
+\rhead{}
+\lhead{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+
+\newtheorem{theorem*}{Theorem} 
+
+% Itemize environment with small skips
+\newenvironment{packedenumerate}{
+\begin{enumerate}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{enumerate}}
+
+
+\newcommand{\vc}[1]{\ensuremath{\vcenter{\hbox{#1}}}}
+
+\newcounter{excounter}
+\setcounter{excounter}{1}
+\newcommand\question[2]{\vskip 1em  \noindent\textbf{\arabic{excounter}\addtocounter{excounter}{1}:} \emph{#1} \noindent#2}
+\newcommand\solution[1]{\vskip 0.5em \noindent\textbf{Solution:} #1}
+%\newcommand\like{\par \noindent\emph{(This question is: good - bad - ugly? Difficulty: 0-10:\hskip 3em )}} 
+
+\newcommand\lecturer[1]{\textbf{#1}}
+\newcommand\hideforstudent[1]{#1}
+
+
+%\renewcommand\lecturer[1]{{\color{white} \textbf{#1} }}
+%\renewcommand\hideforstudent[1]{{\color{white}  }}
+%\renewcommand\solution[1]{{\color{white} \vskip 0.5em \noindent\textbf{Solution:} #1 }}
+
+
+
+\setlength{\parindent}{0cm}
+\setlength{\parskip}{0.1cm}
+
+\begin{document}
+
+Fall  2016, MATH-566
+
+\centerline{{\Large \textbf{Integer Programming - Solution \emph{Methods} - Branch and Bound}}}
+
+Source:  \url{http://co-at-work.zib.de/files/Gurobi_MIP.pdf}
+
+Problem:
+\[
+(IP)
+\begin{cases}
+\text{maximize} & \mathbf{c}^T\mathbf{x} \\
+\text{subject to} & A\mathbf{x} \leq \mathbf{b},
+\end{cases}
+\]
+where $\mathbf{c} \in \mathbb{Z}^n, \mathbf{b} \in \mathbb{Z}^m, A \in \mathbb{Z}^{m \times n}$, and $\mathbf{x} \in \mathbb{Z}^n$.
+
+Suppose we try to relax the problem and solve it as a linear programming problem.
+The set of feasible solutions is $P$. Suppose that the optimum is $\mathbf{x}^\star=(4.6,3.3)$. We know $x_2$ cannot be $3.3$. So we create two new instances, where we add constraints $x_2 \geq \lceil 3.3 \rceil$ and  $x_2 \leq \lfloor 3.3 \rfloor$. Variable $x_2$ is a\emph{branch variable}. We solve both instances and better of the solutions is the solution to the original problem. 
+
+\begin{center}
+\tikzset{insep/.style={inner sep=1pt, outer sep=0pt, circle, fill},}
+\vc{
+\begin{tikzpicture}[scale=0.8]
+\draw[fill=gray!20] (0.5,0.5) -- (4.7,1.5) -- (4.6,3.3) coordinate(x){} -- (0.5,4.7) -- cycle;
+\foreach \x in {0,1,...,5}{
+\foreach \y in {0,1,...,5}{
+\draw (\x,\y) node[insep](x\x\y){};
+}
+\draw[-latex](0,0) -- (5.5,0) node[below]{$x_1$};
+\draw[-latex](0,0) -- (0,5.5) node[left]{$x_2$};
+\draw(2.4,1.4) node{$P$};
+\draw[line width=1pt, color=red] (x) --++(-50:1)  (x) --++(-50:-2)node[right]{$\mathbf{c}^T\mathbf{x}$};
+\draw (x) node[above right]{$\mathbf{x^\star}=(4.6,3.3)$};
+}
+\end{tikzpicture}
+}
+\hskip 1em
+$\Rightarrow$
+\hskip 1em
+\vc{
+\begin{tikzpicture}[scale=0.8]
+\begin{scope}
+\clip (0,4) rectangle (5,6);
+\draw[fill=gray!20] (0.5,0.5) -- (4.7,1.5) -- (4.6,3.3) coordinate(x){} -- (0.5,4.7) -- cycle;
+\end{scope}
+\begin{scope}
+\clip (0,0) rectangle (5,3);
+\draw[fill=gray!20] (0.5,0.5) -- (4.7,1.5) -- (4.6,3.3) coordinate(x){} -- (0.5,4.7) -- cycle;
+\end{scope}
+\foreach \x in {0,1,...,5}{
+\foreach \y in {0,1,...,5}{
+\draw (\x,\y) node[insep](x\x\y){};
+}
+\draw[-latex](0,0) -- (5.5,0) node[below]{$x_1$};
+\draw[-latex](0,0) -- (0,5.5) node[left]{$x_2$};
+\draw(2.4,1.4) node{$P_1$};
+\draw(0.8,4.4) node{$P_2$};
+\draw[line width=1pt, color=blue, dotted] (0,4) -- (5,4)node[right]{$x_2 \geq \lceil 3.3 \rceil$}  (0,3) -- (5,3) node[right]{$x_2 \leq \lfloor 3.3 \rfloor$};
+}
+\end{tikzpicture}
+}
+\end{center}
+
+The same process repeats with $P_1$ and $P_2$. Result is a \emph{big} branch and bound tree $T$.
+\begin{center}
+\begin{tikzpicture}
+\draw (0,0) node[ellipse,draw](P){$P$, $(4.6,3.3)$}
+(P) ++(-45:2) node[circle,draw](P2){$P_2$} 
+(P)  ++(45:-2) node[circle,draw](P1){$P_1$}
+(P) -- node[right]{$x_2 \geq \lceil 3.3 \rceil$}  (P2)
+(P) -- node[left]{$x_2 \leq \lfloor 3.3 \rfloor$} (P1)
+;
+\draw[dotted,line width=1pt]
+(P1) -- ++(-45:1)
+(P1) -- ++(45:-1)
+(P2) -- ++(-45:1)
+(P2) -- ++(45:-1)
+;
+\end{tikzpicture}
+\end{center}
+
+\textbf{Branch and (no Bound) outline}
+\begin{enumerate}
+\item Let $P = \{ \mathbf{x}: A\mathbf{x} \leq \mathbf{b}\}$
+\item Build tree $T$ with one node $P$ (and mark it unexplored)
+\item while $T$ has unexplored node $X$
+\item \hskip 4em $\mathbf{x}^\star :=  $ optimum for LP relaxation of $X$; mark $X$ explored 
+\item \hskip 4em If  $\mathbf{x}^\star_i  \not\in\mathbb{Z}$ for some $i$
+\item \hskip 8em       $X_1 := X \cap \{ \mathbf{x}: \mathbf{x}_i \leq \lfloor  \mathbf{x}^\star_i \rfloor  \}$
+\item \hskip 8em       $X_2 := X \cap \{ \mathbf{x}: \mathbf{x}_i \leq \lceil  \mathbf{x}^\star_i \rceil  \}$
+\item \hskip 8em       Add $X_1$ and $X_2$ to $T$ as unexplored nodes
+\item Return maximum of 	integer solutions in $T$.
+\end{enumerate}
+
+
+\question{}{
+Consider problem 
+\[
+(IP)
+\begin{cases} \text{maximize} & 100x_2 +  x_1\\
+\text{subject to} &  (x_1,x_2) \in P,
+\end{cases}
+\]
+where $P$ is depicted below.
+Solve $(IP)$ using Brand and Bound. Create branch and bound tree $T$.
+
+\begin{center}
+\tikzset{insep/.style={inner sep=1pt, outer sep=0pt, circle, fill},}
+\vc{
+\begin{tikzpicture}[scale=1]
+\draw[fill=gray!20] (0.6,0.5) -- (4.7,1.5) -- (4.6,2.9) -- (2.7,4) -- cycle;
+\foreach \x in {0,1,...,5}{
+\foreach \y in {0,1,...,4}{
+\draw (\x,\y) node[insep](x\x\y){};
+}
+\draw (0,0) node[below left]{0,0};
+\draw[-latex](0,0) -- (5.5,0) node[below]{$x_1$};
+\draw[-latex](0,0) -- (0,4.5) node[left]{$x_2$};
+\draw(2.4,1.4) node{$P$};
+%\draw[line width=1pt, color=red] (x) --++(-50:1)  (x) --++(-50:-2)node[right]{$\mathbf{c}^T\mathbf{x}$};
+%\draw (x) node[above right]{$\mathbf{x^\star}=(4.6,3.3)$};
+}
+\end{tikzpicture}
+}
+\end{center}
+}
+
+\hideforstudent{
+\solution{
+Here is the sequence of cuttings.
+\begin{center}
+\tikzset{insep/.style={inner sep=1pt, outer sep=0pt, circle, fill},}
+\vc{
+\begin{tikzpicture}[scale=1]
+\draw[fill=gray!20] (0.6,0.5) -- (4.7,1.5) -- (4.6,2.9) -- (2.7,4) coordinate(x) -- cycle;
+\foreach \x in {0,1,...,5}{
+\foreach \y in {0,1,...,4}{
+\draw (\x,\y) node[insep](x\x\y){};
+}
+\draw (0,0) node[below left]{0,0};
+\draw[-latex](0,0) -- (5.5,0) node[below]{$x_1$};
+\draw[-latex](0,0) -- (0,4.5) node[left]{$x_2$};
+\draw(2.4,1.4) node{$P$};
+\draw[line width=1pt, color=red] (x) --++(-1.8:2)  (x) --++(-1.8:-2)node[above]{$\mathbf{c}^T\mathbf{x}$};
+\draw[line width=1pt, color=blue, dotted] (2,-0.3) -- (2,4.3) node[above]{$\mathbf{x}_1 \leq 2$};
+\draw[line width=1pt, color=blue, dotted] (3,-0.3) node[below]{$\mathbf{x}_1 \geq 3$} -- (3,4.3);
+\draw[color = blue]
+(1.5,1.3) node {$P_1$}
+(3.5,2.5) node {$P_2$}
+;
+%\draw (x) node[above right]{$\mathbf{x^\star}=(4.6,3.3)$};
+}
+\end{tikzpicture}
+\hskip 4em
+\begin{tikzpicture}[scale=1]
+\begin{scope}
+\clip (0,0) rectangle (2,4);
+\draw[fill=blue!10] (0.6,0.5) -- (4.7,1.5) -- (4.6,2.9) -- (2.7,4)  -- cycle;
+\end{scope}
+\begin{scope}
+\clip (3,0) rectangle (6,4);
+\draw[fill=blue!10]  (0.6,0.5) -- (4.7,1.5) -- (4.6,2.9) -- (2.7,4)  -- cycle;
+\end{scope}
+\foreach \x in {0,1,...,5}{
+\foreach \y in {0,1,...,4}{
+\draw (\x,\y) node[insep](x\x\y){};
+}
+\draw (0,0) node[below left]{0,0};
+\draw[-latex](0,0) -- (5.5,0) node[below]{$x_1$};
+\draw[-latex](0,0) -- (0,4.5) node[left]{$x_2$};
+\draw(2.4,1.4) node{$P$};
+\draw (3,3.8) coordinate(x);
+\draw[line width=1pt, color=red] (x) --++(-1.8:1)  (x) --++(-1.8:-1);
+\draw (2,2.8) coordinate(x);
+\draw[line width=1pt, color=red] (x) --++(-1.8:1)  (x) --++(-1.8:-1);
+\draw[line width=1pt, color=blue, dotted] (2,-0.3) -- (2,4.3) node[above]{$\mathbf{x}_1 \leq 2$};
+\draw[line width=1pt, color=blue, dotted] (3,-0.3) node[below]{$\mathbf{x}_1 \geq 3$} -- (3,4.6);
+\draw[line width=1pt,dotted,color = orange]
+(-0.3,2) node[left]{$\mathbf{x}_2 \leq 2$}  -- (2,2) 
+(-0.3,3) node[left]{$\mathbf{x}_2 \geq 3$}  -- (2,3) 
+(1.5,1.3) node {$P_{1,1}$}
+(1,3.5) node {$P_{1,2}=\emptyset$}
+;
+\draw[line width=1pt, color=green!70!black, dotted] 
+(3,3) -- (5.3,3) node[right]{$\mathbf{x}_2 \leq 3$}
+(3,4) -- (5.3,4) node[right]{$\mathbf{x}_2 \geq 4$}
+(3.5,2.5) node {$P_{2,1}$}
+(4,4.5) node {$P_{2,2} = \emptyset$}
+;
+}
+\end{tikzpicture}
+}
+\vskip 2em
+\vc{
+\begin{tikzpicture}[scale=1]
+\begin{scope}
+\clip (0,0) rectangle (2,2);
+\draw[fill=orange!10]  (0.6,0.5) -- (4.7,1.5) -- (4.6,2.9) -- (2.7,4)  -- cycle;
+\end{scope}
+\begin{scope}
+\clip (3,0) rectangle (6,3);
+\draw[fill=green!10]  (0.6,0.5) -- (4.7,1.5) -- (4.6,2.9) -- (2.7,4)  -- cycle;
+\end{scope}
+\foreach \x in {0,1,...,5}{
+\foreach \y in {0,1,...,4}{
+\draw (\x,\y) node[insep](x\x\y){};
+}
+\draw (0,0) node[below left]{0,0};
+\draw[-latex](0,0) -- (5.5,0) node[right]{$x_1$};
+\draw[-latex](0,0) -- (0,4.5) node[left]{$x_2$};
+\draw(2.4,1.4) node{$P$};
+\draw (4.5,3) coordinate(x);
+\draw[line width=1pt, color=red] (x) --++(-1.8:1)  (x) --++(-1.8:-1);
+\draw (2,2) coordinate(x);
+\draw[line width=1pt, color=red] (x) --++(-1.8:1)  (x) --++(-1.8:-1);
+\draw[line width=1pt, color=blue, dotted] (2,-0.3) -- (2,4.3) node[above]{$\mathbf{x}_1 \leq 2$};
+\draw[line width=1pt, color=blue, dotted] (3,-0.3) node[below]{$\mathbf{x}_1 \geq 3$} -- (3,4.6);
+\draw[line width=1pt,dotted,color = orange]
+(-0.3,2) node[left]{$\mathbf{x}_2 \leq 2$}  -- (2,2) 
+(1.5,1.3) node {$P_{1,1}$}
+;
+\draw[line width=1pt, color=green!70!black, dotted] 
+(3,3) -- (5.5,3) node[right]{$\mathbf{x}_2 \leq 3$}
+(4.3,1.7) node {$P_{2,1}$}
+;
+\draw[line width=1pt, color=pink!60!black, dotted] 
+(4,0) -- (4,4.2) node[above]{$\mathbf{x}_1 \leq 4$}
+(5,0) node[below]{$\mathbf{x}_1 \geq 5$} -- (5,4.2) 
+(3.5,2.5) node {$P_{2,1,1}$}
+(5.8,2.5) node {$P_{2,1,2}=\emptyset$}
+;
+}
+\end{tikzpicture}
+\hskip3em
+\begin{tikzpicture}[scale=1]
+\begin{scope}
+\clip (0,0) rectangle (2,2);
+\draw[fill=orange!10]  (0.6,0.5) -- (4.7,1.5) -- (4.6,2.9) -- (2.7,4)  -- cycle;
+\end{scope}
+\begin{scope}
+\clip (3,0) rectangle (4,3);
+\draw[fill=pink!20]  (0.6,0.5) -- (4.7,1.5) -- (4.6,2.9) -- (2.7,4)  -- cycle;
+\end{scope}
+
+\foreach \x in {0,1,...,5}{
+\foreach \y in {0,1,...,4}{
+\draw (\x,\y) node[insep](x\x\y){};
+}
+\draw (0,0) node[below left]{0,0};
+\draw[-latex](0,0) -- (5.5,0) node[right]{$x_1$};
+\draw[-latex](0,0) -- (0,4.5) node[left]{$x_2$};
+\draw(2.4,1.4) node{$P$};
+\draw (4,3) coordinate(x);
+\draw[line width=1pt, color=red] (x) --++(-1.8:1)  (x) --++(-1.8:-1);
+\draw (2,2) coordinate(x);
+\draw[line width=1pt, color=red] (x) --++(-1.8:1)  (x) --++(-1.8:-1);
+\draw[line width=1pt, color=blue, dotted] (2,-0.3) -- (2,4.3) node[above]{$\mathbf{x}_1 \leq 2$};
+\draw[line width=1pt, color=blue, dotted] (3,-0.3) node[below]{$\mathbf{x}_1 \geq 3$} -- (3,4.6);
+\draw[line width=1pt,dotted,color = orange]
+(-0.3,2) node[left]{$\mathbf{x}_2 \leq 2$}  -- (2,2) 
+(1.5,1.3) node {$P_{1,1}$}
+;
+\draw[line width=1pt, color=green!70!black, dotted] 
+(3,3) -- (5.5,3) node[right]{$\mathbf{x}_2 \leq 3$}
+;
+\draw[line width=1pt, color=pink!60!black, dotted] 
+(4,0) -- (4,4.2) node[above]{$\mathbf{x}_1 \leq 4$}
+(3.5,2.5) node {$P_{2,1,1}$}
+;
+}
+\draw
+(2,2) node[rectangle,fill=yellow,inner sep=2pt,draw]{}
+(4,3) node[rectangle,fill=yellow,inner sep=2pt,draw]{}
+;
+\end{tikzpicture}
+}
+\end{center}
+And this is the resulting tree $T$.
+\begin{center}
+\begin{tikzpicture} [
+every node/.style={circle},
+level distance=25mm,
+level 1/.style={sibling distance=60mm}, 
+level 2/.style={sibling distance=30mm}, 
+level 3/.style={sibling distance=30mm}]
+\draw
+  node[draw,circle split,fill=gray!20] {$P$\nodepart{lower} $(3.7,4)$ }
+     child[label=left:$a$] {node[circle split,draw,fill=blue!20] {$P_1$\nodepart{lower} $(2,2.9)$}
+          child {node[draw,circle split,fill=orange!20] {$P_{1,1}$\nodepart{lower} $(2,2)$ }  edge from parent node[left] {$x_2 \leq 2$}   }
+          child { node[draw,circle split] {$P_{1,2}$\nodepart{lower} $\emptyset$}  edge from parent node[right] {$x_2 \geq 3$}  }
+          edge from parent node[above left] {$x_1 \leq 2$}
+     }
+     child {node[draw,fill=blue!20,circle split] {$P_2$\nodepart{lower} $(3,3.8)$}
+          child {node[draw,fill=green!20,circle split] {$P_{2,1}$\nodepart{lower} $(4.5,3)$}  
+               child {node[draw,fill=pink!20,circle split] {$P_{2,1,1}$\nodepart{lower} $(4,3)$}   edge from parent node[left] {$x_1 \leq 5$} }
+               child {node[draw,circle split] {$P_{2,1,2}$\nodepart{lower} $\emptyset$}             edge from parent node[right] {$x_1 \geq 5$} }               
+               edge from parent node[left] {$x_2 \leq 3$} }
+          child {node[draw,circle split] {$P_{2,2}$\nodepart{lower} $\emptyset$}  edge from parent node[right] {$x_2 \geq 4$}  }
+          edge from parent node[above right] {$x_1 \geq 3$}
+     }
+;
+\end{tikzpicture}
+\end{center}
+Notice that the leaves have either integer solution or are empty.
+Also notice that there is more than just one branching on  $x_1$. 
+And the optimum solution is $(4,3)$, value 304.
+}
+}
+
+\vfill
+\vfill
+
+
+\question{}{
+Will branch and bound ALWAYS find an optimal solution if one exists?
+}
+\solution{
+Yes, this EVENTUALLY gets the right answer.
+}
+
+\question{}{
+Is there a \emph{good} bound on the size of the tree?
+}
+\solution{
+No - the tree may explode. It may have exponential size.
+}
+
+\question{}{
+Is it possible to identify nodes in $T$ that will not contain the optimal solution?
+}
+\solution{
+Sometimes. See the example above. Consider we computed node $P_{2,1,1}$ and get an integer solution
+of value $304$. This tells us that the optimum integral solution has value at least 304.
+Now we look at node $P_1$ - it gives solution with value $292$. In the whole subtree
+under $P_1$, all integer solutions in the subtree rooted at $P_1$ will have value at most $292$.
+Hence no need to solve under $P_1$. \textbf{That is why the method is branch and bound}
+Note: good idea to try to round and get some integers solutions - helps cut the tree.
+This is the bound part of the name.
+}
+
+\question{}{
+What are (dis)advantages of processing nodes deep in the search tree vs nodes close to the root?
+}
+\solution{
+Deep is more likely to give integer solution. But more likely to be eliminated later by some better solution. No clear winner.
+}
+
+
+\question{}{
+Which if a solution in a node has more non-integer coordinates, which variable to branch on first?
+}
+\solution{
+Depends on problem - branch on important first. Example - decide if building factory at all before deciding how many production lines it should have.
+}
+
+\vfill
+
+\emph{Next time: Cutting Planes for Integer Programming.}
+
+\end{document}
+
+
+
+
+
+

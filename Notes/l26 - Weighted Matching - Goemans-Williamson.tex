@@ -1,0 +1,411 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[czech, english]{babel}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric}
+\usetikzlibrary{shapes.multipart}
+\usetikzlibrary{arrows}
+\usetikzlibrary{graphs}
+\usepackage{hyperref}
+
+
+% Itemize environment with small skips
+\newenvironment{packeditemize}{
+\begin{itemize}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{itemize}}
+
+
+% Fancy footnote....
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\usepackage{lastpage}
+\rfoot{MATH 566 - 26, page \thepage/\pageref{LastPage}}
+\cfoot{}
+\rhead{}
+\lhead{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+
+\newtheorem{theorem*}{Theorem} 
+
+% Itemize environment with small skips
+\newenvironment{packedenumerate}{
+\begin{enumerate}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{enumerate}}
+
+
+\newcommand{\vc}[1]{\ensuremath{\vcenter{\hbox{#1}}}}
+
+\newcounter{excounter}
+\setcounter{excounter}{1}
+\newcommand\question[2]{\vskip 1em  \noindent\textbf{\arabic{excounter}\addtocounter{excounter}{1}:} \emph{#1} \noindent#2}
+\newcommand\solution[1]{\vskip 0.5em \noindent\textbf{Solution:} #1}
+%\newcommand\like{\par \noindent\emph{(This question is: good - bad - ugly? Difficulty: 0-10:\hskip 3em )}} 
+
+\newcommand\lecturer[1]{\textbf{#1}}
+\newcommand\hideforstudent[1]{#1}
+
+
+\renewcommand\lecturer[1]{{\color{white} \textbf{#1} }}
+\renewcommand\hideforstudent[1]{{\color{white}  }}
+\renewcommand\solution[1]{{\color{white} \vskip 0.5em \noindent\textbf{Solution:} #1 }}
+
+
+
+\setlength{\parindent}{0cm}
+\setlength{\parskip}{0.1cm}
+
+\begin{document}
+
+Fall  2016, MATH-566
+
+\centerline{{\Large \textbf{Minimum-Weight Perfect Matching for Point in Plane}}}
+
+Source: Bill,Bill,Bill
+
+Goal: Find a minimum-weight perfect matching algorithm that works for points in the plane. 
+Plan is to find a relaxation of the integer program and guide us to build an algorithm by cleverly
+interpreting the dual solution.
+
+First we write a good linear program for general matching problem.
+
+Recall that Minimum-weight perfect matching problem can be formulated as an integer programming problem
+in the following way
+\[
+(IP)
+\begin{cases}
+\text{minimize}  &  \sum_{e \in E} c(e) x_e \\
+\text{subject to} & \sum_{e \in \delta(v)} x_e =  1 \text{ for all } v \in V\\
+                          &  \mathbf{x} \in \{0,1\}^{|E|},
+\end{cases}
+\]
+
+\question{}{
+Show that a relaxation of $(IP)$ to linear program may result in optimal solution
+that is not realizable by a perfect matching. You need to cleverly assign weights!
+
+\begin{center}
+\begin{tikzpicture}[scale=1.2]
+\tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
+\draw  (0,0) node[insep](a){}  -- +(45:1) node[insep]{}  -- +(-45:1) node[insep]{} -- (a);
+\draw  (-2,0) node[insep](b){}  -- +(45:-1) node[insep]{}  -- +(-45:-1) node[insep]{} -- (b);
+\draw (a)--(b);
+\end{tikzpicture}
+\end{center}
+}
+
+
+
+\question{}{
+Write a better program $(P)$ that prevents issue from the previous figure and
+its dual $(D)$. 
+(Hint: Let $\mathcal C$ be the set of all odd cuts as set of edges and use $\mathcal{C}$. 
+}
+\solution{
+We include constraint that for every odd cut, the edges going across sum to at least one.
+A cut is \emph{odd} if it contains odd number of vertices on each side.
+Let $\mathcal{C}$ be the set of all odd cuts, where we consider as a cut the set of edges.
+\begin{align*}
+(P)
+\begin{cases}
+\text{minimize}  &  \sum_{e \in E} c(e) x_e \\
+\text{subject to} & \sum_{e \in \delta(v)} x_e =  1 \text{ for all } v \in V\\
+                         & \sum_{e \in D} x_e \geq 1 \text{ for all } D \in \mathcal{C}\\
+                          & x_e \geq 0 \text{ for all } e \in E
+\end{cases}
+&&
+(D)
+\begin{cases}
+\text{maximize}  &  \sum_{v \in V} y_v \\
+\text{subject to} & y_{u}  + y_v + \sum_{uv \in D \in \mathcal C}Y_D \leq  c(uv) \text{ for all } uv \in E\\
+                          & y_v \in \mathbb{R} \text{ for all } v \in V\\
+                          & Y_D \geq 0 \text{ for all } D \in \mathcal{C}
+\end{cases}
+\end{align*}
+Notice that the bad solution from the previous relaxation is gone.
+}
+
+
+\textbf{Theorem} Edmonds: $G$ has a perfect matching iff $(P)$ has a feasible solution.
+Moreover, the minimum weight of the perfect matching is equal to the value of optimal solution to $(P)$.
+
+
+\question{}{
+Write complementary slackness conditions for $(P)$.
+}
+
+\solution{\\
+ $x_e > 0$ implies $y_e  + y_e + \sum_{e \in D \in \mathcal C}Y_D =  c(e)$\\
+ $Y_D > 0$ implies $\sum_{e \in D} x_e = 1 \text{ for all } D$
+}
+
+\newpage
+
+A family of sets $\mathcal{A}$ is \emph{nested} if for any $A,B \in \mathcal{A}$ exactly one of $A \cap B = \emptyset$, $ A \subseteq B$, and $B \subseteq A$ holds.
+
+A solution to  $(D)$ is \emph{nested} if the family of $D$s corresponding to $Y_D > 0$ is nested.
+
+\textbf{Theorem 5.17}
+If an optimal solution to $(D)$ exists, then there exists a nested one.
+
+
+If $c$ satisfies triangle-inequality, then the dual has a nice solution.
+
+\textbf{Theorem 5.20}
+Let $G$ be a complete graph having even number of nodes and $c \geq 0$ satisfy the triangle inequality,
+then there exists an optimal solution to the dual with $y \geq 0$.
+
+\vskip 2em
+Finally, we are ready for some geometric ideas behind the algorithm that is on the cover of the textbook!
+\vskip 2em
+
+Let $V$ be points in the plane and let $c:uv \rightarrow \mathbb{R}^+$ the Euclidean distance of $u$ and $v$.
+Find a perfect matching $M$ that is minimizing the sum of costs of the edges in the matching.
+Let $E$ be the set of all pairs of vertices.
+
+Notice this problem satisfies the triangle inequality.
+
+
+\question{}{
+Suppose $|V|=n$ and every point has  a disk of radius 1. Assume these disks are disjoint. Can you give a lower bound on the cost of a perfect matching?
+\begin{center}
+\begin{tikzpicture}[scale=1.2]
+\tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
+\draw  (0,0) node[insep](a){} circle(0.5 cm);
+\draw  (1,0) node[insep](a){} circle(0.5 cm);
+\draw  (2,0) node[insep](a){} circle(0.5 cm);
+\draw  (4,0) node[insep](a){} circle(0.5 cm);
+\end{tikzpicture}
+\end{center}
+}
+\solution{
+The lower bound is $n$ as for every edge in the matching, it must go trough a radius of two circles.
+}
+\question{}{
+Consider the following extension, where big white disk has radius 2 and the gray area is actually union of three disk of  radius 2 without white disk of radius one. Can you provide a lower bound on the cost of a perfect matching?
+\begin{center}
+\begin{tikzpicture}[scale=1.2]
+\tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill=black},}
+\draw[fill=white]  (0,0) node[insep](a){} circle(0.5 cm);
+\foreach \x in {0,1,2}{
+\fill[fill=gray!80]  (\x,0) circle(1 cm);
+}
+\foreach \x in {0,1,2}{
+\draw[fill=white]  (\x,0) node[insep](a){} circle(0.5 cm);
+}
+\draw  (4,0) node[insep](a){} circle(1 cm);
+\end{tikzpicture}
+\end{center}
+}
+\solution{
+Lower bound would be $6$. This comes from $1+1+1+2$ for the radius of the disks.
+Then additional $+1$ comes from the fact that they gray area encloses an odd number of points. So at least one edge of the perfect matching must pass through the gray area.
+}
+
+We call the white disks around vertices \emph{control zones}.
+A pair of compact sets  $(N,I)$ is a \emph{moat} if 
+\[
+I \subset N, |I \cap V| \text{ is odd, and } N \setminus \text{ interior}(I) \text{ contains no points in } V.
+\]
+Example of a moat is the pair of gray set as $N$ and the three white disks inside as $I$.
+
+Notice we could interpret $y_v$ as a radius of the control zone and $Y_D$ as a width of a moat.
+This is a possible interpretation of a  dual solution to $D$ - try example, where you find optimal matching and corresponding control zones and moates.
+
+\begin{center}
+\begin{tikzpicture}[scale=1]
+\tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
+\draw  (0,0) node[insep](a){}   +(45:1) node[insep]{}  --  +(-45:1) node[insep]{}  (a);
+\draw  (-2,0) node[insep](b){}   +(45:-1) node[insep]{}  -- +(-45:-1) node[insep]{}  (b);
+\draw (a)--(b);
+\end{tikzpicture}
+\end{center}
+
+
+\newpage
+\textbf{Goal:} Algorithm that finds a perfect matching of cost at most twice of the optimum solution.\\
+
+Algorithm outline:\\
+1) Obtain a forest $F$, where every component has even number of vertices. So called \emph{even forest}.\\
+2) Transform the forest $F$ into a perfect matching $M$ such that the cost of used
+     edges does not increase.
+
+In order to provide a bound on the cost of the resulting matching $M$, we build a forest $F^\star$ whose
+cost would be at most twice the lower bound  obtained from control zones and moats.
+
+\textbf{Definition}
+Let $C$ be a set. Define
+\[
+parity(C) = \begin{cases} 0 & \text{ if } |C| \text{ even} \\  1 & \text{ if } |C| \text{ odd.}  \end{cases}
+\]
+
+Let $\overline{c}_e = c(uv) -  y_{u}  + y_v + \sum_{uv \in D \in \mathcal C}Y_D$.
+(Slack in the constraints in $D$.)
+\vskip 1em
+
+\textbf{Goemans-Williamson algorithm} (sketch)\\
+Goal: Find an even forest $F$ and a feasible solution to dual program $(D)$.
+\begin{enumerate}
+\item\hskip 0em  $\mathcal{C} = \{ \{v\}: v \in V\}$;  $F=\emptyset$; $y = 0$; $Y = 0$
+\item\hskip 0em while exists $C \in \mathcal{C}$ with $|C|$ odd 
+\item\hskip 4em  Find an edge $e = uv$, with $u \in C_i$ and $v \in C_j$, $C_i \neq C_j$, that minimizes $\varepsilon = \overline{c}_e/(parity(C_i)+parity(C_j))$. 
+Notice at least one of $|C_i|$ and $|C_j|$ is odd.
+\item \hskip 4em For all $C\in \mathcal{C}$ where $C=\{x\}$, add $\varepsilon$ to $y_x$.
+\item \hskip 4em For all $C\in \mathcal{C}$ where $|C| > 1$ and $|C|$ is odd, add $\varepsilon$ to $Y_C$.
+\item \hskip 4em  add $e$  to $F$ and replace $C_i$ and $C_j$ by $C_i \cup C_j$.
+\end{enumerate}
+
+
+Example:
+
+\begin{center}
+\def\nodes{
+\draw 
+(0,0) node[insep](a){}
+(a) ++(135:1.5) node[insep](b){}
+(b) ++(220:1) node[insep](c){}
+(a) ++(20:2.5) node[insep](d){}
+;
+}
+\begin{tikzpicture}[scale=1]
+\tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill=black},}
+\nodes
+\end{tikzpicture}
+\hskip 8em
+\begin{tikzpicture}[scale=1]
+\tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill=black},}
+\nodes
+\fill [gray!20]
+(a) circle (0.5)
+(b) circle (0.5)
+(c) circle (0.5)
+(d) circle (0.5)
+;
+\draw (b)--(c);
+\nodes
+\end{tikzpicture}
+\vskip 4em
+\begin{tikzpicture}[scale=1]
+\tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill=black},}
+\nodes
+\fill [gray!20]
+(a) circle (1)
+(b) circle (0.5)
+(c) circle (0.5)
+(d) circle (1)
+;
+\draw (b)--(c) (a)--(b);
+\nodes
+\end{tikzpicture}
+\hskip 8em
+\begin{tikzpicture}[scale=1]
+\tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill=black},}
+\nodes
+\fill [gray!40]
+(a) circle (1.25)
+(b) circle (0.75)
+(c) circle (0.75)
+;
+\fill [gray!20]
+(a) circle (1)
+(b) circle (0.5)
+(c) circle (0.5)
+(d) circle (1.25)
+;
+\draw (b)--(c) (a)--(b) (a)--(d);
+\nodes
+\end{tikzpicture}
+
+
+\end{center}
+
+
+\newpage
+\question{}{
+Try the algorithm on the following example:
+\begin{center}
+\begin{tikzpicture}[scale=1]
+\tikzset{insep/.style={inner sep=2pt, outer sep=0pt, circle, fill},}
+\draw  (0,0) node[insep](a){}   +(45:1) node[insep]{}   +(-45:1) node[insep]{}  (a);
+\draw  (-2,0) node[insep](b){}   +(45:-1) node[insep]{}   +(-45:-1) node[insep]{}  (b);
+\draw (a) (b);
+\end{tikzpicture}
+\end{center}
+
+}
+
+\question{}{
+Show that there exists a matching $M$ such that 
+$\sum_{e\in M} c(e)   \leq \sum_{e\in F} c(e)$.
+}
+\solution{
+Use example and previous question to demonstrate the steps!\\
+We provide an algorithmic way and use two steps\\
+(a) If there are is an edge $e$ in $F$ such that $F-e$ is still an even forest, remove $e$.\\
+(b) Otherwise consider $F'$, which is $F$ without leaves. Let $v$ be a leaf in $F'$. 
+Since the edge of $F'$ incident with $v$ is not removed in (a), $v$ must have at least two
+pendant leaves $x$ and $y$ in $F$ that were removed.
+Replace edges $xv$ and $yv$ by edge $xy$. \\
+Notice none of these operations increase the cost of $F$ and if none is applicable, $F$ is a matching.
+}
+
+
+More precise way of computing the cost of the resulting lower bound $LB$ on the matching:
+\question{}{
+Show that 
+\[
+LB = \sum_k \varepsilon^k | \{ C \in \mathcal C^k: |C| \text{ odd }\}|
+\]
+where $\mathcal C^k$ and $\varepsilon^k$ are from the $k$th iterations of the algorithm.
+}
+\solution{
+This exactly corresponds to how much each each control zone and moat grows in each iterations and they must all be crossed.
+}
+
+
+\question{}{
+Show that the forest $F^\star$ obtained  from $F$ by \emph{dropping even edges} has cost at most 
+$2 \left(\sum_v y_v + \sum_D Y_D\right)$.\\ Cost of $F^\star$ is $\sum_{e\in F^\star} c(e)$.\\
+More precisely, consider every edge $e \in F^\star$ of the forest and decompose its cost into small pieces.
+\[
+c_e^k = \begin{cases} 0 & \text{ if } C_i = C_j \\
+                     \varepsilon^k(parity(C_i)+parity(C_j)) & \text{otherwise}
+                     \end{cases}
+\]
+Now 
+\[
+c(e) = \sum_k c_e^k
+\]
+Goal is to show for all $k$
+\[
+\sum_{e} c_{e}^k \leq 2  \varepsilon^k | \{ c \in \mathcal C^k: |C| \text{ odd }\}|,
+\]
+which gives
+\[
+cost(M)  \leq cost(F^\star) = \sum_k \sum_{e} c_{e}^k \leq 2  \sum_k \varepsilon^k | \{ C \in \mathcal C^k: |C| \text{ odd }\}|  = 2LB.
+\]
+}
+\solution{
+See the book.
+}
+
+
+
+\end{document}
+
+
+
+
+

@@ -1,0 +1,423 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[czech, english]{babel}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric}
+\usetikzlibrary{shapes.multipart}
+\usetikzlibrary{arrows}
+\usetikzlibrary{graphs}
+\usepackage{hyperref}
+
+
+% Itemize environment with small skips
+\newenvironment{packeditemize}{
+\begin{itemize}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{itemize}}
+
+
+% Fancy footnote....
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\usepackage{lastpage}
+\rfoot{MATH 566 - 28, page \thepage/\pageref{LastPage}}
+\cfoot{}
+\rhead{}
+\lhead{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+
+\newtheorem{theorem*}{Theorem} 
+
+% Itemize environment with small skips
+\newenvironment{packedenumerate}{
+\begin{enumerate}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{enumerate}}
+
+
+\newcommand{\vc}[1]{\ensuremath{\vcenter{\hbox{#1}}}}
+
+\newcounter{excounter}
+\setcounter{excounter}{1}
+\newcommand\question[2]{\vskip 1em  \noindent\textbf{\arabic{excounter}\addtocounter{excounter}{1}:} \emph{#1} \noindent#2}
+\newcommand\solution[1]{\vskip 0.5em \noindent\textbf{Solution:} #1}
+%\newcommand\like{\par \noindent\emph{(This question is: good - bad - ugly? Difficulty: 0-10:\hskip 3em )}} 
+
+\newcommand\lecturer[1]{\textbf{#1}}
+\newcommand\hideforstudent[1]{#1}
+
+
+\renewcommand\lecturer[1]{{\color{white} \textbf{#1} }}
+\renewcommand\hideforstudent[1]{{\color{white}  }}
+\renewcommand\solution[1]{{\color{white} \vskip 0.5em \noindent\textbf{Solution:} #1 }}
+
+
+
+\setlength{\parindent}{0cm}
+\setlength{\parskip}{0.1cm}
+
+\begin{document}
+
+Fall  2016, MATH-566
+
+\centerline{{\Large \textbf{Semidefinite Programming - Quick Intro}}}
+
+\makeatletter
+\newcommand*\bigcdot{\mathpalette\bigcdot@{.8}}
+\newcommand*\bigcdot@[2]{\mathbin{\vcenter{\hbox{\scalebox{#2}{$\m@th#1\bullet$}}}}}
+\makeatother
+
+
+
+Source: Matou\v{s}ek semidefinite programming
+
+
+Recall:
+Let $A  = \mathbb{R}^{n \times n}$. The \emph{trace} of $A$ is $Tr(A) = \sum_{i=1}^n a_{i,i}$.
+
+Let $SYM_n$ be symmetric matrices in $\mathbb{R}^{n \times n}$.
+
+For $X,Y \in  \mathbb{R}^{n \times n}$, let the dot product of $X$ and $Y$ be $X \bigcdot Y = Tr(X^TY)$.
+
+$X \in SYM_n$ is positive semidefinite if  $v^T X v \geq 0$ for all $v \in \mathbb{R}^n$, denoted by $X \succeq 0$.
+
+\[
+ (LP) \begin{cases}
+ \begin{array}{lrccc} 
+ \text{maximize}  &\mathbf{c}^T\mathbf{x}  & &  \\
+ \text{subject to}  & A\mathbf{x} & = & \mathbf{b} \\
+                           & \mathbf{x}   & \geq & 0 \\
+\end{array}\\
+\end{cases}
+\text{ is equivalent to }
+ (LP) \begin{cases}
+ \begin{array}{lrccc} 
+ \text{maximize}  &\mathbf{c} \bigcdot \mathbf{x}  & &  \\
+ \text{subject to}  & \mathbf{a}_1 \bigcdot \mathbf{x} & = & b_1 \\
+                            &  \mathbf{a}_2 \bigcdot \mathbf{x} & = & b_2 \\
+                            &  & \vdots & \\  
+                            &  \mathbf{a}_m \bigcdot \mathbf{x} & = & b_m \\
+                           & \mathbf{x}   & \geq & 0 \\
+\end{array}\\
+\end{cases}
+\]
+where $\mathbf{c},\mathbf{x} \in \mathbb{R}^n$, $\mathbf{b},\in \mathbb{R}^m$,
+$A \in  \mathbb{R}^{m \cdot n}$, and   $\mathbf{a}_i $ is the $i$th row of $A$.
+
+One can view semidefinite programming $(SDP)$ as a linear program with matrices instead of vectors.
+\[
+ (SDP) \begin{cases}
+ \begin{array}{lrccc} 
+ \text{maximize}  &C \bigcdot X  & &  \\
+ \text{subject to}  & A_1 \bigcdot X & = & b_1 \\
+                            &  A_2 \bigcdot X & = & b_1 \\
+                            &  & \vdots & \\  
+                            &  A_m \bigcdot X & = & b_m \\
+                           & X   & \succeq & 0 \\
+\end{array}\\
+\end{cases}
+\]
+Where $C,X,A_i \in SYM_n$ and $b_i \in \mathbb{R}$.
+
+
+\question{}{
+Compute
+\[
+Tr\left(  
+\begin{pmatrix}
+c_{11} & c_{12} \\
+c_{12} & c_{22}
+\end{pmatrix}^T
+\begin{pmatrix}
+x_{11} & x_{12} \\
+x_{12} & x_{22}
+\end{pmatrix}
+\right)
+=
+\begin{pmatrix}
+c_{11} & c_{12} \\
+c_{12} & c_{22}
+\end{pmatrix}
+\bigcdot
+\begin{pmatrix}
+x_{11} & x_{12} \\
+x_{12} & x_{22}
+\end{pmatrix}
+=
+\]
+}
+\solution{
+$= c_{11}x_{11}+2c_{12}x_{12}+2c_{22}x_22$
+}
+
+\question{}{
+Show that the following is an equivalent form of $(SDP)$ up to some scaling.
+\[
+ (SDP) \begin{cases}
+ \begin{array}{lrcccl} 
+ \text{minimize}  &\sum_{i \leq j} c_{i,j} x_{i,j}  & &   &\\
+ \text{subject to}  & \sum_{i \leq j} a_{i,j,k} x_{i,j} & = & b_k  & \text{ for } k = 1\ldots m\\
+                           & X   & \succeq & 0 & \\
+\end{array}
+\end{cases}
+\]
+}
+\solution{
+If we look at the original problem, diagonal elements would have half the coefficient.
+}
+
+\question{}{
+Write the following linear program as a semidefinite program
+\[
+(LP) \begin{cases}
+ \begin{array}{lrccc} 
+ \text{maximize}  &2x_1 + 3x_2  & &  \\
+ \text{subject to}  & x_1+2x_2 & = & 1 \\
+                            & x_1-x_2 & \geq & 2 \\
+                           & x_1,x_2  & \geq & 0 
+\end{array}
+\end{cases}
+\]
+}
+\solution{
+One needs to add one slack variable for equality.
+\[
+(SDP) \begin{cases}
+ \begin{array}{lrccc} 
+ \text{maximize}  & 
+ \begin{pmatrix}
+ 2 & 0 & 0 \\
+ 0  & 3 & 0  \\
+ 0  &  0 & 0 
+ \end{pmatrix}
+ \bigcdot X\\
+ \text{subject to}  & \begin{pmatrix}
+ 1 & 0 & 0 \\
+ 0  & 2 & 0  \\
+ 0  &  0 & 0 
+ \end{pmatrix}
+ \bigcdot X
+ & = & 1 \\
+ 
+                            &  \begin{pmatrix}
+ 1 & 0 & 0 \\
+ 0  & -1 & 0  \\
+ 0  &  0 & -1 
+ \end{pmatrix}
+ \bigcdot X & = & 2 \\
+                           &   X  & \succeq & 0 
+\end{array}
+\end{cases}
+\]
+}
+
+\question{}{
+Write the following general linear program as a semidefinite program
+\[
+(LP) \begin{cases}
+ \begin{array}{lrccc} 
+ \text{maximize}  &\mathbf{c}^T\mathbf{x}  & &  \\
+ \text{subject to}  & A\mathbf{x} & = & \mathbf{b} \\
+                           & \mathbf{x}   & \geq & 0 \\
+\end{array}\\
+\end{cases}
+\]
+}
+\solution{
+
+}
+
+Dual form of $(SDP)$ is
+\[
+(DSDP) \begin{cases}
+ \begin{array}{llccc} 
+ \text{minimize}  &\mathbf{b}^T\mathbf{y}  & &  \\
+ \text{subject to}  & y_1A_1 + y_2A_2 + \cdots + y_mA_n  -C & \succeq & 0 \end{array}\\
+\end{cases}
+\]
+
+$(SDP)$ is \emph{strictly feasible} if exists feasible $X$ which is positive definite ($X \succ 0$).
+
+$(DSDP)$ is  \emph{strictly feasible} if exists feasible $\mathbf{y}$ such that $\left(\sum_{i}\mathbf{y}A_ i \right)- C \succ 0$.
+
+\vskip 1em
+\textbf{Theorem: Strong duality of $(SDP)$}\\
+If $(SDP)$ is strictly feasible and has an optimal solution of value $\gamma$, then $(DSDP)$ is feasible and has an optimal solution of value $\gamma$.
+
+If $(DSDP)$ is strictly feasible and has an optimal solution of value $\gamma$, then $(DSDP)$ is feasible and has an optimal solution of value $\gamma$.
+
+\vskip 1em
+\textbf{Theorem: Solvability of $(SDP)$ in polynomial time}\\
+Let $(SDP)$ be feasible, set of feasible solutions $F$ bounded.
+Let $R \in \mathbb{N}$ be such that $R \geq \sqrt{Tr(X^TX)}$ for all $X \in F$ and $\varepsilon > 0$ be constants.
+Let $n$ be the size of binary encoding of $(SDP)$. Then in polynomial time
+in $n$ we can compute $X' \in F$ of value $optimum - \varepsilon$.\\[10pt]
+In other words, if no solution is not too big ($R$) and we are happy with $\varepsilon$ precision, we have a polynomial time algorithm.
+
+Solution is using interior point methods. There exist free and efficient implementations CSDP and SDPA.
+
+
+\question{}{
+Write the following program $(P)$ as $(DSDP)$
+\[
+(P) \begin{cases}
+ \begin{array}{lrccc} 
+ \text{minimize}  & \frac{(\mathbf{c}^T\mathbf{x})^2}{\mathbf{d}^T\mathbf{x}}  & &  \\
+ \text{subject to}  & A\mathbf{x} + \mathbf{b}& \geq  & 0
+\end{array}
+\end{cases}
+\]
+where ${\mathbf{d}^T\mathbf{x}} \geq 0$ whenever $A\mathbf{x} + \mathbf{b} \geq  0$. (So the objective function is always $\geq 0$ and we do not have to worry about division by zero.)
+}
+\solution{
+First we introduce dummy variable $t$ to make the objective function linear:
+\[
+(P') \begin{cases}
+ \begin{array}{lrccc} 
+ \text{minimize}  & t  & &  \\
+ \text{subject to}  & A\mathbf{x} + \mathbf{b}& \geq  & 0 \\
+ & \frac{(\mathbf{c}^T\mathbf{x})^2}{\mathbf{d}^T\mathbf{x}} & \leq & t
+\end{array}
+\end{cases}
+\]
+Now 
+$ \frac{(\mathbf{c}^T\mathbf{x})^2}{\mathbf{d}^T\mathbf{x}}  \leq  t$ 
+is same as
+$ (\mathbf{c}^T\mathbf{x})^2 \leq  t\cdot  \mathbf{d}^T\mathbf{x}$
+and hence $ 0 \leq  t\cdot  \mathbf{d}^T\mathbf{x} - (\mathbf{c}^T\mathbf{x})^2$. Notice this corresponds to
+\[
+\begin{vmatrix}
+  t    & \mathbf{c}^T\mathbf{x} \\
+\mathbf{c}^T\mathbf{x} & \mathbf{d}^T\mathbf{x}
+\end{vmatrix} \geq 0
+\]
+This gives a program
+\[
+(DSDP) \begin{cases}
+ \begin{array}{llccc} 
+ \text{minimize}  & t  & &  \\
+ \text{subject to}  &
+\begin{pmatrix}
+  \mathbf{a}_1\cdot\mathbf{x}+b_1   &    &    &    &  0 \\
+  &  \ddots &      &    &  \\
+  &             &   \mathbf{a}_m\cdot\mathbf{x}+b_m &    & \\
+  & & & t & \mathbf{c}^T\mathbf{x} \\
+0  & & & \mathbf{c}^T\mathbf{x} & \mathbf{d}^T\mathbf{x}\\
+\end{pmatrix} & \succeq & 0
+\end{array}
+\end{cases}
+\]
+It is indeed $(DSDP)$ since it can be written as
+\[
+(DSDP) \begin{cases}
+ \begin{array}{llccc} 
+ \text{minimize}  & t  & &  \\
+ \text{subject to}  &
+ \sum_i
+ x_i
+\begin{pmatrix}
+  {a}_{1,i}   &    &    &    & 0  \\
+  &  \ddots &      &    &  \\
+  &             &   {a}_{m,i} &    & \\
+  & & &  0 & c_i \\
+0  & & & c_i & d_i\\
+\end{pmatrix}
++
+t
+\begin{pmatrix}
+0  &   &    &    &     0 \\
+  &   &      &    &  \\
+  &             &  0 &    & \\
+  & & & 1 &  \\
+ 0 & & &   & 0 \\
+\end{pmatrix}
+-
+\begin{pmatrix}
+  -b_1   &    &    &    & 0  \\
+  &  \ddots &      &    &  \\
+  &             &   -b_m &    & \\
+  & & & 0 &  \\
+0  & & &  & 0\\
+\end{pmatrix}
+ & \succeq & 0
+\end{array}
+\end{cases}
+\]
+}
+
+\question{}{
+Now we show that the requirement of $R$ for polynomial time solvability is indeed necessary.
+Consider the following constraint for $(DSDP)$. Show that $x_n$ is HUGE in any feasible solution. 
+\[
+\begin{pmatrix}
+  1& 2    &       &        &          &          &          &      &                & \\
+  2 &x_1 &       &        &        &          &          &      &                &  \\
+      &      &  1   & x_1 &         &          &          &      &                &\\
+      &      & x_1 & x_2 &        &          &          &      &                &\\ 
+      &      &        &        &   1   &  x_2  &          &      &                & \\
+      &      &        &        & x_2 &  x_3  &          &      &                & \\     
+      &      &        &        &        &          &\ddots&      &                & \\
+      &      &        &        &        &          &          &  1  &  x_{n-1}   &  \\  
+      &      &        &        &        &          &          & x_{n-1}   &  x_n   &  \\  
+\end{pmatrix}
+\succeq 0
+\]
+Use that the matrix is positive semidefinite if each block is positive semidefinite.
+}
+
+\solution{
+So we see that 
+\[
+\begin{pmatrix}
+  1& 2  \\
+   2 &x_1 
+ \end{pmatrix} 
+ \succeq 0
+ \Rightarrow  
+\begin{vmatrix}
+  1& 2  \\
+   2 &x_1 
+ \end{vmatrix} 
+ \geq 0 
+ \Rightarrow  
+ x_1 -4 \geq 0 
+\]
+and 
+\[
+\begin{pmatrix}
+  1& x_i  \\
+   x_i  &x_{i+1} 
+ \end{pmatrix} 
+ \succeq 0
+ \Rightarrow  
+\begin{vmatrix}
+  1& x_i   \\
+  x_i  &x_{i+1} 
+ \end{vmatrix} 
+ \geq 0 
+ \Rightarrow  
+ x_{i+1}  - x_{i}^2 \geq 0 
+\]
+So we get
+$x_1 \geq 2^2$, $x_2 \geq (2^2)^2=2^4$, $x_3 \geq ((2^2)^2)^2=2^8$.
+By induction, $x_n \geq 2^{2^n}$. 
+Therefore, just writing $x_n$ will take time at least $O(\log 2^{2^n}) = O(2^n)$.
+}
+\end{document}
+
+
+
+
+
+

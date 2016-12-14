@@ -1,0 +1,536 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[czech, english]{babel}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric}
+\usetikzlibrary{shapes.multipart}
+\usetikzlibrary{arrows}
+\usetikzlibrary{graphs}
+\usepackage{hyperref}
+
+
+% Itemize environment with small skips
+\newenvironment{packeditemize}{
+\begin{itemize}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{itemize}}
+
+
+% Fancy footnote....
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\usepackage{lastpage}
+\rfoot{MATH 566 - 24, page \thepage/\pageref{LastPage}}
+\cfoot{}
+\rhead{}
+\lhead{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+
+\newtheorem{theorem*}{Theorem} 
+
+% Itemize environment with small skips
+\newenvironment{packedenumerate}{
+\begin{enumerate}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{enumerate}}
+
+
+\newcommand{\vc}[1]{\ensuremath{\vcenter{\hbox{#1}}}}
+
+\newcounter{excounter}
+\setcounter{excounter}{1}
+\newcommand\question[2]{\vskip 1em  \noindent\textbf{\arabic{excounter}\addtocounter{excounter}{1}:} \emph{#1} \noindent#2}
+\newcommand\solution[1]{\vskip 0.5em \noindent\textbf{Solution:} #1}
+%\newcommand\like{\par \noindent\emph{(This question is: good - bad - ugly? Difficulty: 0-10:\hskip 3em )}} 
+
+\newcommand\lecturer[1]{\textbf{#1}}
+\newcommand\hideforstudent[1]{#1}
+
+
+%\renewcommand\lecturer[1]{{\color{white} \textbf{#1} }}
+%\renewcommand\hideforstudent[1]{{\color{white}  }}
+%\renewcommand\solution[1]{{\color{white} \vskip 0.5em \noindent\textbf{Solution:} #1 }}
+
+
+
+\setlength{\parindent}{0cm}
+\setlength{\parskip}{0.1cm}
+
+\begin{document}
+
+Fall  2016, MATH-566
+
+\centerline{{\Large \textbf{Maximum Matchings in Graphs (Edmonds' Blossom Algorithm)}}}
+
+Source: Chapter 10.1, 10.5
+
+Let $G=(V,E)$ be a graph. \textbf{Matching} $M$ a subset of $E$, such
+that graph $(M,E)$ has maximum degree one.
+
+Problem: For a graph $G$, find maximum matching $M$.
+
+
+\question{}{
+Formulate the maximum matching problem as an integer programming $(IP)$.
+}
+\solution{
+To every edge $e \in E$ assign variable $x_e \in \{0,1\}$.
+For every vertex, sum of edges is $\leq 1$. 
+Maximize sum over all edges.
+\[
+(IP)
+\begin{cases}
+\text{maximize}  &  \sum_{e \in E} x_e \\
+\text{subject to} & A\mathbf{x} \leq \mathbf{1}\\
+                          &  \mathbf{x} \in \{0,1\}^{|E|},
+\end{cases}
+\]
+where $A$ is the incidence matrix of $G$.
+}
+
+\question{}{
+Is there a condition on $G$ that guarantees that a relaxation of $(IP)$ to linear program always has an integral optimal solution?
+Notice that the matrix $A$ is an incidence matrix of $G$. 
+}
+\solution{
+If $G$ is a bipartite graph, then the incidence matrix is totally unimodular. That guarantees the relaxation to LP will give an integral solution.
+}
+
+
+
+\question{}{
+Show that finding maximum matching in a bipartite graph $G$ can be done using maximum
+flow algorithm. Is there a \emph{certificate} that a matching is maximum?
+\begin{center}
+\tikzset{insep/.style={inner sep=1.5pt, outer sep=0pt, circle, fill},}
+\begin{tikzpicture}[scale=1]
+\foreach \x in {0,1,...,3}{
+\draw (0,\x) node[insep](x0\x){};
+\draw (2,\x) node[insep](x1\x){};
+}
+\foreach \x/\y in {0/2,1/1,3/2,2/2,2/0,1/3}{
+\draw (x0\x) -- (x1\y);
+}
+\end{tikzpicture}
+\end{center}
+}
+\solution{
+Let $G=(V,E)$, where $V=V_1\cup V_2$. Add $s$ adjacent to all vertices in $V_1$
+and $t$ adjacent to all vertices in $V_2$. Orient all edges from $s$ to $t$ and add 
+capacities 1 everywhere.
+\begin{center}
+\tikzset{insep/.style={inner sep=1.5pt, outer sep=0pt, circle, fill},}
+\begin{tikzpicture}[scale=1]
+\draw
+(-2,1.5) node[insep,label=left:$s$](s){} 
+(4,1.5) node[insep,label=right:$t$](t){} 
+;
+\foreach \x in {0,1,...,3}{
+\draw[-latex] (s) -- (0,\x) node[insep](x0\x){};
+\draw[-latex] (2,\x) node[insep](x1\x){} -- (t);
+}
+\foreach \x/\y in {0/2,1/1,3/2,2/2,2/0,1/3}{
+\draw[-latex] (x0\x) -- (x1\y);
+}
+\end{tikzpicture}
+\end{center}
+Notice that maximality can be shown using minimum cut.
+}
+
+\textbf{Definition:}
+Let $M$ be a matching in graph $G=(V,E)$.
+A vertex $v\in V$ is \textbf{covered} if exists $e \in M$ such that $v \in e$,
+otherwise $v$ is \textbf{exposed}.
+A matching is called a \textbf{perfect matching} if all vertices are covered.
+
+Perfect matchings are covered in the book but we are skipping them.
+
+Notice: maximizing $M$ is the same as minimizing exposed vertices.
+
+\newpage
+
+Inspiration by flow: use \emph{augmenting paths}.
+
+A path $P$ is \textbf{$M$-alternating} if $E(P)\setminus M$ is a matching.
+An \textbf{$M$-alternating} path $P$ is \textbf{$M$-augmenting}  if $P$ has
+positive length and its endpoints are exposed in $M$. 
+Augmented $M' = M \Delta E(P)$.
+
+
+\question{}{
+Assume there is a matching $M$ (thick lines). Find augmenting path(s) and augment $M$.
+\begin{center}
+\tikzset{insep/.style={inner sep=1.5pt, outer sep=0pt, circle, fill},}
+\begin{tikzpicture}[scale=1]
+\foreach \x in {1,2,...,6}{
+\draw  (\x,0) node[insep,label=below:$v_\x$](x\x){};
+}
+\draw(x1) -- (x6);
+\draw[line width=1.6pt] (x2)--(x3) (x4)--(x5);
+\foreach \x in {2,...,5}{ \draw  (\x,1) node[insep,label=above:$u_\x$](u\x){}; } 
+\draw (x1)--(u2)--(u5) (x2)--(u3) (u3)--(x4);
+\draw[line width=1.6pt] (u2)--(u3) (u4)--(u5);  
+\end{tikzpicture}
+\hskip 4em
+\begin{tikzpicture}[scale=1]
+\draw  
+(0,0) node[insep,label=below:$v_1$](x1){}
+--
+(1,0) node[insep,label=below:$v_2$](x2){}
+--
+(1,1) node[insep,label=left:$v_3$](x3){}
+--
+++(1,0) node[insep,label=above right:$v_4$](x4){}
+--
+++(1,0) node[insep,label=right:$v_5$](x5){}
+--
+++(0,-1) node[insep,label=below:$v_6$](x6){}
+--
+++(-1,0) node[insep,label=below:$v_7$](x7){}
+(x4) -- ++(0,1) node[insep,label=right:$v_8$](x8){}
+;
+\draw(x2) -- (x7) (x3)--(x7)--(x5) (x6)--(x4) ;
+\draw[line width=1.6pt] (x2)--(x3) (x4)--(x5) (x6)--(x7) ;
+\end{tikzpicture}
+\end{center}
+}
+
+
+
+\solution{
+Augmenting path is a path $P$ with endpoints exposed, inner points covered and 
+the edges of the matching are alternating on $P$. 
+\begin{center}
+\tikzset{insep/.style={inner sep=1.5pt, outer sep=0pt, circle, fill},}
+\begin{tikzpicture}[scale=1]
+\foreach \x in {1,2,...,6}{
+\draw  (\x,0) node[insep,label=below:$v_\x$](x\x){};
+}
+\draw(x1) -- (x6);
+\draw[line width=1.6pt] (x1)--(x2) (x3)--(x4) (x5)--(x6) ;
+\foreach \x in {2,...,5}{ \draw  (\x,1) node[insep,label=above:$u_\x$](u\x){}; } 
+\draw (x1)--(u2)--(u5) (x2)--(u3) (u3)--(x4);
+\draw[line width=1.6pt] (u2)--(u3) (u4)--(u5);  
+\end{tikzpicture}
+\hskip 4em
+\begin{tikzpicture}[scale=1]
+\draw  
+(0,0) node[insep,label=below:$v_1$](x1){}
+--
+(1,0) node[insep,label=below:$v_2$](x2){}
+--
+(1,1) node[insep,label=left:$v_3$](x3){}
+--
+++(1,0) node[insep,label=above right:$v_4$](x4){}
+--
+++(1,0) node[insep,label=right:$v_5$](x5){}
+--
+++(0,-1) node[insep,label=below:$v_6$](x6){}
+--
+++(-1,0) node[insep,label=below:$v_7$](x7){}
+(x4) -- ++(0,1) node[insep,label=right:$v_8$](x8){}
+;
+\draw(x2) -- (x7) (x3)--(x7)--(x5) (x6)--(x4) ;
+\draw[line width=1.6pt] (x1)--(x2) (x3)--(x7) (x6)--(x5) (x4)-- (x8) ;
+\end{tikzpicture}
+\end{center}
+}
+
+
+\textbf{Theorem 10.7}
+Let $G$ be a graph with matching $M$. Then $M$ is maximum iff there is no $M$-augmenting path.
+
+\question{}{Prove Theorem 10.7}
+\solution{
+$\Rightarrow$: Augmenting path increases the size of the matching\\
+$\Leftarrow$. Consider $M'$ being a matching with more edges than $M$.
+Take the symmetric difference of $M$ and $M'$. It is a graph of maximum
+degree two, which gives set of even cycles and paths. Implies one of the paths
+must be $M$-augmenting.
+}
+
+\question{}{
+Can we use augmenting walks instead of  paths? It particular, examine walk\\
+$v_1, v_2, v_3, v_4, v_5, v_6, v_7, v_5, v_4, v_8$ in the graph on the right-hand side.
+}
+\solution{
+We cannot augment on it. Both $v_4$ and $v_5$ would have two matching edges.
+}
+
+
+Idea: Start from exposed vertices as roots and build \textbf{alternating forest} $F$. 
+Alternate non-matching edges and matching edges. 
+This gives layers of matching edges and non-matching edges.
+
+\begin{center}
+\tikzset{insep/.style={inner sep=1.5pt, outer sep=0pt, circle, fill},}
+\tikzset{inwhite/.style={inner sep=1.5pt, outer sep=0pt, circle, fill=white,draw},}
+\begin{tikzpicture}[scale=1]
+\draw  
+(0,0) node[inwhite](x1){}
+(-0.5,1) node[insep](x2){}
+ (0.5,1) node[insep](x3){}
+(-0.5,2) node[inwhite](x4){}
+ (0.5,2) node[inwhite](x5){}
+(-1,3) node[insep](x6){}
+ (0,3) node[insep](x7){}
+(-1,4) node[inwhite](x8){}
+ (0,4) node[inwhite](x9){}
+(1,3) node[insep](x10){}
+(1,4) node[inwhite](x11){}
+ 
+ (3,0) node[inwhite](y1){}
+ (2,1) node[insep](y2){}
+ (3,1) node[insep](y3){}
+ (4,1) node[insep](y4){}
+ (2,2) node[inwhite](y5){}
+ (3,2) node[inwhite](y6){}
+ (4,2) node[inwhite](y7){}
+ (4,3) node[insep](y8){}
+ (4,4) node[inwhite](y9){}
+;
+\draw(x1)--(x2) (x1)--(x3) (x4)--(x6) (x4)--(x7) (x5)--(x10) (y1)--(y2) (y1)--(y3) (y1)--(y4) (y7)--(y8);
+\draw[line width=1.6pt] (x2)--(x4)  (x3)--(x5) (x6)--(x8) (x7)--(x9) (x10)--(x11) (y2)--(y5)
+(y3)--(y6)(y4)--(y7) (y8)--(y9);
+\end{tikzpicture}
+\end{center}
+Notice that not all edges of $G$ are present in the forest $F$! Call vertex \textbf{outer} vertex if it is in even distance from the root (white ones).
+
+Assume building of the alternating forest by picking an edge adjacent to outer vertex and trying to extend the forest edge by edge.
+
+\question{}{
+What happens when we try to add any of the dotted edges?
+
+\begin{center}
+\tikzset{insep/.style={inner sep=1.5pt, outer sep=0pt, circle, fill},}
+\tikzset{inwhite/.style={inner sep=1.5pt, outer sep=0pt, circle, fill=white,draw},}
+\begin{tikzpicture}[scale=1]
+\draw  
+(0,0) node[inwhite](x1){}
+(-0.5,1) node[insep](x2){}
+ (0.5,1) node[insep](x3){}
+(-0.5,2) node[inwhite](x4){}
+ (0.5,2) node[inwhite](x5){}
+ 
+ (3,0) node[inwhite](y1){}
+ (2,1) node[insep](y2){}
+ (3,1) node[insep](y3){}
+ (4,1) node[insep](y4){}
+ (2,2) node[inwhite](y5){}
+ (3,2) node[inwhite](y6){}
+ (4,2) node[inwhite](y7){}
+ (5,2) node[inwhite](y8){}
+ (6,2) node[inwhite](y9){}
+
+;
+\draw(x1)--(x2) (x1)--(x3) (y1)--(y2) (y1)--(y3) (y1)--(y4) ;
+\draw[line width=1.6pt] (x2)--(x4)  (x3)--(x5)  (y2)--(y5) (y8)--(y9)
+(y3)--(y6)(y4)--(y7);
+\draw[line width=2pt,dotted,color=red] (x5) --node[above]{$e_1$} (y5) (y7)--node[above]{$e_2$}(y8)  (y6)--node[above]{$e_3$}(y4)
+(x3) --node[below]{$e_4$} (y5)
+;
+\end{tikzpicture}
+\end{center}
+}
+\solution{
+$e_1$ gives an augmenting path, $e_2$ allows the forest to grow, 
+$e_3,e_4$ can be dropped - if there is an augmenting path using them, there is one avoiding them.
+}
+
+\question{}{
+What happens with $e_5$?
+\begin{center}
+\tikzset{insep/.style={inner sep=1.5pt, outer sep=0pt, circle, fill},}
+\tikzset{inwhite/.style={inner sep=1.5pt, outer sep=0pt, circle, fill=white,draw},}
+\begin{tikzpicture}[scale=1]
+\draw  
+(0,0) node[inwhite](x1){}
+(-0.5,1) node[insep](x2){}
+ (0.5,1) node[insep](x3){}
+(-0.5,2) node[inwhite](x4){}
+ (0.5,2) node[inwhite](x5){}
+ 
+ (3,0) node[inwhite](y1){}
+ (2,1) node[insep](y2){}
+ (3,1) node[insep](y3){}
+ (4,1) node[insep](y4){}
+ (2,2) node[inwhite](y5){}
+ (3,2) node[inwhite](y6){}
+ (4,2) node[inwhite](y7){}
+;
+\draw(x1)--(x2) (x1)--(x3) (y1)--(y2) (y1)--(y3) (y1)--(y4) ;
+\draw[line width=1.6pt] (x2)--(x4)  (x3)--(x5)  (y2)--(y5) (y3)--(y6)(y4)--(y7);
+\draw[line width=2pt,dotted,color=red] (x4) --node[above]{$e_5$} (x5)  
+%(x3) --node[below]{$e_4$} (y5)
+;
+\end{tikzpicture}
+\end{center}
+}
+\solution{
+Edge $e_5$ is important. Consider edge $e_4$ from the previous. Show  the augmenting paths is using $e_5$ and it cannot be avoided.
+\begin{center}
+\tikzset{insep/.style={inner sep=1.5pt, outer sep=0pt, circle, fill},}
+\tikzset{inwhite/.style={inner sep=1.5pt, outer sep=0pt, circle, fill=white,draw},}
+\begin{tikzpicture}[scale=1]
+\draw  
+(0,0) node[inwhite](x1){}
+(-0.5,1) node[insep](x2){}
+ (0.5,1) node[insep](x3){}
+(-0.5,2) node[inwhite](x4){}
+ (0.5,2) node[inwhite](x5){}
+ 
+ (3,0) node[inwhite](y1){}
+ (2,1) node[insep](y2){}
+ (3,1) node[insep](y3){}
+ (4,1) node[insep](y4){}
+ (2,2) node[inwhite](y5){}
+ (3,2) node[inwhite](y6){}
+ (4,2) node[inwhite](y7){}
+;
+\draw(x1)--(x2) (x1)--(x3) (y1)--(y2) (y1)--(y3) (y1)--(y4) ;
+\draw[line width=1.6pt] (x2)--(x4)  (x3)--(x5)  (y2)--(y5) (y3)--(y6)(y4)--(y7);
+\draw[line width=2pt,dotted] (x4) --node[above]{$e_5$} (x5)  
+(x3) --node[below]{$e_4$} (y5)
+;
+\draw[line width=2pt,dotted]  (x1)--(x2)--(x4)--(x5)--  
+(x3) -- (y5) -- (y2)--(y1)
+;
+\end{tikzpicture}
+\end{center}
+}
+
+\textbf{Blossom} is an odd cycle on $k$ vertices containing $\frac{k-1}{2}$ edges from $M$.
+\question{}{
+Let $C$ be a blossom, where $v$ is not matched with other vertex in $C$. Show that alternating path entering $C$ using a matching edge $e$ containing $v$ can leave $C$ using unmatched edge from any vertex of $C$.
+
+\begin{center}
+\tikzset{insep/.style={inner sep=1.5pt, outer sep=0pt, circle, fill},}
+\tikzset{inwhite/.style={inner sep=1.5pt, outer sep=0pt, circle, fill=white,draw},}
+\begin{tikzpicture}[scale=1]
+\draw  
+(0,0) node[inwhite,label=left:$v$](x1){}
+(-0.5,1) node[inwhite](x2){}
+ (0.5,1) node[inwhite](x3){}
+(-0.5,2) node[inwhite](x4){}
+ (0.5,2) node[inwhite](x5){}
+ (0,-1) node[inwhite](y1){}
+ (0,-2) node[inwhite](y2){}
+
+;
+\draw (y2)--(y1) (x1)--(x2) (x1)--(x3) (x4)--(x5);
+\draw[line width=1.6pt] (x2)--(x4)  (x3)--(x5) (y1)-- node[right]{$e$}(x1);
+;
+\draw
+(x1) -- ++(0:1) node[inwhite,label=right:$z_1$](z1){}
+(x2) -- ++(180:1) node[inwhite,label=left:$z_2$](z2){}
+(x3) -- ++(0:1) node[inwhite,label=right:$z_1$](z3){}
+(x4) -- ++(130:1) node[inwhite,label=left:$z_1$](z4){}
+(x5) -- ++(50:1) node[inwhite,label=right:$z_1$](z5){}
+;
+\end{tikzpicture}
+\end{center}
+}
+
+
+\newpage
+
+Since blossom acts like a vertex that can be matched to anything, we contract the blossom.
+
+\begin{center}
+\tikzset{insep/.style={inner sep=1.5pt, outer sep=0pt, circle, fill},}
+\tikzset{inwhite/.style={inner sep=1.5pt, outer sep=0pt, circle, fill=white,draw},}
+\vc{
+\begin{tikzpicture}[scale=1]
+\draw  
+(0,0) node[inwhite,label=left:$v$](x1){}
+(-0.5,1) node[inwhite](x2){}
+ (0.5,1) node[inwhite](x3){}
+(-0.5,2) node[inwhite](x4){}
+ (0.5,2) node[inwhite](x5){}
+ (0,-1) node[inwhite](y1){}
+ (0,-2) node[inwhite](y2){}
+
+;
+\draw (y2)--(y1) (x1)--(x2) (x1)--(x3) (x4)--(x5);
+\draw[line width=1.6pt] (x2)--(x4)  (x3)--(x5) (y1)--(x1);
+;
+\draw
+(x1) -- ++(0:1) node[inwhite,label=right:$z_1$](z1){}
+(x2) -- ++(180:1) node[inwhite,label=left:$z_2$](z2){}
+(x3) -- ++(0:1) node[inwhite,label=right:$z_1$](z3){}
+(x4) -- ++(130:1) node[inwhite,label=left:$z_1$](z4){}
+(x5) -- ++(50:1) node[inwhite,label=right:$z_1$](z5){}
+;
+\end{tikzpicture}
+}
+\hskip 3em
+$\Rightarrow$
+\hskip 3em
+\vc{
+\begin{tikzpicture}[scale=1]
+\draw  
+(0,0) node[inwhite,label=left:$v$](x1){}
+(-0.5,1) coordinate (x2)
+ (0.5,1) coordinate(x3){}
+(-0.5,2) coordinate(x4){}
+ (0.5,2) coordinate(x5){}
+ (0,-1) node[insep](y1){}
+ (0,-2) node[inwhite](y2){}
+
+;
+\draw (y2)--(y1) ;
+\draw[line width=1.6pt]  (y1)--(x1);
+;
+\draw
+(x1)  ++(0:1) node[inwhite,label=right:$z_1$](z1){} -- (x1)
+(x2)  ++(180:1) node[inwhite,label=left:$z_2$](z2){}  -- (x1)
+(x3)  ++(0:1) node[inwhite,label=right:$z_1$](z3){}  -- (x1)
+(x4)  ++(130:1) node[inwhite,label=left:$z_1$](z4){}  -- (x1)
+(x5)  ++(50:1) node[inwhite,label=right:$z_1$](z5){}  -- (x1)
+;
+\end{tikzpicture}
+}
+\end{center}
+
+\textbf{Edmonds Blossom Algorithm} (sketch)
+\begin{enumerate}
+\item $M = \emptyset$
+\item\hskip 0em  $F = $ uncovered vertices, all edges unexplored
+\item\hskip 0em while exists unexplored edge $e$ adjacent to outer vertex of $F$
+\item\hskip 4em  if $e$ connects two outer vertices from different components of $F$, 
+\item \hskip 6em get $M$-alternating path and augment $M$, go to 2.
+\item\hskip 4em  if $e$ connects two outer vertices from the same components of $F$:
+\item \hskip 6em  find a blossom and contract it, unexplore edges going out from no-outer vertices of the blossom..
+\item\hskip 4em  if $e$ connects and outer vertex to unexplored node $x$,
+\item \hskip 6em  add $x$ and its neighbor in $M$ to $F$.
+\end{enumerate}
+
+If implemented carefully, runs in $O(\sqrt{n}m)$, where $n=|V|$ and $m=|E|$.
+
+\question{}{
+Try to run the algorithm on Petersen's graph.
+}
+\solution{
+A good choice of order of explored edges can show all features of the algorithm.
+}
+
+
+
+\end{document}
+
+
+
+
+
+

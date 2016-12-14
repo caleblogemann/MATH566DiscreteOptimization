@@ -1,0 +1,201 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{fullpage}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric}
+\usetikzlibrary{arrows}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{wrapfig}
+
+
+\newcounter{excounter}
+\setcounter{excounter}{1}
+\newcommand\question[2]{\vskip 1em  \noindent\textbf{\arabic{excounter}\addtocounter{excounter}{1}:} (\emph{#1}) \newline \noindent#2}
+\newcommand\hint[1]{ \newline \noindent\textit{Hint: #1}}
+\newcommand\solution[1]{\vskip 0.5em \noindent\textbf{Solution:}\par\noindent#1}
+
+\renewcommand\solution[1]{ }
+
+
+
+\begin{document}
+\pagestyle{empty}
+\large
+
+{\bf MATH-566 \hspace{1cm} Final Exam}
+\vskip 1em
+Due \textbf{72 hours since your starting time}. Just bring it to the Emperor (office 422).\\
+
+
+\vskip 1em
+
+\newcommand{\vc}[1]{\ensuremath{\vcenter{\hbox{#1}}}}
+Help the Emperor to rule the Empire and crush the Rebels.\hfill
+\vc{
+%\includegraphics[height=2cm]{fig-emperor}
+}
+
+\vskip 2em
+
+In every problem where you use some algorithm to solve the problem, describe the algorithm.
+Moreover, describe the steps of the algorithm as it is running on the problem instance you are
+solving or provide an implementation in Sage. You can reuse code you implemented while
+creating HW. APMonitor is also allowed. 
+\vskip 1em
+\hfill\emph{May the SAGE be with you!}
+\vskip 1em
+\question{Collect taxes for the Emperor}{
+Emperor has decided to build Death Star II. He needs  money to pay for it. He sent you to collect taxes from
+several planets. Here are the coordinates of the planets assigned to you. You are starting at Corusant (0,0) and want to
+return there. The time of travel between the planets corresponds to their Euclidean distance.
+You have to visit all planets. Minimize the travel time.
+}
+\begin{verbatim}
+X = [  [0,0], [9,0], [1,1], [8,1], [0,2], [9,2], [4,3], [5,3], \
+[0,4], [1,4], [2,4], [3,4], [6,4], [7,4], [8,4], [9,4], \
+[0,5], [1,5], [3,5], [2,5], [6,5], [7,5], [8,5], [9,5], \
+[4,6], [5,6], [0,7], [9,7], [1,8], [8,8], [0,9], [9,9] ];
+\end{verbatim}
+{
+\emph{Provide approximate solution and provide also a lower bound. Create map of your trip (means 2D plot). The bounds do not have to be perfect.}
+}
+
+
+\question{Plan a defense against a surprise rebel attack}{
+%\begin{wrapfigure}{r}{3cm}
+%\includegraphics[width=3cm]{fig-shuttle}
+%\end{wrapfigure}
+You are leading a group $4$ of imperial fighters that are protecting an imperial shuttle transporting secret plans to Death Star II. 
+You were ambushed by $3$ rebel ships. You must protect the secret plans! Do not repeat the same mistake that happened with Death Star.
+
+Choose one fighter from your group to accompany the transport shuttle cover their retreat by fighting the rebel ship.
+The remaining three ships will each try to fight one rebel ship. You need to fight against each of the rebel ships to prevent
+pursuit of the transport shuttle and you do not want to leave the transport ship unguarded.
+
+For the remaining 3 ships that fight the rebel ships, maximize the total damage (sum of damages) caused to the rebel ships.
+For every pair of imperial and rebel ship, the damage caused by imperial ships to rebel ships is described in the following table.
+\begin{center}
+\begin{tabular}{c|ccccc}
+          & $r_1$ & $r_2$ & $r_3$  \\ \hline
+$i_1$   &    3     &     2    &     3         \\
+$i_2$   &    2     &     3    &     1     \\
+$i_3$   &    4     &     2    &     2      \\
+$i_4$   &    1     &     5    &     1      \\
+\end{tabular}
+\end{center}
+\emph{Provide optimal solution.}
+}
+
+
+\question{Bring Vader's lightsaber}{
+Darth Vader forgot his lightsaber. Bring it to him as fast as you can so the Emperor can watch a lightsaber fight between Darth Vader and Luke Skywalker.
+You have only a small ship and hence you need refueling.
+Here is a map of the space. Every planet has a number that corresponds to the time needed for refueling 
+and every connection has a travel time associated to it. 
+
+\begin{center}
+\begin{tikzpicture}[scale=0.8]
+\draw (0,0) node[circle,draw](y){You};
+\draw (10,0) node[circle,draw](v){Vader};
+\draw (2,-3) node[circle,draw](p1){3};
+\draw (3,3) node[circle,draw](p2){4};
+\draw (2,0) node[circle,draw](p3){2};
+\draw (5,-2) node[circle,draw](p4){3};
+\draw (5,2) node[circle,draw](p5){2};
+\draw (3,-1) node[circle,draw](p6){2};
+\draw (7,2) node[circle,draw](p7){4};
+\draw (7,-1) node[circle,draw](p8){2};
+\draw (8,-3) node[circle,draw](p9){1};
+\draw
+(y) -- node[above]{1} (p1)
+(y) -- node[above]{2} (p2)
+(y) -- node[above]{1} (p3)
+(p1) -- node[above]{1} (p4)
+(p1) -- node[above]{2} (p6)
+(p3) -- node[above]{1} (p6)
+(p3) -- node[above]{2} (p5)
+(p2) -- node[above]{1} (p5)
+(p5) -- node[above]{2} (p7)
+(p5) -- node[above]{3} (p8)
+(p5) -- node[left]{1} (p4)
+(p4) -- node[above]{2} (p6)
+(p4) -- node[above]{2} (p9)
+(p8) -- node[above]{1} (p9)
+(p8) -- node[above]{3} (v)
+(p9) -- node[above]{1} (v)
+(p7) -- node[above]{5} (v)
+; 
+\end{tikzpicture}
+\end{center}
+\emph{Provide optimal solution.}
+\begin{center}
+%\includegraphics[height=1.5cm]{fig-vader}
+%\hskip 2em
+%\includegraphics[height=2cm]{fig-luke}
+\end{center}
+}
+
+\newpage
+
+\question{Promote Chaos}{
+The Emperor, as any other good emperor, knows that it is best if his enemies are fighting among each other.
+Here is a map of Emperor's enemies and how much does it cost for each pair to start fighting each other.
+Find for the Emperor which pairs to trick into fighting each other such that every enemy is in exactly one fight.
+Provide also a certificate verifying the optimality of your solution.\\
+
+\emph{Provide optimal solution and certificate of optimality.}
+\begin{center}
+\begin{tikzpicture}[scale=0.8]
+\draw (0,0) node[circle,draw](y){a};
+\draw (10,0) node[circle,draw](v){b};
+\draw (2,-3) node[circle,draw](p1){c};
+\draw (3,3) node[circle,draw](p2){d};
+\draw (2,0) node[circle,draw](p3){e};
+\draw (5,-2) node[circle,draw](p4){f};
+\draw (5,2) node[circle,draw](p5){g};
+\draw (3,-1) node[circle,draw](p6){h};
+\draw (7,2) node[circle,draw](p7){i};
+\draw (7,-1) node[circle,draw](p8){j};
+\draw (8,-3) node[circle,draw](p9){k};
+\draw (5,-4) node[circle,draw](p10){l};
+\draw
+(y) -- node[above]{1} (p1)
+(y) -- node[above]{2} (p2)
+(y) -- node[above]{1} (p3)
+(p1) -- node[above]{2} (p6)
+(p3) -- node[above]{1} (p6)
+(p3) -- node[above]{2} (p5)
+(p2) -- node[above]{3} (p5)
+(p5) -- node[above]{2} (p7)
+(p5) -- node[above]{3} (p8)
+(p5) -- node[left]{1} (p4)
+(p4) -- node[above]{2} (p6)
+(p4) -- node[above]{2} (p9)
+(p8) -- node[above]{1} (p9)
+(p8) -- node[above]{3} (v)
+(p7) -- node[above]{5} (v)
+(p4) -- node[right]{5} (p10)
+(p1) -- node[above]{4} (p10)
+; 
+\end{tikzpicture}
+\end{center}
+}
+
+\newpage
+
+\textbf{Additional explanations}
+\begin{itemize}
+\item APMonitor allowed
+\item MixedIntegerProgram allowed
+\item You need to explain what and why are you doing. Solving problems by staring
+at them is not acceptable.
+\end{itemize}
+
+
+Question 1: Reasonable bounds do not have to be the best possible
+bounds. They must be justified.
+
+
+\end{document}
+

@@ -1,0 +1,378 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[czech, english]{babel}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric}
+\usetikzlibrary{shapes.multipart}
+\usetikzlibrary{arrows}
+\usetikzlibrary{graphs}
+\usepackage{hyperref}
+
+
+% Itemize environment with small skips
+\newenvironment{packeditemize}{
+\begin{itemize}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{itemize}}
+
+
+% Fancy footnote....
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\usepackage{lastpage}
+\rfoot{MATH 566 - 25, page \thepage/\pageref{LastPage}}
+\cfoot{}
+\rhead{}
+\lhead{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+
+\newtheorem{theorem*}{Theorem} 
+
+% Itemize environment with small skips
+\newenvironment{packedenumerate}{
+\begin{enumerate}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{enumerate}}
+
+
+\newcommand{\vc}[1]{\ensuremath{\vcenter{\hbox{#1}}}}
+
+\newcounter{excounter}
+\setcounter{excounter}{1}
+\newcommand\question[2]{\vskip 1em  \noindent\textbf{\arabic{excounter}\addtocounter{excounter}{1}:} \emph{#1} \noindent#2}
+\newcommand\solution[1]{\vskip 0.5em \noindent\textbf{Solution:} #1}
+%\newcommand\like{\par \noindent\emph{(This question is: good - bad - ugly? Difficulty: 0-10:\hskip 3em )}} 
+
+\newcommand\lecturer[1]{\textbf{#1}}
+\newcommand\hideforstudent[1]{#1}
+
+
+%\renewcommand\lecturer[1]{{\color{white} \textbf{#1} }}
+%\renewcommand\hideforstudent[1]{{\color{white}  }}
+%\renewcommand\solution[1]{{\color{white} \vskip 0.5em \noindent\textbf{Solution:} #1 }}
+
+
+
+\setlength{\parindent}{0cm}
+\setlength{\parskip}{0.1cm}
+
+\begin{document}
+
+Fall  2016, MATH-566
+
+\centerline{{\Large \textbf{Minimum-Weight Perfect Matching in Bipartite Graphs}}}
+
+Source: Bill,Bill,Bill
+
+Let $G=(V,E)$ be a graph. Let $c:E \rightarrow \mathbb{R}^+$ is a cost.
+Find a perfect matching $M$ that is minimizing the sum of costs of the edges
+in the matching.
+
+\question{}{
+Find minimum-weight perfect matching in the following graph:
+\begin{center}
+\tikzset{insep/.style={inner sep=1.5pt, outer sep=0pt, circle, fill},}
+\begin{tikzpicture}[scale=1.5]
+\draw   (0,0) node[insep,label=left: ](r){} 
+++(45:1)  node[insep,label=above: ](a){}
+++(0:1)  node[insep,label=above: ](b){}
+(r) ++(-45:1)  node[insep,label=below: ](d){}
+++(0:1)  node[insep,label=below: ](f){}
+++(45:1) node[insep,label=above: ](g){}
+++(0:1) node[insep,label=above: ](h){}
+(f) ++(0:1.5) node[insep,label=below: ](i){}
+;
+\draw
+(r) -- node[above]{3} (a)
+(r) -- node[below]{4} (d)
+(a) -- node[above]{4} (b)
+(d) -- node[above]{5} (f)
+(g) -- node[above]{5} (h)
+(b) -- node[above]{5} (g)
+(f) -- node[above]{4} (g)
+(f) -- node[above]{6} (i)
+(h) -- node[right]{7} (i)
+;
+\end{tikzpicture}
+\end{center}
+}
+
+\question{}{
+Write the  minimum-weight perfect matching as an integer program $(IP)$ on a graph $G=(V,E)$.
+}
+\solution{
+\[
+(IP)
+\begin{cases}
+\text{minimize}  &  \sum_{e \in E} c(e) x_e \\
+\text{subject to} & \sum_{e \in \delta(v)} x_e =  1 \text{ for all } v \in V\\
+                          &  \mathbf{x} \in \{0,1\}^{|E|},
+\end{cases}
+\]
+}
+
+
+\question{}{
+Consider a relaxation of $(IP)$ to a linear program $(P$) and write the dual $(D)$ of $(P)$.
+}
+\solution{
+\[
+(P)
+\begin{cases}
+\text{minimize}  &  \sum_{e \in E} c(e) x_e \\
+\text{subject to} & \sum_{e \in \delta(v)} x_e =  1 \text{ for all } v \in V\\
+                          & x_e \geq 0 \text{ for all } e \in E
+\end{cases}
+\]
+\[
+(D)
+\begin{cases}
+\text{maximize}  &  \sum_{v \in V} y_v \\
+\text{subject to} & y_{u}  + y_v \leq  c(uv) \text{ for all } uv \in E\\
+                          & y_v \in \mathbb{R} \text{ for all } v \in V
+\end{cases}
+\]
+
+
+}
+
+\textbf{Theorem} Birkhoff: If $G$ is a bipartite graph, then solution to $(P)$ is integral. (Why?)\\
+\hideforstudent{Use minimum cost flow.}
+
+\question{}{
+Formulate complementary slackness conditions for optimal solution  $\mathbf{x}$ of $(P)$
+and optimal solution $\mathbf{y}$ of $(D)$.
+}
+\solution{\\
+If $x_e > 0$, then $y_{u}  + y_v = c(uv)$.\\
+If $y_{u}  + y_v < c(uv)$ then  $x_e = 0$, then.\\
+}
+
+
+
+Algorithm idea: Maintain an optimal solution to $(D)$, create a solution to $(P)$ whose value
+is matching the dual solution.
+
+\question{}{
+Find initial solutions to $(P)$ and $(D)$, where solution to $(D)$ is feasible and the
+solutions satisfy complementary slackness. (Solution to $(P)$ does not have to be feasible.) 
+}
+\solution{
+$\textbf{x} = 0$, $\textbf{y} = 0$ will do.
+}
+
+
+
+\question{}{
+If the solution to $(D)$ is fixed, which edges can be used in matching? (Denote the edges by $E_=$.)
+}
+\solution{
+All edges $e=uv$, where  $y_{u}  + y_v = c(e)$ can have $x_e > 0$.
+}
+
+
+Algorithm sketch, suppose a perfect matching exists.
+\begin{packeditemize}
+\item start with initial solution $\mathbf{x}$,$\mathbf{y}$.
+\item Take edges $E_=$ and try to find a perfect matching $M$ by growing augmenting forests
+\item If $M$ is not perfect, there are some outer of $F$ vertices adjacent to edges in $E$ but not in $E_=$.
+\item Update $\mathbf{y}$ to allow more edges in $E_=$ and repeat.
+\end{packeditemize}
+
+\question{}{
+What to do if there is no perfect matching in $E_=$? Consider the following example.
+Number on edge $e$ is $c(e)$, number at vertex $v$ is  $y_v$. How to modify $\mathbf{y}$
+to allow the tree to grow?
+\begin{center}
+\tikzset{insep/.style={inner sep=1.5pt, outer sep=0pt, circle, fill},}
+\begin{tikzpicture}[scale=1.4]
+\draw   (0,0) node[insep,label=left:1](r){} 
+++(45:1)  node[insep,label=above:2](a){}
+++(0:1)  node[insep,label=above:2](b){}
+(r) ++(-45:1)  node[insep,label=below:3](d){}
+++(0:1)  node[insep,label=below:2](f){}
+++(45:1) node[insep,label=above:1](g){}
+++(0:1) node[insep,label=above:4](h){}
+(f) ++(0:1.5) node[insep,label=below:1](i){}
+;
+\draw
+(r) -- node[above]{3} (a)
+(r) -- node[below]{4} (d)
+;
+\draw[line width=1pt]
+(a) -- node[above]{4} (b)
+(d) -- node[above]{5} (f)
+(g) -- node[above]{5} (h)
+;
+\draw[dashed]
+(b) -- node[above]{5} (g)
+(f) -- node[above]{4} (g)
+(f) -- node[above]{6} (i)
+(h) -- node[right]{7} (i)
+;
+\end{tikzpicture}
+\end{center}
+}
+
+\solution{
+\begin{center}
+\tikzset{insep/.style={inner sep=1.5pt, outer sep=0pt, circle, fill},}
+\begin{tikzpicture}[scale=1.4]
+\draw   (0,0) node[insep,label=left:+](r){} 
+++(45:1)  node[insep,label=above:-](a){}
+++(0:1)  node[insep,label=above:+](b){}
+(r) ++(-45:1)  node[insep,label=below:-](d){}
+++(0:1)  node[insep,label=below:+](f){}
+++(45:1) node[insep,label=above:1](g){}
+++(0:1) node[insep,label=above:4](h){}
+(f) ++(0:1.5) node[insep,label=below:1](i){}
+;
+\foreach \x in {a,b,d,r,f,g,h,i}{
+\draw[black] (\x) node[insep]{};
+} 
+\draw[dashed,color=black]
+(r) -- node[above]{3} (a)
+(r) -- node[below]{4} (d)
+(a) -- node[above]{4} (b)
+(d) -- node[above]{5} (f)
+(g) -- node[above]{5} (h)
+(b) -- node[above]{5} (g)
+(f) -- node[above]{4} (g)
+(f) -- node[above]{6} (i)
+(h) -- node[right]{7} (i)
+;
+\end{tikzpicture}
+\hskip 4em
+\begin{tikzpicture}[scale=1.4]
+\draw   (0,0) node[insep,label=left:2](r){} 
+++(45:1)  node[insep,label=above:1](a){}
+++(0:1)  node[insep,label=above:3](b){}
+(r) ++(-45:1)  node[insep,label=below:2](d){}
+++(0:1)  node[insep,label=below:3](f){}
+++(45:1) node[insep,label=above:1](g){}
+++(0:1) node[insep,label=above:4](h){}
+(f) ++(0:1.5) node[insep,label=below:1](i){}
+;
+\draw
+(r) -- node[above]{3} (a)
+(r) -- node[below]{4} (d)
+(f) -- node[above]{4} (g)
+;
+\draw[line width=1pt]
+(a) -- node[above]{4} (b)
+(d) -- node[above]{5} (f)
+(g) -- node[above]{5} (h)
+;
+\draw[dashed]
+(b) -- node[above]{5} (g)
+(f) -- node[above]{6} (i)
+(h) -- node[right]{7} (i)
+;
+\end{tikzpicture}
+\end{center}
+\begin{center}
+\tikzset{insep/.style={inner sep=1.5pt, outer sep=0pt, circle, fill},}
+\begin{tikzpicture}[scale=1.4]
+\draw   (0,0) node[insep,label=left:4](r){} 
+++(45:1)  node[insep,label=above:-1](a){}
+++(0:1)  node[insep,label=above:5](b){}
+(r) ++(-45:1)  node[insep,label=below:0](d){}
+++(0:1)  node[insep,label=below:5](f){}
+++(45:1) node[insep,label=above:-1](g){}
+++(0:1) node[insep,label=above:6](h){}
+(f) ++(0:1.5) node[insep,label=below:1](i){}
+;
+\draw
+(r) -- node[above]{3} (a)
+(r) -- node[below]{4} (d)
+(f) -- node[above]{4} (g)
+(f) -- node[above]{6} (i)
+;
+\draw[line width=1pt]
+(a) -- node[above]{4} (b)
+(d) -- node[above]{5} (f)
+(g) -- node[above]{5} (h)
+;
+\draw[dashed]
+(b) -- node[above]{5} (g)
+(h) -- node[right]{7} (i)
+;
+\end{tikzpicture}
+\hskip 4em
+\tikzset{insep/.style={inner sep=1.5pt, outer sep=0pt, circle, fill},}
+\begin{tikzpicture}[scale=1.4]
+\draw   (0,0) node[insep,label=left:4](r){} 
+++(45:1)  node[insep,label=above:-1](a){}
+++(0:1)  node[insep,label=above:5](b){}
+(r) ++(-45:1)  node[insep,label=below:0](d){}
+++(0:1)  node[insep,label=below:5](f){}
+++(45:1) node[insep,label=above:-1](g){}
+++(0:1) node[insep,label=above:6](h){}
+(f) ++(0:1.5) node[insep,label=below:1](i){}
+;
+\draw
+(r) -- node[above]{3} (a)
+(f) -- node[above]{4} (g)
+(d) -- node[above]{5} (f)
+;
+\draw[line width=1pt]
+(a) -- node[above]{4} (b)
+(g) -- node[above]{5} (h)
+(f) -- node[above]{6} (i)
+(r) -- node[below]{4} (d)
+;
+\draw[dashed]
+(b) -- node[above]{5} (g)
+(h) -- node[right]{7} (i)
+;
+\end{tikzpicture}
+\end{center}
+}
+
+Recall that during growing the tree, we encountered edges like $e_5$ that were not possible
+to drop from the tree. The above algorithm does not work for edges with $e_5$.\begin{center}
+\tikzset{insep/.style={inner sep=1.5pt, outer sep=0pt, circle, fill},}
+\tikzset{inwhite/.style={inner sep=1.5pt, outer sep=0pt, circle, fill=white,draw},}
+\begin{tikzpicture}[scale=1]
+\draw  
+(0,0) node[inwhite](x1){}
+(-0.5,1) node[insep](x2){}
+ (0.5,1) node[insep](x3){}
+(-0.5,2) node[inwhite](x4){}
+ (0.5,2) node[inwhite](x5){}
+ 
+ (3,0) node[inwhite](y1){}
+ (2,1) node[insep](y2){}
+ (3,1) node[insep](y3){}
+ (4,1) node[insep](y4){}
+ (2,2) node[inwhite](y5){}
+ (3,2) node[inwhite](y6){}
+ (4,2) node[inwhite](y7){}
+;
+\draw(x1)--(x2) (x1)--(x3) (y1)--(y2) (y1)--(y3) (y1)--(y4) ;
+\draw[line width=1.6pt] (x2)--(x4)  (x3)--(x5)  (y2)--(y5) (y3)--(y6)(y4)--(y7);
+\draw[line width=2pt,dotted,color=red] (x4) --node[above]{$e_5$} (x5)  
+%(x3) --node[below]{$e_4$} (y5)
+;
+\end{tikzpicture}
+\end{center}
+Our algorithm works only for \textbf{bipartite} graphs. Can be (nontrivially) generalized for
+all graphs. (The linear program has to be stronger by adding more constraints - for all odd vertex subsets, at least one edge is in the cut, blossoms need to be treated carefully.)
+\end{document}
+
+
+
+
+
+
