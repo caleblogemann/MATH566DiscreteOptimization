@@ -1,3 +1,5 @@
+import itertools as it
+load('kruskal.sage')
 def nearestNeighbor(points):
     pointList = list(points)
     n = len(pointList)
@@ -94,9 +96,28 @@ def furthestInsertion(points):
         cycle.insert(minCycleIndex+1, pointList.pop(maxVertexIndex))
     return (cycle, N(total_distance))
 
-def christofides(points):
-    
-    return (cycle, n(total_distance))
+def lowerBound(points):
+    LB = 0
+    for v in points:
+        vertexList = list(points)
+        vertexList.remove(v)
+        n = len(vertexList)
+        edgeList = list(it.combinations(range(n), 2))
+        costList = []
+        for edge in edgeList:
+            u = vertexList[edge[0]]
+            v = vertexList[edge[1]]
+            costList.append(distance(u, v))
+        treeEdges = kruskal(vertexList, edgeList, costList)
+        bound = sum([distance(vertexList[e[0]], vertexList[e[1]]) for e in treeEdges])
+        w = min(vertexList, key=lambda x:distance(x,v))
+        bound += distance(v,w)
+        vertexList.remove(w)
+        u = min(vertexList, key=lambda x:distance(x,v))
+        bound += distance(v,u)
+        if bound > LB:
+            LB = bound
+    return LB
 
 def plotCycle(cycle):
     plot = line([])

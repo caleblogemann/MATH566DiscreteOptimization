@@ -9,22 +9,17 @@ pointList = [[0,0], [9,0], [1,1], [8,1], [0,2], [9,2], [4,3], [5,3], \
 cycle, total_distance = nearestNeighbor(pointList)
 print 'Nearest Neighbor'
 print('Distance: %s' % total_distance)
-print computeTotalDistance(cycle)
 plotCycle(cycle)
 
 cycle, total_distance = cheapestInsertion(pointList)
 print 'Cheapest Insertion'
 print('Distance: %s' % total_distance)
-print computeTotalDistance(cycle)
 plotCycle(cycle)
 
 cycle, total_distance = furthestInsertion(pointList)
 print 'Furthest Insertion'
 print('Distance: %s' % total_distance)
-print computeTotalDistance(cycle)
 plotCycle(cycle)
 
-# cycle, total_distance = christofides(pointList)
-# print 'Christofides Algorithm'
-# print('Distance: %s' % total_distance)
-# plotCycle(cycle)
+LB = lowerBound(pointList)
+print('Lower Bound: %s' % LB)
