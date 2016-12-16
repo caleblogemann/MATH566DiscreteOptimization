@@ -35,6 +35,9 @@ Final
     This script also has a function to compute a lower bound on the traveling
     salesman tour.
     \lstinputlisting[language=Sage]{Sage/travelingSalesman.sage}
+    The lower bound function uses Kruskal's algorithm to find the minimum spanning tree.
+    This algorithm is implemented below.
+    \lstinputlisting[language=Sage]{Sage/kruskal.sage}
     The following script runs each of these algorithms on the given set of
     points and computes a lower bound.
     \lstinputlisting[language=Sage]{Sage/final_1.sage}
